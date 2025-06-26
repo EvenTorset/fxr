@@ -1542,13 +1542,24 @@ namespace ExternalValue {
      */
     Terminate = 0,
     Unk1 = 1, // Precipitation?
-    Unk2 = 2, // Time of day?
+    /**
+     * This represents the the time of day. At midnight, the value is 0, at
+     * noon it is 12, and then it goes up to 24 before wrapping back to 0, just
+     * like the hours on the clock.
+     */
+    TimeOfDay = 2,
     Unk1000 = 1000, // Distance?
     Unk2000 = 2000, // Hit effect variation?
     Unk2100 = 2100,
     Unk2200 = 2200,
     Unk4000 = 4000,
-    Unk10000 = 10000, // Blood visibility?
+    /**
+     * Based on the "Display Blood" setting.
+     * - Off: `-1`
+     * - On: `0`
+     * - Mild: `1`
+     */
+    BloodVisibility = 10000,
   }
 }
 
@@ -1633,6 +1644,10 @@ export enum ScaleCondition {
    * is *enabled*.
    */
   ParticleModifier = 5,
+  /**
+   * Always scaled.
+   */
+  RawInstanceSize = 6,
 }
 
 /**
@@ -4245,7 +4260,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     isParticle: false,
     slotDefault: false,
     props: {
-      radius: { default: 1, field: 2 },
+      radius: { default: 1, field: 2, scale: 6 },
       friction: { default: 0.5, field: 2 },
       bounciness: { default: 0.5, field: 2 },
     },
@@ -4912,7 +4927,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
-      }
+      },
+      [Game.Nightreign]: Game.ArmoredCore6
     }
   },
   [ActionType.GPUSparkCorrectParticle]: {
@@ -5070,7 +5086,8 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields2: ['unk_ac6_f2_0','unk_ac6_f2_1','unk_ac6_f2_2','unk_ac6_f2_3','unk_ac6_f2_4','unk_ac6_f2_5','unk_ac6_f2_6','unk_ac6_f2_7','unk_ac6_f2_8','unk_ac6_f2_9','unk_ac6_f2_10','unk_ac6_f2_11','unk_ac6_f2_12','unk_ac6_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_ac6_f2_20','unk_ac6_f2_21','unk_ac6_f2_22','unk_ac6_f2_23','unk_ac6_f2_24','unkDepthBlend1','unkDepthBlend2','unk_ac6_f2_27','unk_ac6_f2_28','unk_ac6_f2_29','shadowDarkness','unkHideIndoors','unk_ac6_f2_32','unk_ac6_f2_33','unk_ac6_f2_34','lighting','unk_ac6_f2_36','unk_ac6_f2_37','unk_ac6_f2_38','unk_ac6_f2_39'],
         properties1: ['particleFollowFactor','unk_ac6_p1_1','unk_ac6_p1_2','unk_ac6_p1_3','particleAccelerationX','particleAccelerationY','particleAccelerationZ','color','particleLength','particleWidth','unkParticleAcceleration','unk_ac6_p1_11','particleGravity','unk_ac6_p1_13'],
         properties2: ['unk_ac6_p2_0','unk_ac6_p2_1','unk_ac6_p2_2','unk_ac6_p2_3','unk_ac6_p2_4','unk_ac6_p2_5','unk_ac6_p2_6']
-      }
+      },
+      [Game.Nightreign]: Game.ArmoredCore6
     }
   },
   [ActionType.Tracer]: {
@@ -5610,7 +5627,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.WindForce]: {
@@ -5745,7 +5763,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.ForceCollision]: {
@@ -5765,7 +5784,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3
+      [Game.ArmoredCore6]: Game.DarkSouls3,
+      [Game.Nightreign]: Game.DarkSouls3
     }
   },
   [ActionType.TurbulenceForce]: {
@@ -6338,7 +6358,11 @@ function writeProperty(
   bw.writeInt16(typeEnumA)
   bw.writeUint8(0)
   bw.writeUint8(1)
-  bw.writeInt32(typeEnumB)
+  if (game === Game.DarkSouls3 || game === Game.Sekiro || game === Game.EldenRing) {
+    bw.writeInt32(typeEnumB)
+  } else {
+    bw.writeInt32(0)
+  }
   bw.writeInt32(prop.fieldCount)
   bw.writeInt32(0)
   bw.reserveInt32(`${isModifierProp ? 'Property' : 'ModifiableProperty'}FieldsOffset${count}`)
@@ -6353,6 +6377,10 @@ function writeProperty(
 }
 
 function writePropertyModifiers(prop: IModifiableProperty<any, any>, bw: BinaryWriter, game: Game, index: number, modifiers: IModifier<any>[]) {
+  if (prop.modifiers.length === 0) {
+    bw.fill(`PropertyModifiersOffset${index}`, 0)
+    return
+  }
   bw.fill(`PropertyModifiersOffset${index}`, bw.position)
   for (const modifier of prop.modifiers) {
     writeModifier(modifier, bw, game, modifiers)
@@ -6570,8 +6598,8 @@ function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actio
   }
   bw.convertedDataActions.set(action,
     action.type in ActionDataConversion && 'write' in action.$convert ?
-    action.$convert.write(Object.assign(Object.create(null), action), game) :
-    action
+      action.$convert.write(action.clone(), game) :
+      action
   )
   const ade = action.$data
   const data = getActionGameData(action.type, game)
@@ -7147,9 +7175,13 @@ function writeSection10(s10: number[], bw: BinaryWriter, section10s: number[][])
 }
 
 function writeSection10Fields(s10: number[], bw: BinaryWriter, index: number): number {
-  bw.fill(`Section10FieldsOffset${index}`, bw.position)
-  for (const value of s10) {
-    bw.writeInt32(value)
+  if (s10.length === 0) {
+    bw.fill(`Section10FieldsOffset${index}`, 0)
+  } else {
+    bw.fill(`Section10FieldsOffset${index}`, bw.position)
+    for (const value of s10) {
+      bw.writeInt32(value)
+    }
   }
   return s10.length
 }
@@ -10016,7 +10048,19 @@ class FXR {
    * This uses the fs module from Node.js to read the file. If you are
    * targeting browers, pass an {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the contents of the file instead.
    * @param filePath A path to the FXR file to parse.
-   * @param game The game the FXR file is for.
+   * @param game The game the FXR file is for. Defaults to
+   * {@link Game.Heuristic}, which will make the function try to figure out
+   * what it is for automatically.
+   * 
+   * Accuracy of {@link Game.Heuristic} (with valid FXRs):
+   * - Dark Souls 3: **Perfect, 100%**
+   * - Sekiro: **Perfect, 100%**
+   * - Elden Ring: **Low**
+   * - Armored Core 6: **Low**
+   * - Elden Ring Nightreign: **Perfect, 100%**
+   * 
+   * For Elden Ring and Armored Core 6, it will still correctly parse the file,
+   * but {@link gameHint} will be *very* unreliable.
    */
   static read<T extends typeof FXR>(
     this: T,
@@ -10038,6 +10082,7 @@ class FXR {
    * - Sekiro: **Perfect, 100%**
    * - Elden Ring: **Low**
    * - Armored Core 6: **Low**
+   * - Elden Ring Nightreign: **Perfect, 100%**
    * 
    * For Elden Ring and Armored Core 6, it will still correctly parse the file,
    * but {@link gameHint} will be *very* unreliable.
@@ -10052,7 +10097,19 @@ class FXR {
   /**
    * Parses an FXR file.
    * @param input A path to the FXR file to parse, or an {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer ArrayBuffer} or {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView ArrayBufferView} of the contents of the FXR file.
-   * @param game The game the FXR file is for.
+   * @param game The game the FXR file is for. Defaults to
+   * {@link Game.Heuristic}, which will make the function try to figure out
+   * what it is for automatically.
+   * 
+   * Accuracy of {@link Game.Heuristic} (with valid FXRs):
+   * - Dark Souls 3: **Perfect, 100%**
+   * - Sekiro: **Perfect, 100%**
+   * - Elden Ring: **Low**
+   * - Armored Core 6: **Low**
+   * - Elden Ring Nightreign: **Perfect, 100%**
+   * 
+   * For Elden Ring and Armored Core 6, it will still correctly parse the file,
+   * but {@link gameHint} will be *very* unreliable.
    */
   static read<T extends typeof FXR>(
     this: T,
@@ -13031,6 +13088,8 @@ class DataAction implements IAction {
       for (const [k, v] of Object.entries(this.$data.props)) {
         if ('scale' in v) {
           switch (true) {
+            case v.scale === ScaleCondition.RawInstanceSize:
+
             case v.scale === ScaleCondition.True
               && options.scaleStructural:
 
@@ -30037,25 +30096,25 @@ class RichModel extends DataAction {
    */
   unk_er_f2_37: number
   /**
-   * Unknown scalar.
+   * Unknown section10.
    * 
    * **Default**: `[]`
    */
   unk_nr_s10_0: number[]
   /**
-   * Unknown scalar.
+   * Unknown section10.
    * 
    * **Default**: `[]`
    */
   unk_nr_s10_1: number[]
   /**
-   * Unknown scalar.
+   * Unknown section10.
    * 
    * **Default**: `[]`
    */
   unk_nr_s10_2: number[]
   /**
-   * Unknown scalar.
+   * Unknown section10.
    * 
    * **Default**: `[]`
    */
@@ -33791,8 +33850,8 @@ class ComponentSequenceProperty<T extends ValueType>
 
 class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
 
-  constructor(value: TypeMap.PropertyValue[T]) {
-    super(getValueType(value), value)
+  constructor(value: TypeMap.PropertyValue[T], modifiers?: IModifier<T>[]) {
+    super(getValueType(value), value, modifiers)
   }
 
 }

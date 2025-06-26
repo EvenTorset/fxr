@@ -14,6 +14,7 @@ properties:
   radius:
     field: float
     default: 1
+    scale: rawInstanceSize
     desc: |
       The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
   friction:

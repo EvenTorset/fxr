@@ -70,6 +70,7 @@ const scaleMap = {
   distanceIfNotMinusOne: 3,
   instanceSize: 4,
   particleModifier: 5,
+  rawInstanceSize: 6,
 }
 
 const timeMap = {
@@ -418,7 +419,7 @@ export default async function(writeToDist = true) {
                * ${
                 'desc' in v ?
                   v.desc.trim().replace(/\n/g, '\n   * ') :
-                  `Unknown${'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ` ${propTypeMap[v.components] ?? 'scalar'}`}.`}
+                  `Unknown${'s10' in v ? ' section10' : 'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ` ${propTypeMap[v.components] ?? 'scalar'}`}.`}
                * 
                * **Default**: ${defValString(v)}${
                 'argument' in v ? `

@@ -1,5 +1,27 @@
 # Changelog
 
+## [v27.0.0](https://github.com/EvenTorset/fxr/compare/v26.0.1...v27.0.0)
+
+### Breaking changes
+- `ExternalValue.Nightreign.Unk2` -> `ExternalValue.Nightreign.TimeOfDay`
+- `ExternalValue.Nightreign.Unk10000` -> `ExternalValue.Nightreign.BloodVisibility`
+
+### Improvements
+- The `ConstantProperty` constructor now has an optional `modifiers` parameter, meaning you can pass a list of property modifiers directly to the constructor instead of having to use the `withModifiers` method now.
+- Added Nightreign structures for the following actions:
+  - `GPUSparkParticle`
+  - `GPUSparkCorrectParticle`
+  - `CancelForce`
+  - `GravityForce`
+  - `ForceCollision`
+
+### Bug fixes
+- Fixed the `toArrayBuffer` method in `FXR` instances modifying some properties of actions with conversion functions. This caused various problems with FXRs that were saved to files multiple times, or saved and then reloaded (with `fxr-reloader`) or vice versa.
+- Fixed the offsets for property modifier lists and section10 field lists not being 0 when the lists are empty. The modifier list offsets have never caused any issues, so that shouldn't affect anything. The section10 field list offsets caused Nightreign models without any section10 values to lose their texture, so this fixes that issue.
+- Fixed "typeEnumB" being written for AC6 and NR properties. This value is always just 0 in these games, so this makes FXR files from the library more consistent with vanilla files, but it should not affect anything in the effects.
+- Fixed the `radius` field in `ParticleForceCollision` not being scaled by the scale methods. Since this is directly related to the size of particles, it will now be scaled as if it controlled the particle size in some way, meaning it will *always* be scaled no matter what scaling options are used.
+- Fixed unknown section10s being described as "Unknown scalar." in the documentation.
+
 ## [v26.0.1](https://github.com/EvenTorset/fxr/compare/v26.0.0...v26.0.1) - 2025-05-30
 
 ### Bug fixes
