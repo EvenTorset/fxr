@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v27.0.0...HEAD)
+
+### Bug fixes
+- The `game` parameter for the `saveAs` method on `FXR` objects has been is now marked as optional. It has been optional since `Game.Heuristic` was added, but the type was not set to be optional, so it could cause errors in TypeScript. It is still very much recommended to always provide a value for this parameter.
+- The description for the `toArrayBuffer` method on `FXR` objects has been updated to remove some outdated information.
+
 ## [v27.0.0](https://github.com/EvenTorset/fxr/compare/v26.0.1...v27.0.0) - 2025-06-26
 
 ### Breaking changes
