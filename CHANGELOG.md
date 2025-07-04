@@ -1,5 +1,12 @@
 # Changelog
 
+## [v27.0.1](https://github.com/EvenTorset/fxr/compare/v27.0.0...v27.0.1) - 2025-07-04
+
+### Bug fixes
+- Fixed the `clone` method on `LevelsOfDetailNode`, `BasicNode`, and `NodeEmitterNode` instances not copying the state-config map.
+- The `game` parameter for the `saveAs` method on `FXR` objects is now marked as optional. It has been optional since `Game.Heuristic` was added, but the type was not, so it could cause errors in TypeScript. It is still very much recommended to always provide a value for this parameter.
+- The description for the `toArrayBuffer` method on `FXR` objects has been updated to remove some outdated information.
+
 ## [v27.0.0](https://github.com/EvenTorset/fxr/compare/v26.0.1...v27.0.0) - 2025-06-26
 
 ### Breaking changes

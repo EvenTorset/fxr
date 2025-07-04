@@ -10243,9 +10243,8 @@ class FXR {
    * 
    * Defaults to {@link Game.Heuristic}, which means it will use the
    * {@link gameHint game hint}, unless the hint is also
-   * {@link Game.Heuristic}, in which case it will check if the FXR contains
-   * anything AC6-specific, and then use {@link Game.ArmoredCore6} if it does,
-   * and otherwise throw an error, because the game is unknowable.
+   * {@link Game.Heuristic}, in which case it will throw an error, because the
+   * game is unknowable.
    * @returns ArrayBuffer containing the contents of the FXR file.
    */
   toArrayBuffer(game: Game = Game.Heuristic) {
@@ -10468,7 +10467,7 @@ class FXR {
    * @param path The path to the file.
    * @param game The game to write this FXR for.
    */
-  async saveAs(path: PathLike | FileHandle, game: Game) {
+  async saveAs(path: PathLike | FileHandle, game?: Game) {
     const fs = await import('node:fs/promises')
     await fs.writeFile(path, new Uint8Array(this.toArrayBuffer(game)))
   }
@@ -11709,7 +11708,7 @@ class LevelsOfDetailNode extends NodeWithConfigs {
     return new LevelsOfDetailNode(
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-    )
+    ).mapStates(...this.stateConfigMap)
   }
 
 }
@@ -11982,7 +11981,7 @@ class BasicNode extends NodeWithConfigs {
     return new BasicNode(
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-    )
+    ).mapStates(...this.stateConfigMap)
   }
 
   static chain(...links: OptionalTail<BasicConfig[] | AnyAction[], Node[]>) {
@@ -12071,7 +12070,7 @@ class NodeEmitterNode extends NodeWithConfigs {
     return new NodeEmitterNode(
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-    )
+    ).mapStates(...this.stateConfigMap)
   }
 
 }
