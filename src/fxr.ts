@@ -11708,7 +11708,7 @@ class LevelsOfDetailNode extends NodeWithConfigs {
     return new LevelsOfDetailNode(
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-    )
+    ).mapStates(...this.stateConfigMap)
   }
 
 }
@@ -11981,7 +11981,7 @@ class BasicNode extends NodeWithConfigs {
     return new BasicNode(
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-    )
+    ).mapStates(...this.stateConfigMap)
   }
 
   static chain(...links: OptionalTail<BasicConfig[] | AnyAction[], Node[]>) {
@@ -12070,7 +12070,7 @@ class NodeEmitterNode extends NodeWithConfigs {
     return new NodeEmitterNode(
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
-    )
+    ).mapStates(...this.stateConfigMap)
   }
 
 }
