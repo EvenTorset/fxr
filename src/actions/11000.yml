@@ -244,7 +244,7 @@ properties:
     field: float
     default: 0
     desc: |
-      When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when it the area it's in is sufficiently dark.
+      When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when the area it's in is sufficiently dark.
   unk_er_f1_24:
     field: int
     default: 1

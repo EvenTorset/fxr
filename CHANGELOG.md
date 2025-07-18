@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v27.0.1...HEAD)
+
+### Bug fixes
+- Fixed a typo the descriptions for the `adaptationExponent` property in both light source actions.
+
 ## [v27.0.1](https://github.com/EvenTorset/fxr/compare/v27.0.0...v27.0.1) - 2025-07-04
 
 ### Bug fixes
