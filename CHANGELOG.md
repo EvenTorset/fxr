@@ -1,5 +1,19 @@
 # Changelog
 
+## [v28.0.0](https://github.com/EvenTorset/fxr/compare/v27.0.1...v28.0.0)
+
+### Breaking changes
+#### NodeSound
+The `volume` and `repeat` properties in `NodeSound` have caused more harm than good since they do not work in the later games. As such, they have been renamed in order to stop people from expecting them to do something and getting confused when they don't.
+- `volume` -> `unk_ds3_f1_1`
+- `repeat` -> `unk_ds3_f1_2`
+
+#### Types
+The `PathLike` and `FileHandle` type imports that were only used for the `saveAs` method in the `FXR` class. The method has not changed, but its type has. If you used non-string `PathLike`s or `FileHandle`s in a TypeScript module, you can safely use the type assertion `as unknown as string` on the path argument. This change fixes various issues with using the library in non-Node.js environments, and it should not affect regular JavaScript modules/scripts in any way.
+
+### Bug fixes
+- Fixed a typo the descriptions for the `adaptationExponent` property in both light source actions.
+
 ## [v27.0.1](https://github.com/EvenTorset/fxr/compare/v27.0.0...v27.0.1) - 2025-07-04
 
 ### Bug fixes

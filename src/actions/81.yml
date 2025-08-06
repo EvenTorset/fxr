@@ -11,7 +11,7 @@ properties:
     field: int
     resource: sound
     desc: |
-      The ID of the sound to play.
+      The ID of the sound event to play.
   unk_ds3_f1_1:
     field: float
     default: 1

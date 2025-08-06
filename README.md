@@ -1,5 +1,5 @@
 # FXR
-This is a JavaScript library for creating and editing FXR files (particle effects, lights, etc.) for Dark Souls 3, Sekiro, Elden Ring, and Armored Core 6. It does not require any dependencies, and works in both the browser and in Node.js.
+This is a JavaScript library for creating and editing FXR files (particle effects, lights, etc.) for Dark Souls 3, Sekiro, Elden Ring, Armored Core 6, and Elden Ring Nightreign. It does not require any dependencies, and works in both the browser and in Node.js.
 
 It includes classes for all known structures in the file format that makes it relatively easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in many different ways: scaling, recoloring, converting between games, and more.
 

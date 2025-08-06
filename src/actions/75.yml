@@ -5,33 +5,29 @@ meta:
   isAppearance: false
   isParticle: false
 desc: |
-  Plays a sound effect when the node activates that can repeat.
+  Plays a sound effect when the node activates.
 properties:
   sound:
     field: int
     resource: sound
     desc: |
-      The ID of the sound to play.
-  volume:
+      The ID of the sound event to play.
+  unk_ds3_f1_1:
     field: float
     default: 1
     desc: |
-      Volume multiplier.
-
-      Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
-  repeat:
+      Volume multiplier in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
+  unk_ds3_f1_2:
     field: bool
     default: false
     desc: |
-      Controls whether the sound will repeat or not.
-
-      Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+      Controls whether the sound will repeat or not in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
 games:
   DS3:
     fields1:
       - sound
-      - volume
-      - repeat
+      - unk_ds3_f1_1
+      - unk_ds3_f1_2
   SDT: DS3
   ER: DS3
   AC6: DS3

@@ -1,12 +1,3 @@
-import type { PathLike } from 'node:fs'
-import type { FileHandle } from 'node:fs/promises'
-
-declare global {
-  interface Array<T> {
-    with(index: number, value: T): Array<T>
-  }
-}
-
 /**
  * Values representing different games supported by the library.
  */
@@ -180,7 +171,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
    * - **Class**: {@link NodeSound}
    * 
-   * Plays a sound effect when the node activates that can repeat.
+   * Plays a sound effect when the node activates.
    */
   NodeSound = 75,
   /**
@@ -2439,12 +2430,12 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       sound: { default: 0, field: 1, resource: 3 },
-      volume: { default: 1, field: 2 },
-      repeat: { default: false, field: 0 },
+      unk_ds3_f1_1: { default: 1, field: 2 },
+      unk_ds3_f1_2: { default: false, field: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['sound','volume','repeat']
+        fields1: ['sound','unk_ds3_f1_1','unk_ds3_f1_2']
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: Game.DarkSouls3,
@@ -9467,7 +9458,7 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
 }
 
 //#region Binary Reader/Writer
-class BinaryReader extends DataView<ArrayBuffer> {
+class BinaryReader extends DataView<ArrayBufferLike> {
 
   position: number = 0
   littleEndian: boolean = true
@@ -10089,7 +10080,7 @@ class FXR {
    */
   static read<T extends typeof FXR>(
     this: T,
-    buffer: ArrayBuffer | ArrayBufferView,
+    buffer: ArrayBufferLike | ArrayBufferView<ArrayBufferLike>,
     game?: Game,
     { round }?: FXRReadOptions
   ): InstanceType<T>
@@ -10113,13 +10104,15 @@ class FXR {
    */
   static read<T extends typeof FXR>(
     this: T,
-    input: string | ArrayBuffer | ArrayBufferView,
+    input: string | ArrayBufferLike | ArrayBufferView<ArrayBufferLike>,
     game: Game = Game.Heuristic,
     { round }: FXRReadOptions = {}
   ): Promise<InstanceType<T>> | InstanceType<T> {
     round ??= false
     if (typeof input === 'string') {
-      return import('node:fs/promises').then(async fs => this.read((await fs.readFile(input as string)).buffer, game, { round }))
+      return import('node:fs/promises').then(async fs =>
+        this.read((await fs.readFile(input as string)).buffer, game, { round })
+      )
     }
     if (ArrayBuffer.isView(input)) {
       input = input.buffer
@@ -10467,7 +10460,7 @@ class FXR {
    * @param path The path to the file.
    * @param game The game to write this FXR for.
    */
-  async saveAs(path: PathLike | FileHandle, game?: Game) {
+  async saveAs(path: string, game?: Game) {
     const fs = await import('node:fs/promises')
     await fs.writeFile(path, new Uint8Array(this.toArrayBuffer(game)))
   }
@@ -13999,32 +13992,28 @@ class ParticleSpeedPartialFollow extends DataAction {
  * ### {@link ActionType.NodeSound Action 75 - NodeSound}
  * **Slot**: {@link ActionSlots.NodeAudioAction NodeAudio}
  * 
- * Plays a sound effect when the node activates that can repeat.
+ * Plays a sound effect when the node activates.
  */
 class NodeSound extends DataAction {
   declare readonly type: ActionType.NodeSound
   /**
-   * The ID of the sound to play.
+   * The ID of the sound event to play.
    * 
    * **Default**: `0`
    */
   sound: number
   /**
-   * Volume multiplier.
-   * 
-   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   * Volume multiplier in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
    * 
    * **Default**: `1`
    */
-  volume: number
+  unk_ds3_f1_1: number
   /**
-   * Controls whether the sound will repeat or not.
-   * 
-   * Does not seem to work in Elden Ring, and probably doesn't in Armored Core 6 either.
+   * Controls whether the sound will repeat or not in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
    * 
    * **Default**: `false`
    */
-  repeat: boolean
+  unk_ds3_f1_2: boolean
   constructor(props: Partial<Props<NodeSound>> = {}) {
     super(ActionType.NodeSound)
     this.assign(props)
@@ -14040,7 +14029,7 @@ class NodeSound extends DataAction {
 class EmissionSound extends DataAction {
   declare readonly type: ActionType.EmissionSound
   /**
-   * The ID of the sound to play.
+   * The ID of the sound event to play.
    * 
    * **Default**: `0`
    */
@@ -21872,7 +21861,7 @@ class PointLight extends DataAction {
    */
   asymmetryParam: number
   /**
-   * When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when it the area it's in is sufficiently dark.
+   * When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when the area it's in is sufficiently dark.
    * 
    * **Default**: `0`
    */
@@ -32599,7 +32588,7 @@ class SpotLight extends DataAction {
    */
   asymmetryParam: number
   /**
-   * When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when it the area it's in is sufficiently dark.
+   * When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when the area it's in is sufficiently dark.
    * 
    * **Default**: `0`
    */
