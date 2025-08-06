@@ -9458,7 +9458,7 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
 }
 
 //#region Binary Reader/Writer
-class BinaryReader extends DataView<ArrayBuffer> {
+class BinaryReader extends DataView<ArrayBufferLike> {
 
   position: number = 0
   littleEndian: boolean = true
@@ -10080,7 +10080,7 @@ class FXR {
    */
   static read<T extends typeof FXR>(
     this: T,
-    buffer: ArrayBuffer | ArrayBufferView,
+    buffer: ArrayBufferLike | ArrayBufferView<ArrayBufferLike>,
     game?: Game,
     { round }?: FXRReadOptions
   ): InstanceType<T>
@@ -10104,13 +10104,15 @@ class FXR {
    */
   static read<T extends typeof FXR>(
     this: T,
-    input: string | ArrayBuffer | ArrayBufferView,
+    input: string | ArrayBufferLike | ArrayBufferView<ArrayBufferLike>,
     game: Game = Game.Heuristic,
     { round }: FXRReadOptions = {}
   ): Promise<InstanceType<T>> | InstanceType<T> {
     round ??= false
     if (typeof input === 'string') {
-      return import('node:fs/promises').then(async fs => this.read((await fs.readFile(input as string)).buffer, game, { round }))
+      return import('node:fs/promises').then(async fs =>
+        this.read((await fs.readFile(input as string)).buffer, game, { round })
+      )
     }
     if (ArrayBuffer.isView(input)) {
       input = input.buffer
