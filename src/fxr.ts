@@ -8,9 +8,7 @@ enum Game {
    * 
    * Using it with the {@link FXR.toArrayBuffer} and {@link FXR.saveAs} methods
    * will cause them to use the {@link FXR.gameHint game hint}, unless the hint
-   * is {@link Game.Heuristic}, in which case they will check if the FXR
-   * contains anything AC6-specific, and then use {@link Game.ArmoredCore6} if
-   * it does, and otherwise throw an error.
+   * is {@link Game.Heuristic}, in which case they will throw an error.
    */
   Heuristic = -2,
   /**
