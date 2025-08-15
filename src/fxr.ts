@@ -9914,8 +9914,12 @@ function serializeFilter(
 
 /**
  * An effects resource (FXR, version 4 or 5) for FromSoftware's game engine.
- * Used in Dark Souls III, Sekiro: Shadows Die Twice, Elden Ring, and Armored
- * Core VI Fires of Rubicon.
+ * Used in most of FromSoftware's modern games:
+ * - Dark Souls III
+ * - Sekiro: Shadows Die Twice
+ * - Elden Ring
+ * - Armored Core VI Fires of Rubicon
+ * - Elden Ring Nightreign
  */
 class FXR {
 

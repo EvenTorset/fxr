@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v28.0.0...HEAD)
+
+### Bug fixes
+- Added Nightreign to the list of supported games in the `FXR` class description, where it was still missing.
+
 ## [v28.0.0](https://github.com/EvenTorset/fxr/compare/v27.0.1...v28.0.0) - 2025-08-06
 
 ### Breaking changes
