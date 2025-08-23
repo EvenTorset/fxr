@@ -5,6 +5,7 @@
 ### Documentation
 - Added Nightreign to the list of supported games in the `FXR` class description, where it was still missing.
 - Removed some outdated information in the description for `Game.Heuristic`.
+- Fixed the descriptions of unknown section10s in the actions data JSON referring to them as unknown scalar properties.
 
 ## [v28.0.0](https://github.com/EvenTorset/fxr/compare/v27.0.1...v28.0.0) - 2025-08-06
 
