@@ -138,6 +138,8 @@ export default async function() {
           jsonProp.desc = processMarkdown(prop.desc, data)
         } else if ('field' in prop) {
           jsonProp.desc = `Unknown ${fieldTypeNameMap[prop.field]}.`
+        } else if ('s10' in prop) {
+          jsonProp.desc = `Unknown section10.`
         } else {
           jsonProp.desc = `Unknown ${componentTypeNames[prop.components ?? 1]} property.`
         }
