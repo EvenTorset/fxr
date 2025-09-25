@@ -8701,9 +8701,40 @@ function randomSeed(): number
  * this could also have been done by setting
  * {@link PointLight.separateSpecular separateSpecular} to false, but it
  * should at least show how this functions.
- * @param type The type of seed to generate.
  */
 function randomSeed(): number
+/**
+ * Generates a random seed of the given type.
+ * 
+ * The function can be useful together with the randomization modifiers for
+ * properties:
+ * - {@link RandomDeltaModifier}
+ * - {@link RandomRangeModifier}
+ * - {@link RandomFractionModifier}
+ * 
+ * Or the functions that generate simple properties with these modifiers:
+ * - {@link RandomDeltaProperty}
+ * - {@link RandomRangeProperty}
+ * - {@link RandomFractionProperty}
+ * 
+ * To link multiple random values, so that they change the same amount if
+ * randomized at the same time, you can use this function to generate a seed
+ * that you can use multiple times. For example:
+ * ```js
+ * const seed = randomSeed(ValueType.Vector4)
+ * new PointLight({
+ *   separateSpecular: true,
+ *   diffuseColor: RandomDeltaProperty([1, 1, 1, 1], [0.5, 0.5, 0.5, 0], seed),
+ *   specularColor: RandomDeltaProperty([1, 1, 1, 1], [0.5, 0.5, 0.5, 0], seed),
+ * })
+ * ```
+ * Here, the point light that was created will randomize to have the same
+ * specular color as its diffuse color. This example is not the best, because
+ * this could also have been done by setting
+ * {@link PointLight.separateSpecular separateSpecular} to false, but it
+ * should at least show how this functions.
+ * @param type The type of seed to generate.
+ */
 function randomSeed<T extends Tensor>(type: TypeMap.ValueTypeOfTensor<T>): T
 function randomSeed(type: ValueType = ValueType.Scalar): Tensor {
   switch (type) {
