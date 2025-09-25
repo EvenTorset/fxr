@@ -115,24 +115,24 @@ properties:
     type: ScalarValue
     argument: Constant0
     desc: |
-      Horizontal offset for the {@link normalMap normal map}.
+      Horizontal UV offset for the {@link normalMap normal map}.
   normalMapOffsetV:
     type: ScalarValue
     argument: Constant0
     desc: |
-      Vertical offset for the {@link normalMap normal map}.
+      Vertical UV offset for the {@link normalMap normal map}.
   normalMapSpeedU:
     type: ScalarValue
     argument: ParticleAge
     time: true
     desc: |
-      Horizontal offset speed for the {@link normalMap normal map}.
+      Horizontal UV offset speed for the {@link normalMap normal map}.
   normalMapSpeedV:
     type: ScalarValue
     argument: ParticleAge
     time: true
     desc: |
-      Vertical offset speed for the {@link normalMap normal map}.
+      Vertical UV offset speed for the {@link normalMap normal map}.
   rgbMultiplier:
     type: ScalarValue
     default: 1
@@ -166,12 +166,16 @@ properties:
       Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
 
       This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
-  unk_er_p2_7:
+  normalMapScaleU:
     type: ScalarValue
     default: 1
-  unk_er_p2_8:
+    desc: |
+      Horizontal UV scale for the {@link normalMap normal map}.
+  normalMapScaleV:
     type: ScalarValue
     default: 1
+    desc: |
+      Vertical UV scale for the {@link normalMap normal map}.
   mode:
     type: DistortionMode
     field: int
@@ -608,7 +612,7 @@ games:
       - unk_ds3_p2_4
       - unk_ds3_p2_5
       - alphaThreshold
-      - unk_er_p2_7
-      - unk_er_p2_8
+      - normalMapScaleU
+      - normalMapScaleV
   AC6: ER
   NR: ER

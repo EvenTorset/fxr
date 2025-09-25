@@ -1,5 +1,28 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v28.0.1...HEAD)
+
+### Breaking Changes
+#### Distortion
+Two previously unknown properties of this action were figured out since the last update, and has now been renamed and documented.
+- `unk_er_p2_7` -> `normalMapScaleU`
+- `unk_er_p2_8` -> `normalMapScaleV`
+
+#### Types
+The types in the library have been massively reworked. This should really only mean that type inference from values passed to functions in the library should work more often now, but it also means that your provided type arguments for functions in the library may no longer be valid.
+
+The largest change in this rework is related to `ValueType` and `PropertyValue`. `PropertyValue` has been renamed to `Tensor` to both make it shorter and also separate it from both "values" (`Tensor | Property<Tensor, any>`, basically any value that can be used in place of a `Property` object) and properties, since it is used as a much more generic type in the library now than what it was when it was named originally.
+
+Pretty much all type parameters that extended `ValueType` in some way now instead extend `Tensor`. This is the main thing that needed to be changed to make automatic type inference work in lots of places where it previously did not. For example, property classes now have a `T extends Tensor` type argument, so where you would previously write something like `new LinearProperty<ValueType.Vector4>( ... )` you now instead write `new LinearProperty<Vector4>( ... )`, but you also very likely do not need the type argument at all anymore.
+
+#### Properties
+The `valueType` field in properties is now read-only and automatically inferred from the property's value. This also means that the constructor argument for the value type in the generic property classes (`ValueProperty` and `SequenceProperty`) has been removed.
+
+As a side-effect, this means that `ConstantProperty` and `ValueProperty` are now identical, but `ConstantProperty` has been left in, just in case it needs to change in the future, and to not break existing scripts using it.
+
+### Bug fixes
+- Fixed some logic in various utility functions. The cases where these bugs would happen are so niche that it's unlikely to have ever happened before.
+
 ## [v28.0.1](https://github.com/EvenTorset/fxr/compare/v28.0.0...v28.0.1) - 2025-09-14
 
 ### Documentation
@@ -17,7 +40,7 @@ The `volume` and `repeat` properties in `NodeSound` have caused more harm than g
 - `repeat` -> `unk_ds3_f1_2`
 
 #### Types
-The `PathLike` and `FileHandle` type imports that were only used for the `saveAs` method in the `FXR` class. The method has not changed, but its type has. If you used non-string `PathLike`s or `FileHandle`s in a TypeScript module, you can safely use the type assertion `as unknown as string` on the path argument. This change fixes various issues with using the library in non-Node.js environments, and it should not affect regular JavaScript modules/scripts in any way.
+The `PathLike` and `FileHandle` type imports that were only used for the `saveAs` method in the `FXR` class have been removed. The method has not changed, but its type has. If you used non-string `PathLike`s or `FileHandle`s in a TypeScript module, you can safely use the type assertion `as unknown as string` on the path argument. This change fixes various issues with using the library in non-Node.js environments, and it should not affect regular JavaScript modules/scripts in any way.
 
 ### Bug fixes
 - Fixed a typo the descriptions for the `adaptationExponent` property in both light source actions.
