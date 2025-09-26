@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/EvenTorset/fxr/compare/v28.0.1...HEAD)
+## [v29.0.0](https://github.com/EvenTorset/fxr/compare/v28.0.1...v29.0.0) - 2025-09-26
 
 ### Breaking Changes
 #### Distortion
