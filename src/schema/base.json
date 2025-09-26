@@ -240,8 +240,8 @@
       "maxItems": 4,
       "errorMessage": "Incorrect type. Expected Vector4."
     },
-    "PropertyValue": {
-      "$id": "#PropertyValue",
+    "Tensor": {
+      "$id": "#Tensor",
       "anyOf": [
         { "type": "number" },
         { "$ref": "#Vector2" },
@@ -255,8 +255,8 @@
       "type": "object",
       "properties": {
         "type": { "const": "RandomDelta" },
-        "seed": { "$ref": "#PropertyValue" },
-        "max": { "$ref": "#PropertyValue" }
+        "seed": { "$ref": "#Tensor" },
+        "max": { "$ref": "#Tensor" }
       },
       "required": ["type", "seed", "max"]
     },
@@ -318,9 +318,9 @@
       "type": "object",
       "properties": {
         "type": { "const": "RandomRange" },
-        "seed": { "$ref": "#PropertyValue" },
-        "min": { "$ref": "#PropertyValue" },
-        "max": { "$ref": "#PropertyValue" }
+        "seed": { "$ref": "#Tensor" },
+        "min": { "$ref": "#Tensor" },
+        "max": { "$ref": "#Tensor" }
       },
       "required": ["type", "seed", "min", "max"]
     },
@@ -386,8 +386,8 @@
       "type": "object",
       "properties": {
         "type": { "const": "RandomFraction" },
-        "seed": { "$ref": "#PropertyValue" },
-        "max": { "$ref": "#PropertyValue" }
+        "seed": { "$ref": "#Tensor" },
+        "max": { "$ref": "#Tensor" }
       },
       "required": ["type", "seed", "max"]
     },
@@ -450,7 +450,7 @@
       "properties": {
         "type": { "const": "ExternalValue1" },
         "externalValue": { "type": "number" },
-        "factor": { "$ref": "#AnyProperty" }
+        "factor": { "$ref": "#TensorProperty" }
       },
       "required": ["type", "externalValue", "factor"]
     },
@@ -509,7 +509,7 @@
       "properties": {
         "type": { "const": "ExternalValue2" },
         "externalValue": { "type": "number" },
-        "factor": { "$ref": "#AnyProperty" }
+        "factor": { "$ref": "#TensorProperty" }
       },
       "required": ["type", "externalValue", "factor"]
     },
@@ -618,7 +618,7 @@
       "type": "object",
       "properties": {
         "position": { "type": "number" },
-        "value": { "$ref": "#PropertyValue" }
+        "value": { "$ref": "#Tensor" }
       },
       "required": ["position", "value"]
     },
@@ -664,9 +664,9 @@
       "type": "object",
       "properties": {
         "position": { "type": "number" },
-        "value": { "$ref": "#PropertyValue" },
-        "p1": { "$ref": "#PropertyValue" },
-        "p2": { "$ref": "#PropertyValue" }
+        "value": { "$ref": "#Tensor" },
+        "p1": { "$ref": "#Tensor" },
+        "p2": { "$ref": "#Tensor" }
       },
       "required": ["position", "value", "p1", "p2"]
     },
@@ -720,9 +720,9 @@
       "type": "object",
       "properties": {
         "position": { "type": "number" },
-        "value": { "$ref": "#PropertyValue" },
-        "t1": { "$ref": "#PropertyValue" },
-        "t2": { "$ref": "#PropertyValue" }
+        "value": { "$ref": "#Tensor" },
+        "t1": { "$ref": "#Tensor" },
+        "t2": { "$ref": "#Tensor" }
       },
       "required": ["position", "value", "t1", "t2"]
     },
@@ -775,7 +775,7 @@
       "$id": "#ConstantProperty",
       "type": "object",
       "properties": {
-        "value": { "$ref": "#PropertyValue" },
+        "value": { "$ref": "#Tensor" },
         "modifiers": {
           "type": "array",
           "items": { "$ref": "#Modifier" }
@@ -1373,8 +1373,8 @@
         { "$ref": "#ComponentHermiteVector4Property" }
       ]
     },
-    "AnyProperty": {
-      "$id": "#AnyProperty",
+    "TensorProperty": {
+      "$id": "#TensorProperty",
       "anyOf": [
         { "$ref": "#ScalarProperty" },
         { "$ref": "#Vector2Property" },
@@ -1435,8 +1435,8 @@
         }
       ]
     },
-    "AnyValue": {
-      "$id": "#AnyValue",
+    "TensorValue": {
+      "$id": "#TensorValue",
       "anyOf": [
         { "$ref": "#ScalarValue" },
         { "$ref": "#Vector2Value" },

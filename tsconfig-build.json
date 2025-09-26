@@ -3,7 +3,11 @@
     "experimentalDecorators": true,
     "declaration": true,
     "sourceMap": true,
-    "libReplacement": false
+    "libReplacement": false,
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist/esm"
   },
   "files": ["dist/fxr.ts"]
 }

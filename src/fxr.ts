@@ -1713,31 +1713,52 @@ export type SequencePropertyFunction =
 
 export type ComponentSequencePropertyFunction = PropertyFunction.ComponentHermite
 
+/**
+ * A namespace containing types that map other types to related types.
+ */
 export namespace TypeMap {
-  export type PropertyValue = {
-    [ValueType.Scalar]: number
-    [ValueType.Vector2]: Vector2
-    [ValueType.Vector3]: Vector3
-    [ValueType.Vector4]: Vector4
-  }
-  export type Value = {
-    [ValueType.Scalar]: ScalarValue
-    [ValueType.Vector2]: Vector2Value
-    [ValueType.Vector3]: Vector3Value
-    [ValueType.Vector4]: Vector4Value
-  }
-  export type Property = {
-    [ValueType.Scalar]: ScalarProperty
-    [ValueType.Vector2]: Vector2Property
-    [ValueType.Vector3]: Vector3Property
-    [ValueType.Vector4]: Vector4Property
-  }
-  export type Keyframe<T extends ValueType> = {
-    [PropertyFunction.Stepped]: IBasicKeyframe<T>
-    [PropertyFunction.Linear]: IBasicKeyframe<T>
-    [PropertyFunction.Bezier]: IBezierKeyframe<T>
-    [PropertyFunction.Hermite]: IHermiteKeyframe<T>
-  }
+  export type ValueTypeOfTensor<T> =
+    T extends number ? ValueType.Scalar :
+    T extends Vector2 ? ValueType.Vector2 :
+    T extends Vector3 ? ValueType.Vector3 :
+    T extends Vector4 ? ValueType.Vector4 :
+    never
+
+  export type ValueTypeOfProperty<T> =
+    T extends ScalarProperty ? ValueType.Scalar :
+    T extends Vector2Property ? ValueType.Vector2 :
+    T extends Vector3Property ? ValueType.Vector3 :
+    T extends Vector4Property ? ValueType.Vector4 :
+    never
+
+  export type TensorOfKeyframe<T> =
+    T extends IBasicKeyframe<number> ? number :
+    T extends IBasicKeyframe<Vector2> ? Vector2 :
+    T extends IBasicKeyframe<Vector3> ? Vector3 :
+    T extends IBasicKeyframe<Vector4> ? Vector4 :
+    never
+
+  export type ValueOfTensor<T> =
+    T extends number ? ScalarValue :
+    T extends Vector2 ? Vector2Value :
+    T extends Vector3 ? Vector3Value :
+    T extends Vector4 ? Vector4Value :
+    never
+
+  export type KeyframeOfFunction<T extends Tensor, F extends PropertyFunction> =
+    F extends PropertyFunction.Stepped ? IBasicKeyframe<T> :
+    F extends PropertyFunction.Linear ? IBasicKeyframe<T> :
+    F extends PropertyFunction.Bezier ? IBezierKeyframe<T> :
+    F extends PropertyFunction.Hermite ? IHermiteKeyframe<T> :
+    never
+
+  export type ComponentsOfTensor<T, V extends Tensor> =
+    V extends number ? [T] :
+    V extends Vector2 ? [T, T] :
+    V extends Vector3 ? [T, T, T] :
+    V extends Vector4 ? [T, T, T, T] :
+    never
+
   export type FieldTypeName = {
     [FieldType.Boolean]: 'Boolean'
     [FieldType.Integer]: 'Integer'
@@ -1746,6 +1767,7 @@ export namespace TypeMap {
     [FieldType.Vector3]: 'Vector3'
     [FieldType.Vector4]: 'Vector4'
   }
+
   export type FieldValue = {
     [FieldType.Boolean]: boolean
     [FieldType.Integer]: number
@@ -1754,58 +1776,53 @@ export namespace TypeMap {
     [FieldType.Vector3]: Vector3
     [FieldType.Vector4]: Vector4
   }
-  export type VectorComponents = {
-    [ValueType.Vector2]: Vector2Components
-    [ValueType.Vector3]: Vector3Components
-    [ValueType.Vector4]: Vector4Components
-  }
 }
 
-export interface IBasicKeyframe<T extends ValueType> {
+export interface IBasicKeyframe<T extends Tensor> {
   position: number
-  value: TypeMap.PropertyValue[T]
+  value: T
 }
 
-export interface IBezierKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
-  p1: TypeMap.PropertyValue[T]
-  p2: TypeMap.PropertyValue[T]
+export interface IBezierKeyframe<T extends Tensor> extends IBasicKeyframe<T> {
+  p1: T
+  p2: T
 }
 
-export interface IHermiteKeyframe<T extends ValueType> extends IBasicKeyframe<T> {
-  t1: TypeMap.PropertyValue[T]
-  t2: TypeMap.PropertyValue[T]
+export interface IHermiteKeyframe<T extends Tensor> extends IBasicKeyframe<T> {
+  t1: T
+  t2: T
 }
 
-export type AnyKeyframe<T extends ValueType> =
+export type AnyKeyframe<T extends Tensor> =
   | IBasicKeyframe<T>
   | IBezierKeyframe<T>
   | IHermiteKeyframe<T>
 
-export type ScalarKeyframeFromAny<K extends AnyKeyframe<T>, T extends ValueType> =
-  K extends IBezierKeyframe<T> ? IBezierKeyframe<ValueType.Scalar> :
-  K extends IHermiteKeyframe<T> ? IHermiteKeyframe<ValueType.Scalar> :
-  IBasicKeyframe<ValueType.Scalar>
+export type ScalarKeyframeFromAny<K extends AnyKeyframe<Tensor>> =
+  K extends IBezierKeyframe<TypeMap.TensorOfKeyframe<K>> ? IBezierKeyframe<number> :
+  K extends IHermiteKeyframe<TypeMap.TensorOfKeyframe<K>> ? IHermiteKeyframe<number> :
+  IBasicKeyframe<number>
 
-export interface IProperty<T extends ValueType, F extends PropertyFunction> {
-  valueType: T
+export interface IProperty<T extends Tensor, F extends PropertyFunction> {
+  valueType: TypeMap.ValueTypeOfTensor<T>
   function: F
   componentCount: number
   fieldCount: number
   fields: NumericalField[]
   toJSON(): any
   serialize(options?: FXRSerializeOptions): any
-  scale(factor: TypeMap.PropertyValue[T] | number): this
-  add(summand: TypeMap.PropertyValue[T] | number): this
-  valueAt(arg: number): TypeMap.PropertyValue[T]
+  scale(factor: T | number): this
+  add(summand: T | number): this
+  valueAt(arg: number): T
   clone(): IProperty<T, F>
-  separateComponents(): IProperty<ValueType.Scalar, F>[]
+  separateComponents(): IProperty<number, F>[]
   for(game: Game): IProperty<T, F>
-  min(): TypeMap.PropertyValue[T]
-  max(): TypeMap.PropertyValue[T]
+  min(): T
+  max(): T
   minify(): IProperty<T, PropertyFunction>
 }
 
-export interface IModifiableProperty<T extends ValueType, F extends PropertyFunction> extends IProperty<T, F> {
+export interface IModifiableProperty<T extends Tensor, F extends PropertyFunction> extends IProperty<T, F> {
   modifiers: IModifier<T>[]
 }
 
@@ -1858,17 +1875,17 @@ export interface IConfig {
   walkActions(): Generator<AnyAction>
 }
 
-export interface IModifier<T extends ValueType> {
+export interface IModifier<T extends Tensor> {
   readonly type: ModifierType
-  readonly valueType: T
+  readonly valueType: TypeMap.ValueTypeOfTensor<T>
   getFieldCount(): number
   getFields(): Field<FieldType>[]
   getPropertyCount(): number
-  getProperties(game: Game): AnyProperty[]
+  getProperties(game: Game): UnmodifiableTensorProperty[]
   toJSON(): any
   serialize(options?: FXRSerializeOptions): any
   clone(): IModifier<T>
-  separateComponents(): IModifier<ValueType.Scalar>[]
+  separateComponents(): IModifier<number>[]
   minify(): IModifier<T>
 }
 
@@ -1908,18 +1925,19 @@ const defaultScaleOptions: ScaleOptions = {
 }
 
 export type AnyAction = Action | DataAction
-export type Vector2 = [x: number, y: number]
-export type Vector3 = [x: number, y: number, z: number]
-export type Vector4 = [red: number, green: number, blue: number, alpha: number]
+export type Vector2 = [number, number]
+export type Vector3 = [number, number, number]
+export type Vector4 = [number, number, number, number]
 export type Vector = Vector2 | Vector3 | Vector4
-export type PropertyValue = number | Vector
-export type AnyProperty = Property<any, PropertyFunction>
-export type ScalarProperty = Property<ValueType.Scalar, PropertyFunction>
-export type Vector2Property = Property<ValueType.Vector2, PropertyFunction>
-export type Vector3Property = Property<ValueType.Vector3, PropertyFunction>
-export type Vector4Property = Property<ValueType.Vector4, PropertyFunction>
+export type Tensor = number | Vector
+export type TensorProperty = Property<Tensor, PropertyFunction>
+export type UnmodifiableTensorProperty = IProperty<Tensor, PropertyFunction>
+export type ScalarProperty = Property<number, PropertyFunction>
+export type Vector2Property = Property<Vector2, PropertyFunction>
+export type Vector3Property = Property<Vector3, PropertyFunction>
+export type Vector4Property = Property<Vector4, PropertyFunction>
 export type VectorProperty = Vector2Property | Vector3Property | Vector4Property
-export type AnyValue = AnyProperty | PropertyValue
+export type TensorValue = TensorProperty | Tensor
 export type ScalarValue = number | ScalarProperty
 export type Vector2Value = Vector2 | Vector2Property
 export type Vector3Value = Vector3 | Vector3Property
@@ -1931,10 +1949,6 @@ export type Vector2Components = [ScalarValue, ScalarValue]
 export type Vector3Components = [ScalarValue, ScalarValue, ScalarValue]
 export type Vector4Components = [ScalarValue, ScalarValue, ScalarValue, ScalarValue]
 export type VectorComponents = Vector2Components | Vector3Components | Vector4Components
-
-export type GenComponents<T, V extends ValueType> = [
-  [T], [T, T], [T, T, T], [T, T, T, T]
-][V]
 
 export type NodeMovementProps = Partial<
   | Props<NodeSpin>
@@ -2151,7 +2165,7 @@ export type ActionDataProp = (
       [game: string]: [string, number]
     }
   } & ({
-    default: AnyValue
+    default: TensorValue
   } | {
     default: boolean
     field: FieldType.Boolean
@@ -3900,8 +3914,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_ds3_p2_4: { default: [1, 1, 1, 1] },
       unk_ds3_p2_5: { default: [1, 1, 1, 1] },
       alphaThreshold: { default: 0 },
-      unk_er_p2_7: { default: 1 },
-      unk_er_p2_8: { default: 1 },
+      normalMapScaleU: { default: 1 },
+      normalMapScaleV: { default: 1 },
       mode: { default: DistortionMode.NormalMap, field: 1 },
       shape: { default: DistortionShape.Rectangle, field: 1 },
       orientation: { default: OrientationMode.CameraPlane, field: 1 },
@@ -3970,7 +3984,7 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['mode','shape','orientation','texture','normalMap','mask','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_ds3_f1_11','unk_ds3_f1_12','unk_er_f1_12','unk_er_f1_13'],
         fields2: Game.Sekiro,
         properties1: Game.Sekiro,
-        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold','unk_er_p2_7','unk_er_p2_8']
+        properties2: ['rgbMultiplier','alphaMultiplier','unk_ds3_p2_2','unk_ds3_p2_3','unk_ds3_p2_4','unk_ds3_p2_5','alphaThreshold','normalMapScaleU','normalMapScaleV']
       },
       [Game.ArmoredCore6]: Game.EldenRing,
       [Game.Nightreign]: Game.EldenRing
@@ -6406,8 +6420,8 @@ function readAction(
   br.position += 8 // Unknown offset
 
   br.stepIn(propertyOffset)
-  const properties1: AnyProperty[] = []
-  const properties2: AnyProperty[] = []
+  const properties1: TensorProperty[] = []
+  const properties2: TensorProperty[] = []
   for (let i = 0; i < propertyCount1; ++i) {
     properties1.push(readProperty(br, false))
   }
@@ -6513,8 +6527,8 @@ function readDataAction(
   const c: {
     fields1: Field<FieldType>[]
     fields2: Field<FieldType>[]
-    properties1: AnyProperty[]
-    properties2: AnyProperty[]
+    properties1: TensorProperty[]
+    properties2: TensorProperty[]
     section10s: number[][]
   } = {
     fields1: [],
@@ -6626,8 +6640,8 @@ function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actio
 
 function writeDataActionProperties(action: DataAction, bw: BinaryWriter, game: Game, index: number, properties: IModifiableProperty<any, any>[]) {
   const conProps = bw.convertedDataActions.get(action)
-  const properties1: AnyProperty[] = action.getProperties(game, 'properties1', conProps)
-  const properties2: AnyProperty[] = action.getProperties(game, 'properties2', conProps)
+  const properties1: TensorProperty[] = action.getProperties(game, 'properties1', conProps)
+  const properties2: TensorProperty[] = action.getProperties(game, 'properties2', conProps)
   bw.fill(`ActionPropertiesOffset${index}`, bw.position)
   for (const property of properties1) {
     writeProperty(property, bw, game, properties, false)
@@ -7008,7 +7022,7 @@ function writeConfigActions(config: IConfig, bw: BinaryWriter, game: Game, index
 }
 
 //#region Functions - Modifier
-function readModifier(br: BinaryReader): IModifier<ValueType> {
+function readModifier(br: BinaryReader): IModifier<Tensor> {
   const typeEnumA = br.readUint16()
   const modifierType = Modifier.enumAToType(typeEnumA)
   if (!(modifierType in ModifierType)) {
@@ -7106,7 +7120,7 @@ function readModifier(br: BinaryReader): IModifier<ValueType> {
   }
 }
 
-function writeModifier(modifier: IModifier<ValueType>, bw: BinaryWriter, game: Game, modifiers: IModifier<ValueType>[]) {
+function writeModifier(modifier: IModifier<Tensor>, bw: BinaryWriter, game: Game, modifiers: IModifier<Tensor>[]) {
   const count = modifiers.length
   bw.writeInt16(Modifier.typeToEnumA(modifier.type, modifier.valueType))
   bw.writeUint8(0)
@@ -7121,7 +7135,7 @@ function writeModifier(modifier: IModifier<ValueType>, bw: BinaryWriter, game: G
   modifiers.push(modifier)
 }
 
-function writeModifierProperties(modifier: IModifier<ValueType>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
+function writeModifierProperties(modifier: IModifier<Tensor>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
   for (const property of modifier.getProperties(game)) {
     // Modifier props can't have modifiers, so it's safe to not use .for(game) here
@@ -7129,7 +7143,7 @@ function writeModifierProperties(modifier: IModifier<ValueType>, bw: BinaryWrite
   }
 }
 
-function writeModifierFields(modifier: IModifier<ValueType>, bw: BinaryWriter, index: number): number {
+function writeModifierFields(modifier: IModifier<Tensor>, bw: BinaryWriter, index: number): number {
   bw.fill(`Section8FieldsOffset${index}`, bw.position)
   const fields = modifier.getFields()
   let count = 0
@@ -7514,7 +7528,7 @@ function cubicBezier(p0: number, p1: number, p2: number, p3: number, t: number) 
   return k * (k * k * p0 + 3 * t * (k * p1 + t * p2)) + t * t * t * p3
 }
 
-function surroundingKeyframes<K extends AnyKeyframe<T>, T extends ValueType>(keyframes: K[], position: number) {
+function surroundingKeyframes<K extends AnyKeyframe<T>, T extends Tensor>(keyframes: K[], position: number) {
   let max = -Infinity
   keyframes = keyframes.filter(kf => {
     if (kf.position < max) {
@@ -7539,7 +7553,7 @@ function surroundingKeyframes<K extends AnyKeyframe<T>, T extends ValueType>(key
   return { prevKeyframe, nextKeyframe }
 }
 
-function stepKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+function stepKeyframes<T extends Tensor>(keyframes: IBasicKeyframe<T>[], position: number): T {
   if (keyframes.length === 1) {
     return keyframes[0].value
   }
@@ -7557,7 +7571,7 @@ function stepKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], posi
   return nearestKeyframe.value
 }
 
-function lerpKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+function lerpKeyframes<T extends Tensor>(keyframes: IBasicKeyframe<T>[], position: number): T {
   if (keyframes.length === 1) {
     return keyframes[0].value
   }
@@ -7573,13 +7587,13 @@ function lerpKeyframes<T extends ValueType>(keyframes: IBasicKeyframe<T>[], posi
   const t = (position - prevKeyframe.position) / (nextKeyframe.position - prevKeyframe.position)
 
   if (typeof prevKeyframe.value === 'number') {
-    return lerp(prevKeyframe.value, nextKeyframe.value as number, t) as TypeMap.PropertyValue[T]
+    return lerp(prevKeyframe.value, nextKeyframe.value as number, t) as T
   } else {
-    return prevKeyframe.value.map((e, i) => lerp(e, nextKeyframe.value[i], t)) as TypeMap.PropertyValue[T]
+    return prevKeyframe.value.map((e, i) => lerp(e, nextKeyframe.value[i], t)) as T
   }
 }
 
-function bezierInterpKeyframes<T extends ValueType>(keyframes: IBezierKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+function bezierInterpKeyframes<T extends Tensor>(keyframes: IBezierKeyframe<T>[], position: number): T {
   if (keyframes.length === 1) {
     return keyframes[0].value
   }
@@ -7601,13 +7615,13 @@ function bezierInterpKeyframes<T extends ValueType>(keyframes: IBezierKeyframe<T
       const t1 = prevKeyframe.p1[i]
       const t2 = nextKeyframe.p2[i]
       return cubicBezier(v1, v1 + t1 / 3, v2 - t2 / 3, v2, x)
-    }) as TypeMap.PropertyValue[T]
+    }) as T
   } else {
     const v1 = prevKeyframe.value as number
     const v2 = nextKeyframe.value as number
     const t1 = prevKeyframe.p1 as number
     const t2 = nextKeyframe.p2 as number
-    return cubicBezier(v1, v1 + t1 / 3, v2 - t2 / 3, v2, x) as TypeMap.PropertyValue[T]
+    return cubicBezier(v1, v1 + t1 / 3, v2 - t2 / 3, v2, x) as T
   }
 }
 
@@ -7721,7 +7735,7 @@ const hermiteInterpKeyframes = (() => {
     )
   }
 
-  return function hermiteInterpKeyframes<T extends ValueType>(keyframes: IHermiteKeyframe<T>[], position: number): TypeMap.PropertyValue[T] {
+  return function hermiteInterpKeyframes<T extends Tensor>(keyframes: IHermiteKeyframe<T>[], position: number): T {
     if (keyframes.length === 1) {
       return keyframes[0].value
     }
@@ -7745,7 +7759,7 @@ const hermiteInterpKeyframes = (() => {
           nextKeyframe.value[i],
           approxHermite(t1, t2, x)
         )
-      }) as TypeMap.PropertyValue[T]
+      }) as T
     } else {
       const t1 = (prevKeyframe.t1 as number) / Math.PI * 2
       const t2 = (prevKeyframe.t2 as number) / Math.PI * 2
@@ -7753,7 +7767,7 @@ const hermiteInterpKeyframes = (() => {
         prevKeyframe.value as number,
         nextKeyframe.value as number,
         approxHermite(t1, t2, x)
-      ) as TypeMap.PropertyValue[T]
+      ) as T
     }
   }
 })()
@@ -7793,172 +7807,159 @@ function filterMillisecondDiffs(nums: Iterable<number>) {
  * @param av1 Left operand.
  * @param av2 Right operand.
  */
-function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
+function anyValueMult<T extends TensorValue>(av1: TensorValue, av2: TensorValue): T {
+  const av1c = av1
+  const av2c = av2
+
   // If p2 is none of these, it's invalid, likely undefined or null, it must
   // either return something or throw to avoid a recursive loop.
   if (!(
-    typeof av2 === 'number' ||
-    Array.isArray(av2) ||
-    av2 instanceof Property
+    typeof av2c === 'number' ||
+    isVector(av2c) ||
+    av2c instanceof Property
   )) {
-    throw new Error('Invalid operand for anyValueMult: ' + av2)
+    throw new Error('Invalid operand for anyValueMult: ' + av2c)
   }
-
-  if (typeof av1 === 'number') {
-    if (av1 === 1) {
-      return (av2 instanceof Property ? av2.clone() : Array.isArray(av2) ? av2.slice() : av2) as T
-    } else if (typeof av2 === 'number') {
-      return av1 * av2 as T
-    } else if (Array.isArray(av2)) {
-      return av2.map(e => e * (av1 as number)) as unknown as T
-    } else if (av2 instanceof Property) {
-      return av2.clone().scale(av1) as unknown as T
+  if (typeof av1c === 'number') {
+    if (av1c === 1) {
+      return (av2c instanceof Property ? av2c.clone() : isVector(av2c) ? av2c.slice() : av2c) as T
+    } else if (typeof av2c === 'number') {
+      return av1c * av2c as T
+    } else if (isVector(av2c)) {
+      return av2c.map(e => e * (av1c as number)) as unknown as T
+    } else if (av2c instanceof Property) {
+      return av2c.clone().scale(av1c) as unknown as T
     }
-  } else if (Array.isArray(av1)) {
-    if (Array.isArray(av2)) {
-      return av2.map((e, i) => e * av1[i]) as unknown as T
-    } else if (av2 instanceof ValueProperty) {
-      let mods = av2.modifiers
-      if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
+  } else if (isVector(av1c)) {
+    if (isVector(av2c)) {
+      return av2c.map((e, i) => e * av1c[i]) as unknown as T
+    } else if (av2c instanceof ValueProperty) {
+      let mods = av2c.modifiers
+      if (av2c.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1c.length - 1))
       }
       return new ValueProperty(
-        av1.length - 1,
-        anyValueMult(av1, av2.value),
-        mods.map(mod => Modifier.multPropertyValue(mod, av1))
+        anyValueMult(av1c, av2c.value),
+        mods.map(mod => Modifier.multTensor(mod, av1c))
       ) as unknown as T
-    } else if (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty) {
-      let mods = av2.modifiers
-      if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
+    } else if (av2c instanceof SequenceProperty || av2c instanceof ComponentSequenceProperty) {
+      let mods = av2c.modifiers
+      if (av2c.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1c.length - 1))
       }
-      if (av2 instanceof SequenceProperty) {
+      if (av2c instanceof SequenceProperty) {
         return new SequenceProperty(
-          av1.length - 1,
-          av2.function,
-          av2.loop,
-          av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1 as Vector)),
-          mods.map(mod => Modifier.multPropertyValue(mod, av1))
+          av2c.function,
+          av2c.loop,
+          av2c.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1c)),
+          mods.map(mod => Modifier.multTensor(mod, av1c))
         ) as unknown as T
       } else {
-        const cav2 = av2
+        const cav2 = av2c
         return new ComponentSequenceProperty(
-          av2.loop,
-          av1.map((c, i) => cav2.components[cav2.components.length === 1 ? 0 : i].keyframes
+          av2c.loop,
+          av1c.map((c, i) => cav2.components[cav2.components.length === 1 ? 0 : i].keyframes
             .map(kf => Keyframe.scale(Keyframe.copy(kf), c))
-          ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
-          mods.map(mod => Modifier.multPropertyValue(mod, av1))
+          ) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], ValueType>,
+          mods.map(mod => Modifier.multTensor(mod, av1c))
         ) as unknown as T
       }
     }
-  } else if (av1 instanceof ValueProperty) {
-    if (av2 instanceof ValueProperty) {
-      const cav1 = av1
-      const cav2 = av2
-      let av1Mods = cav1.modifiers
-      let av2Mods = cav2.modifiers
-      const vt = Math.max(cav1.valueType, cav2.valueType)
-      if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
+  } else if (av1c instanceof ValueProperty) {
+    if (av2c instanceof ValueProperty) {
+      let av1Mods = av1c.modifiers
+      let av2Mods = av2c.modifiers
+      const vt = Math.max(av1c.valueType, av2c.valueType)
+      if (vt > ValueType.Scalar && av1c.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && av2c.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      return new ValueProperty(vt, anyValueMult(av1.value, av2.value), [
-        ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.value)),
-        ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
+      return new ValueProperty(anyValueMult(av1c.value, av2c.value), [
+        ...av1Mods.map(mod => Modifier.multTensor(mod, av2c.value)),
+        ...av2Mods.map(mod => Modifier.multTensor(mod, av1c.value)),
       ]) as unknown as T
-    } else if (av2 instanceof SequenceProperty) {
-      const cav1 = av1
-      const cav2 = av2
-      let av1Mods = av1.modifiers
-      let av2Mods = av2.modifiers
-      const vt = Math.max(av1.valueType, av2.valueType)
-      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+    } else if (av2c instanceof SequenceProperty) {
+      let av1Mods = av1c.modifiers
+      let av2Mods = av2c.modifiers
+      const vt = Math.max(av1c.valueType, av2c.valueType)
+      if (vt > ValueType.Scalar && av1c.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && av2c.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        vt,
-        av2.function,
-        av2.loop,
-        av2.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), cav1.value)),
+        av2c.function,
+        av2c.loop,
+        av2c.keyframes.map(kf => Keyframe.scale(Keyframe.copy(kf), av1c.value)),
         [
-          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
-          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
+          ...av1Mods.map(mod => Modifier.multTensor(mod, av2c.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.multTensor(mod, av1c.value)),
         ]
       ) as unknown as T
-    } else if (av2 instanceof ComponentSequenceProperty) {
-      const cav1 = av1
-      const cav2 = av2
-      let av1Mods = av1.modifiers
-      let av2Mods = av2.modifiers
-      const vt = Math.max(av1.valueType, av2.valueType)
-      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+    } else if (av2c instanceof ComponentSequenceProperty) {
+      let av1Mods = av1c.modifiers
+      let av2Mods = av2c.modifiers
+      const vt = Math.max(av1c.valueType, av2c.valueType)
+      if (vt > ValueType.Scalar && av1c.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && av2c.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ComponentSequenceProperty(
-        av2.loop,
-        arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
-          .map(kf => Keyframe.scale(Keyframe.copy(kf), typeof cav1.value === 'number' ? cav1.value : cav1.value[i]))
-        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
+        av2c.loop,
+        arrayOf(vt + 1, i => av2c.components[av2c.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.scale(Keyframe.copy(kf), typeof av1c.value === 'number' ? av1c.value : av1c.value[i]))
+        ) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], ValueType>,
         [
-          ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
-          ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.value)),
+          ...av1Mods.map(mod => Modifier.multTensor(mod, av2c.valueAt(0))),
+          ...av2Mods.map(mod => Modifier.multTensor(mod, av1c.value)),
         ]
       ) as unknown as T
     }
   } else if (
-    (av1 instanceof SequenceProperty || av1 instanceof ComponentSequenceProperty) &&
-    (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty)
+    (av1c instanceof SequenceProperty || av1c instanceof ComponentSequenceProperty) &&
+    (av2c instanceof SequenceProperty || av2c instanceof ComponentSequenceProperty)
   ) {
-    if (av1 instanceof ComponentSequenceProperty) {
-      av1 = av1.combineComponents()
-    }
-    if (av2 instanceof ComponentSequenceProperty) {
-      av2 = av2.combineComponents()
-    }
-    const cav1 = av1 as SequenceProperty<any, any>
-    const cav2 = av2 as SequenceProperty<any, any>
+    const av1s = av1c instanceof ComponentSequenceProperty ? av1c.combineComponents() : av1c as SequenceProperty<any, any>
+    const av2s = av2c instanceof ComponentSequenceProperty ? av2c.combineComponents() : av2c as SequenceProperty<any, any>
     const posSet = new Set<number>()
-    for (const keyframe of cav1.keyframes) {
+    for (const keyframe of av1s.keyframes) {
       posSet.add(keyframe.position)
     }
-    for (const keyframe of cav2.keyframes) {
+    for (const keyframe of av2s.keyframes) {
       posSet.add(keyframe.position)
     }
     const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
-    let av1Mods = cav1.modifiers
-    let av2Mods = cav2.modifiers
-    const vt = Math.max(cav1.valueType, cav2.valueType)
-    if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
+    let av1Mods = av1s.modifiers
+    let av2Mods = av2s.modifiers
+    const vt = Math.max(av1s.valueType, av2s.valueType)
+    if (vt > ValueType.Scalar && av1s.valueType === ValueType.Scalar) {
       av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
+    if (vt > ValueType.Scalar && av2s.valueType === ValueType.Scalar) {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      cav1.loop && cav2.loop,
-      (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
+      av1s.loop && av2s.loop,
+      (av1c.function === PropertyFunction.Linear && av2c.function === PropertyFunction.Linear ?
         positions :
         filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
       ).map(e => new Keyframe(e,
-        anyValueMult(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
+        anyValueMult(av1s.valueAt(e), av2s.valueAt(e)) as Tensor
       ))
     ).withModifiers(
-      ...av1Mods.map(mod => Modifier.multPropertyValue(mod, cav2.valueAt(0))),
-      ...av2Mods.map(mod => Modifier.multPropertyValue(mod, cav1.valueAt(0))),
+      ...av1Mods.map(mod => Modifier.multTensor(mod, av2s.valueAt(0))),
+      ...av2Mods.map(mod => Modifier.multTensor(mod, av1s.valueAt(0))),
     ) as unknown as T
   }
 
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
-  return anyValueMult(av2, av1)
+  return anyValueMult(av2c, av1c)
 }
 
 /**
@@ -7970,138 +7971,134 @@ function anyValueMult<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
  * @param av1 Left operand.
  * @param av2 Right operand.
  */
-function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
+function anyValueSum<T extends TensorValue>(av1: TensorValue, av2: TensorValue): T {
+  const av1c = av1
+  const av2c = av2
+
   // If p2 is none of these, it's invalid, likely undefined or null, it must
   // either return something or throw to avoid a recursive loop.
   if (!(
-    typeof av2 === 'number' ||
-    Array.isArray(av2) ||
-    av2 instanceof Property
+    typeof av2c === 'number' ||
+    isVector(av2c) ||
+    av2c instanceof Property
   )) {
-    throw new Error('Invalid operand for anyValueSum: ' + av2)
+    throw new Error('Invalid operand for anyValueSum: ' + av2c)
   }
 
-  if (typeof av1 === 'number') {
-    if (av1 === 0) {
-      return (av2 instanceof Property ? av2.clone() : Array.isArray(av2) ? av2.slice() : av2) as T
-    } else if (typeof av2 === 'number') {
-      return av1 + av2 as T
-    } else if (Array.isArray(av2)) {
-      return av2.map(e => e + (av1 as number)) as unknown as T
-    } else if (av2 instanceof ValueProperty) {
+  if (typeof av1c === 'number') {
+    if (av1c === 0) {
+      return (av2c instanceof Property ? av2c.clone() : isVector(av2c) ? av2c.slice() : av2c) as T
+    } else if (typeof av2c === 'number') {
+      return av1c + av2c as T
+    } else if (isVector(av2c)) {
+      return av2c.map(e => e + (av1c as number)) as unknown as T
+    } else if (av2c instanceof ValueProperty) {
       return new ValueProperty(
-        av2.valueType,
-        anyValueSum(av1, av2.value),
-        av2.modifiers.map(mod => mod.clone())
+        anyValueSum(av1c, av2c.value),
+        av2c.modifiers.map(mod => mod.clone())
       ) as unknown as T
-    } else if (av2 instanceof SequenceProperty) {
+    } else if (av2c instanceof SequenceProperty) {
       return new SequenceProperty(
-        av2.valueType,
-        av2.function,
-        av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as number))),
-        av2.modifiers.map(mod => mod.clone())
+        av2c.function,
+        av2c.loop,
+        av2c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1c as number))),
+        av2c.modifiers.map(mod => mod.clone())
       ) as unknown as T
-    } else if (av2 instanceof ComponentSequenceProperty) {
+    } else if (av2c instanceof ComponentSequenceProperty) {
       return new ComponentSequenceProperty(
-        av2.loop,
-        av2.components.map(
-          c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1 as number))
-        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
-        av2.modifiers.map(mod => mod.clone())
+        av2c.loop,
+        av2c.components.map(
+          c => c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1c as number))
+        ) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], ValueType>,
+        av2c.modifiers.map(mod => mod.clone())
       ) as unknown as T
     }
-  } else if (Array.isArray(av1)) {
-    if (Array.isArray(av2)) {
-      return av2.map((e, i) => e + av1[i]) as unknown as T
-    } else if (av2 instanceof ValueProperty) {
-      let mods = av2.modifiers
-      if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
+  } else if (isVector(av1c)) {
+    if (isVector(av2c)) {
+      return av2c.map((e, i) => e + av1c[i]) as unknown as T
+    } else if (av2c instanceof ValueProperty) {
+      let mods = av2c.modifiers
+      if (av2c.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1c.length - 1))
       }
       return new ValueProperty(
-        av1.length - 1,
-        anyValueSum(av1, av2.value),
+        anyValueSum(av1c, av2c.value),
         mods.map(mod => mod.clone())
       ) as unknown as T
-    } else if (av2 instanceof SequenceProperty) {
-      let mods = av2.modifiers
-      if (av2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
+    } else if (av2c instanceof SequenceProperty) {
+      let mods = av2c.modifiers
+      if (av2c.valueType === ValueType.Scalar) {
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, av1c.length - 1))
       }
       return new SequenceProperty(
-        av1.length - 1,
-        av2.function,
-        av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as Vector))),
+        av2c.function,
+        av2c.loop,
+        av2c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), av1c)),
         mods.map(mod => mod.clone())
       ) as unknown as T
-    } else if (av2 instanceof ComponentSequenceProperty) {
-      const cav2 = av2
+    } else if (av2c instanceof ComponentSequenceProperty) {
+      const cav2 = av2c
       let mods = cav2.modifiers
       if (cav2.valueType === ValueType.Scalar) {
-        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1 as Vector).length - 1))
+        mods = mods.map(mod => Modifier.vectorFromScalar(mod, (av1c as Vector).length - 1))
       }
       return new ComponentSequenceProperty(
         cav2.loop,
-        av1.map((c, i) => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
+        av1c.map((c, i) => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
           .map(kf => Keyframe.add(Keyframe.copy(kf), c))
-        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
+        ) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], ValueType>,
         mods.map(mod => mod.clone())
       ) as unknown as T
     }
-  } else if (av1 instanceof ValueProperty) {
-    if (av2 instanceof ValueProperty) {
-      let av1Mods = av1.modifiers
-      let av2Mods = av2.modifiers
-      const vt = Math.max(av1.valueType, av2.valueType)
-      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+  } else if (av1c instanceof ValueProperty) {
+    if (av2c instanceof ValueProperty) {
+      let av1Mods = av1c.modifiers
+      let av2Mods = av2c.modifiers
+      const vt = Math.max(av1c.valueType, av2c.valueType)
+      if (vt > ValueType.Scalar && av1c.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && av2c.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      return new ValueProperty(vt, anyValueSum(av1.value, av2.value), [
+      return new ValueProperty(anyValueSum(av1c.value, av2c.value), [
         ...av1Mods.map(mod => mod.clone()),
         ...av2Mods.map(mod => mod.clone()),
       ]) as unknown as T
-    } else if (av2 instanceof SequenceProperty) {
-      let av1Mods = av1.modifiers
-      let av2Mods = av2.modifiers
-      const vt = Math.max(av1.valueType, av2.valueType)
-      if (vt > ValueType.Scalar && av1.valueType === ValueType.Scalar) {
+    } else if (av2c instanceof SequenceProperty) {
+      let av1Mods = av1c.modifiers
+      let av2Mods = av2c.modifiers
+      const vt = Math.max(av1c.valueType, av2c.valueType)
+      if (vt > ValueType.Scalar && av1c.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && av2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && av2c.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new SequenceProperty(
-        vt,
-        av2.function,
-        av2.loop,
-        av2.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1 as ValueProperty<any>).value)),
+        av2c.function,
+        av2c.loop,
+        av2c.keyframes.map(kf => Keyframe.add(Keyframe.copy(kf), (av1c as ValueProperty<any>).value)),
         [
           ...av1Mods.map(mod => mod.clone()),
           ...av2Mods.map(mod => mod.clone()),
         ]
       ) as unknown as T
-    } else if (av2 instanceof ComponentSequenceProperty) {
-      const cav1 = av1
-      const cav2 = av2
-      let av1Mods = cav1.modifiers
-      let av2Mods = cav2.modifiers
-      const vt = Math.max(cav1.valueType, cav2.valueType)
-      if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
+    } else if (av2c instanceof ComponentSequenceProperty) {
+      let av1Mods = av1c.modifiers
+      let av2Mods = av2c.modifiers
+      const vt = Math.max(av1c.valueType, av2c.valueType)
+      if (vt > ValueType.Scalar && av1c.valueType === ValueType.Scalar) {
         av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
-      if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
+      if (vt > ValueType.Scalar && av2c.valueType === ValueType.Scalar) {
         av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
       }
       return new ComponentSequenceProperty(
-        cav2.loop,
-        arrayOf(vt + 1, i => cav2.components[cav2.componentCount === 1 ? 0 : i].keyframes
-          .map(kf => Keyframe.add(Keyframe.copy(kf), typeof cav1.value === 'number' ? cav1.value : cav1.value[i]))
-        ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>,
+        av2c.loop,
+        arrayOf(vt + 1, i => av2c.components[av2c.componentCount === 1 ? 0 : i].keyframes
+          .map(kf => Keyframe.add(Keyframe.copy(kf), typeof av1c.value === 'number' ? av1c.value : av1c.value[i]))
+        ) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], ValueType>,
         [
           ...av1Mods.map(mod => mod.clone()),
           ...av2Mods.map(mod => mod.clone()),
@@ -8109,41 +8106,35 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
       ) as unknown as T
     }
   } else if (
-    (av1 instanceof SequenceProperty || av1 instanceof ComponentSequenceProperty) &&
-    (av2 instanceof SequenceProperty || av2 instanceof ComponentSequenceProperty)
+    (av1c instanceof SequenceProperty || av1c instanceof ComponentSequenceProperty) &&
+    (av2c instanceof SequenceProperty || av2c instanceof ComponentSequenceProperty)
   ) {
-    if (av1 instanceof ComponentSequenceProperty) {
-      av1 = av1.combineComponents()
-    }
-    if (av2 instanceof ComponentSequenceProperty) {
-      av2 = av2.combineComponents()
-    }
-    const cav1 = av1 as SequenceProperty<any, any>
-    const cav2 = av2 as SequenceProperty<any, any>
+    const av1s = av1c instanceof ComponentSequenceProperty ? av1c.combineComponents() : av1c as SequenceProperty<any, any>
+    const av2s = av2c instanceof ComponentSequenceProperty ? av2c.combineComponents() : av2c as SequenceProperty<any, any>
     const posSet = new Set<number>()
-    for (const keyframe of cav1.keyframes) {
+    for (const keyframe of av1s.keyframes) {
       posSet.add(keyframe.position)
     }
-    for (const keyframe of cav2.keyframes) {
+    for (const keyframe of av2s.keyframes) {
       posSet.add(keyframe.position)
     }
     const positions = filterMillisecondDiffs(posSet).sort((a, b) => a - b)
-    let av1Mods = cav1.modifiers
-    let av2Mods = cav2.modifiers
-    const vt = Math.max(cav1.valueType, cav2.valueType)
-    if (vt > ValueType.Scalar && cav1.valueType === ValueType.Scalar) {
+    let av1Mods = av1s.modifiers
+    let av2Mods = av2s.modifiers
+    const vt = Math.max(av1s.valueType, av2s.valueType)
+    if (vt > ValueType.Scalar && av1s.valueType === ValueType.Scalar) {
       av1Mods = av1Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
-    if (vt > ValueType.Scalar && cav2.valueType === ValueType.Scalar) {
+    if (vt > ValueType.Scalar && av2s.valueType === ValueType.Scalar) {
       av2Mods = av2Mods.map(mod => Modifier.vectorFromScalar(mod, vt))
     }
     return new LinearProperty(
-      cav1.loop && cav2.loop,
-      (av1.function === PropertyFunction.Linear && av2.function === PropertyFunction.Linear ?
+      av1s.loop && av2s.loop,
+      (av1c.function === PropertyFunction.Linear && av2c.function === PropertyFunction.Linear ?
         positions :
         filterMillisecondDiffs(interpolateSegments(positions, 0.1, 40))
       ).map(e => new Keyframe(e,
-        anyValueSum(cav1.valueAt(e), cav2.valueAt(e)) as PropertyValue
+        anyValueSum(av1s.valueAt(e), av2s.valueAt(e)) as Tensor
       ))
     ).withModifiers(
       ...av1Mods.map(mod => mod.clone()),
@@ -8153,7 +8144,7 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
 
   // If none of the stuff above returned, p1 is more complex than p2, so just
   // swap them and return the result of that instead.
-  return anyValueSum(av2, av1)
+  return anyValueSum(av2c, av1c)
 }
 
 /**
@@ -8165,23 +8156,23 @@ function anyValueSum<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
  * @param av1 Left operand.
  * @param av2 Right operand.
  */
-function anyValueDiff<T extends AnyValue>(av1: AnyValue, av2: AnyValue): T {
+function anyValueDiff<T extends TensorValue>(av1: TensorValue, av2: TensorValue): T {
   return anyValueSum(av1, anyValueMult(-1, av2))
 }
 
-function steppedToLinearProperty<T extends ValueType>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
+function steppedToLinearProperty<T extends Tensor>(prop: SequenceProperty<T, PropertyFunction.Stepped>) {
   return new LinearProperty(prop.loop, prop.keyframes.flatMap((kf, i, a) => [
     new Keyframe(i === 0 ? 0 : a[i].position - 0.001, kf.value),
     Keyframe.copy(kf)
   ]).slice(1, -1))
 }
 
-function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorComponents[T]): TypeMap.Value[T] {
+function combineComponents<T extends Vector>(...comps: TypeMap.ComponentsOfTensor<ScalarValue, T>): T | Property<T, PropertyFunction> {
   comps = comps.map(
     c => c instanceof SequenceProperty && c.function === PropertyFunction.Stepped ? steppedToLinearProperty(c) : c
-  ) as TypeMap.VectorComponents[T]
+  ) as TypeMap.ComponentsOfTensor<ScalarValue, T>
   if (!comps.some(c => c instanceof Property)) {
-    return comps as TypeMap.Value[T]
+    return comps as unknown as T
   }
   const hasCurveComp = comps.some(e =>
     e instanceof SequenceProperty && (
@@ -8205,7 +8196,7 @@ function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorCo
   function combineModifiers() {
     const origMods = comps.map(c => c instanceof Property ? c.modifiers : [])
     const mappedComps = new Set
-    const out: (IModifier<ValueType.Scalar>[] | IModifier<ValueType>)[] = []
+    const out: (IModifier<number>[] | IModifier<Tensor>)[] = []
     const max = origMods.reduce((a, e) => Math.max(a, e.length), 0)
     for (let i = 0; i < max; i++) {
       for (const [j, a] of origMods.entries()) {
@@ -8264,19 +8255,19 @@ function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorCo
       switch (e[0].type) {
         case ModifierType.RandomDelta:
           return new RandomDeltaModifier(
-            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
-            e.map(m => (m as RandomDeltaModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
+            e.map(m => (m as RandomDeltaModifier<number>).max) as T,
+            e.map(m => (m as RandomDeltaModifier<number>).seed) as T
           )
         case ModifierType.RandomRange:
           return new RandomRangeModifier(
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).min) as TypeMap.PropertyValue[T],
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
-            e.map(m => (m as RandomRangeModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
+            e.map(m => (m as RandomRangeModifier<number>).min) as T,
+            e.map(m => (m as RandomRangeModifier<number>).max) as T,
+            e.map(m => (m as RandomRangeModifier<number>).seed) as T
           )
         case ModifierType.RandomFraction:
           return new RandomFractionModifier(
-            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).max) as TypeMap.PropertyValue[T],
-            e.map(m => (m as RandomFractionModifier<ValueType.Scalar>).seed) as TypeMap.PropertyValue[T]
+            e.map(m => (m as RandomFractionModifier<number>).max) as T,
+            e.map(m => (m as RandomFractionModifier<number>).seed) as T
           )
       }
     }) as IModifier<T>[]
@@ -8285,23 +8276,23 @@ function combineComponents<T extends VectorValueType>(...comps: TypeMap.VectorCo
     const keyframes: Keyframe<T>[] = (hasCurveComp ?
       filterMillisecondDiffs(interpolateSegments(Array.from(positions).sort((a, b) => a - b), 0.1, 40)) :
       Array.from(positions).sort((a, b) => a - b)
-    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as TypeMap.PropertyValue[T]))
+    ).map(e => new Keyframe(e, comps.map(c => c instanceof Property ? c.valueAt(e) : c) as T))
     return new LinearProperty<T>(
       comps.some(e => (e instanceof SequenceProperty || e instanceof ComponentSequenceProperty) && e.loop),
       keyframes
-    ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
+    ).withModifiers(...combineModifiers())
   } else {
     return new ConstantProperty<T>(
-      comps.map(c => c instanceof Property ? c.valueAt(0) : c) as TypeMap.PropertyValue[T]
-    ).withModifiers(...combineModifiers()) as unknown as TypeMap.Property[T]
+      comps.map(c => c instanceof Property ? c.valueAt(0) : c) as T
+    ).withModifiers(...combineModifiers())
   }
 }
 
-function separateComponents<T extends VectorValueType>(value: TypeMap.Value[T]): TypeMap.VectorComponents[T] {
+function separateComponents<T extends Vector>(value: TypeMap.ValueOfTensor<T>): T | Property<number, any>[] {
   if (value instanceof Property) {
-    return value.separateComponents() as TypeMap.VectorComponents[T]
+    return value.separateComponents()
   } else {
-    return value as TypeMap.PropertyValue[T]
+    return value.slice() as unknown as T
   }
 }
 
@@ -8311,7 +8302,7 @@ function fieldsCount(fields: Field<FieldType>[]) {
   return count
 }
 
-function getComponentCount(v: AnyValue | boolean): 1 | 2 | 3 | 4 {
+function getComponentCount(v: TensorValue | boolean): 1 | 2 | 3 | 4 {
   const cc = isVector(v) ? v.length : isVectorValue(v) ? v.componentCount : 1
   if (cc < 1 || cc > 4) {
     throw new Error('Invalid value.')
@@ -8323,8 +8314,10 @@ function getComponentCount(v: AnyValue | boolean): 1 | 2 | 3 | 4 {
  * Gets the {@link ValueType} of a given value.
  * @param v The value to get the type of.
  */
-function getValueType<T extends ValueType>(v: TypeMap.Property[T] | TypeMap.PropertyValue[T]): T {
-  return (getComponentCount(v) - 1) as T
+function getValueType<T extends Tensor>(v: T): TypeMap.ValueTypeOfTensor<T>
+function getValueType<T extends IProperty<Tensor, PropertyFunction>>(v: T): TypeMap.ValueTypeOfProperty<T>
+function getValueType(v: TensorValue): ValueType {
+  return getComponentCount(v) - 1
 }
 
 function setVectorComponent(vec: VectorValue, componentIndex: number, value: ScalarValue): VectorValue {
@@ -8487,17 +8480,17 @@ function normalizeVector3([x, y, z]: Vector3): Vector3 {
   ]
 }
 
-function constantValueOf(v: AnyValue) {
-  return v instanceof Property ? v.valueAt(0) : v
+function constantValueOf<T extends Tensor>(v: TypeMap.ValueOfTensor<T>): T {
+  return (isTensorType<Property<T, any>>(v, Property) ? v.valueAt(0) : v) as T
 }
 
-function scalePropMods<T extends ValueType>(prop: Property<T, PropertyFunction>, factor: TypeMap.PropertyValue[T] | number) {
+function scalePropMods<T extends Tensor>(prop: Property<T, PropertyFunction>, factor: T | number) {
   for (let i = prop.modifiers.length - 1; i >= 0; i--) {
-    prop.modifiers[i] = Modifier.multPropertyValue(prop.modifiers[i], factor)
+    prop.modifiers[i] = Modifier.multTensor<T>(prop.modifiers[i], factor)
   }
 }
 
-function clampPropValue<T extends PropertyValue>(v: T, min: T, max: T): T {
+function clampPropValue<T extends Tensor>(v: T, min: T, max: T): T {
   if (Array.isArray(v) && Array.isArray(min) && Array.isArray(max)) {
     return v.map((e, i) => Math.max(min[i], Math.min(max[i], e))) as T
   } else if (!Array.isArray(v) && !Array.isArray(min) && !Array.isArray(max)) {
@@ -8507,7 +8500,7 @@ function clampPropValue<T extends PropertyValue>(v: T, min: T, max: T): T {
   }
 }
 
-function lerpPropValue<T extends PropertyValue>(v1: T, v2: T, t: number): T {
+function lerpPropValue<T extends Tensor>(v1: T, v2: T, t: number): T {
   if (isVector(v1) && isVector(v2)) {
     return v1.map((e, i) => lerp(e, v2[i], t)) as T
   } else if (typeof v1 === 'number' && typeof v2 === 'number') {
@@ -8517,11 +8510,11 @@ function lerpPropValue<T extends PropertyValue>(v1: T, v2: T, t: number): T {
   }
 }
 
-function findIntersections<T extends ValueType>(
+function findIntersections<T extends Tensor>(
   keyframe1: Keyframe<T>,
   keyframe2: Keyframe<T>,
-  minValue: TypeMap.PropertyValue[T],
-  maxValue: TypeMap.PropertyValue[T]
+  minValue: T,
+  maxValue: T
 ): Keyframe<T>[] {
   const { position: x1, value: y1 } = keyframe1
   const { position: x2, value: y2 } = keyframe2
@@ -8567,10 +8560,10 @@ function findIntersections<T extends ValueType>(
   return results
 }
 
-function clampKeyframes<T extends ValueType>(
+function clampKeyframes<T extends Tensor>(
   keyframes: Keyframe<T>[],
-  min: TypeMap.PropertyValue[T],
-  max: TypeMap.PropertyValue[T]
+  min: T,
+  max: T
 ): Keyframe<T>[] {
   const clampedKeyframes: Keyframe<T>[] = []
   for (let i = 0; i < keyframes.length - 1; i++) {
@@ -8585,15 +8578,23 @@ function clampKeyframes<T extends ValueType>(
   return clampedKeyframes
 }
 
-function clampProp<T extends ValueType>(
+function isSequenceProperty<T extends Tensor>(prop: IProperty<T, any>): prop is SequenceProperty<T, any> {
+  return prop instanceof SequenceProperty
+}
+
+function isComponentSequenceProperty<T extends Tensor>(prop: IProperty<T, any>): prop is ComponentSequenceProperty<T> {
+  return prop instanceof ComponentSequenceProperty
+}
+
+function clampProp<T extends Tensor>(
   prop: Property<T, PropertyFunction>,
-  min: TypeMap.PropertyValue[T],
-  max: TypeMap.PropertyValue[T]
+  min: T,
+  max: T
 ): Property<T, PropertyFunction> {
   let clone = prop.clone().minify()
   if (clone instanceof ValueProperty) {
     clone.value = clampPropValue(clone.value, min, max)
-  } else if (clone instanceof SequenceProperty || clone instanceof ComponentSequenceProperty) {
+  } else if (isSequenceProperty(clone) || isComponentSequenceProperty(clone)) {
     if (clone instanceof ComponentSequenceProperty) {
       clone = clone.combineComponents()
     }
@@ -8628,20 +8629,11 @@ function f32Equal(a: number, b: number) {
   return Math.abs(a - b) <= FLOAT32_EPSILON
 }
 
-function propValueEqual(a: PropertyValue, b: PropertyValue) {
+function propValueEqual(a: Tensor, b: Tensor) {
   if (isVector(a) && isVector(b)) {
     return a.every((e, i) => f32Equal(e, b[i]))
   } else if (!isVector(a) && !isVector(b)) {
     return f32Equal(a, b)
-  }
-  return false
-}
-
-function anyMatch<T>(iterator: Iterable<T>, predicate: (value: T) => boolean): boolean {
-  for (const value of iterator) {
-    if (predicate(value)) {
-      return true
-    }
   }
   return false
 }
@@ -8709,10 +8701,42 @@ function randomSeed(): number
  * this could also have been done by setting
  * {@link PointLight.separateSpecular separateSpecular} to false, but it
  * should at least show how this functions.
+ */
+function randomSeed(): number
+/**
+ * Generates a random seed of the given type.
+ * 
+ * The function can be useful together with the randomization modifiers for
+ * properties:
+ * - {@link RandomDeltaModifier}
+ * - {@link RandomRangeModifier}
+ * - {@link RandomFractionModifier}
+ * 
+ * Or the functions that generate simple properties with these modifiers:
+ * - {@link RandomDeltaProperty}
+ * - {@link RandomRangeProperty}
+ * - {@link RandomFractionProperty}
+ * 
+ * To link multiple random values, so that they change the same amount if
+ * randomized at the same time, you can use this function to generate a seed
+ * that you can use multiple times. For example:
+ * ```js
+ * const seed = randomSeed(ValueType.Vector4)
+ * new PointLight({
+ *   separateSpecular: true,
+ *   diffuseColor: RandomDeltaProperty([1, 1, 1, 1], [0.5, 0.5, 0.5, 0], seed),
+ *   specularColor: RandomDeltaProperty([1, 1, 1, 1], [0.5, 0.5, 0.5, 0], seed),
+ * })
+ * ```
+ * Here, the point light that was created will randomize to have the same
+ * specular color as its diffuse color. This example is not the best, because
+ * this could also have been done by setting
+ * {@link PointLight.separateSpecular separateSpecular} to false, but it
+ * should at least show how this functions.
  * @param type The type of seed to generate.
  */
-function randomSeed(type: ValueType): TypeMap.PropertyValue[typeof type]
-function randomSeed(type: ValueType = ValueType.Scalar): TypeMap.PropertyValue[typeof type] {
+function randomSeed<T extends Tensor>(type: TypeMap.ValueTypeOfTensor<T>): T
+function randomSeed(type: ValueType = ValueType.Scalar): Tensor {
   switch (type) {
     case ValueType.Scalar: return randomInt32()
     case ValueType.Vector2: return [randomInt32(), randomInt32()]
@@ -8962,7 +8986,7 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
   }
 
   function proc<T>(
-    paletteProp: AnyValue,
+    paletteProp: TensorValue,
     c: T,
     k: keyof T,
     durationFallback: () => number = () => 1
@@ -8980,12 +9004,12 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
           durationFallback()
       )
       let alpha: ScalarValue
-      if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+      if (isVectorValue(c[k]) && getComponentCount(c[k] as TensorValue) === 4) {
         alpha = separateComponents(c[k])[3]
       }
       ;(c[k] as any) = paletteProp.clone()
       ;(c[k] as any).duration = d
-      if (isVectorValue(c[k]) && getComponentCount(c[k] as AnyValue) === 4) {
+      if (isVectorValue(c[k]) && getComponentCount(c[k] as TensorValue) === 4) {
         ;(c[k] as any) = setVectorComponent(c[k] as any, 3, alpha)
       }
       if (c[k] instanceof Property) {
@@ -9015,26 +9039,30 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
   return { palette, durationFallback, proc }
 }
 
-function valueWithType<T extends ValueType>(type: T, val: number): TypeMap.PropertyValue[T] {
-  return (type === ValueType.Scalar ? val : arrayOf(type + 1, () => val)) as TypeMap.PropertyValue[T]
+function valueWithType<T extends Tensor>(type: TypeMap.ValueTypeOfTensor<T>, val: number): T {
+  return (type === ValueType.Scalar ? val : arrayOf(type + 1, () => val)) as T
 }
 
 function isNodeArray<T>(list: T | Node[]): list is Node[] {
   return list[0] instanceof Node
 }
 
-function getLoop(prop: AnyValue): boolean {
+function getLoop(prop: TensorValue): boolean {
   if (prop instanceof SequenceProperty || prop instanceof ComponentSequenceProperty) {
     return prop.loop
   }
   return false
 }
 
-function setLoop(prop: AnyValue, loop: boolean): AnyValue {
+function setLoop(prop: TensorValue, loop: boolean): TensorValue {
   if (prop instanceof SequenceProperty || prop instanceof ComponentSequenceProperty) {
     prop.loop = loop
   }
   return prop
+}
+
+function isTensorType<T>(obj: any, type: any): obj is T {
+  return obj instanceof type
 }
 
 const GameVersionMap = {
@@ -9211,12 +9239,12 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
       props.fadeOutTime = Math.round(props.fadeOutTime * 30)
       if (game === Game.DarkSouls3) {
         const diffuseComps = separateComponents(props.diffuseColor)
-        props.diffuseColor = combineComponents<ValueType.Vector4>(
+        props.diffuseColor = combineComponents<Vector4>(
           ...diffuseComps.slice(0, 3) as Vector3Components,
           anyValueMult(diffuseComps[3], anyValueMult(1/10, props.diffuseMultiplier))
         ) as Vector4Value
         const specularComps = separateComponents(props.specularColor)
-        props.specularColor = combineComponents<ValueType.Vector4>(
+        props.specularColor = combineComponents<Vector4>(
           ...specularComps.slice(0, 3) as Vector3Components,
           anyValueMult(specularComps[3], anyValueMult(1/10, props.specularMultiplier))
         ) as Vector4Value
@@ -10386,7 +10414,7 @@ class FXR {
     bw.fill('PropertyCount', properties.length)
     bw.pad(16)
     bw.fill('Section8Offset', bw.position)
-    const modifiers: IModifier<ValueType>[] = []
+    const modifiers: IModifier<Tensor>[] = []
     for (let i = 0; i < properties.length; ++i) {
       // The property has already gone through .for(game) here, so don't use it again
       writePropertyModifiers(properties[i], bw, game, i, modifiers)
@@ -11054,12 +11082,12 @@ abstract class Node {
 
   /**
    * Yields all properties in this branch, excluding properties inside
-   * modifiers and properties in the form of {@link PropertyValue}s in
+   * modifiers and properties in the form of {@link Tensor}s in
    * {@link DataAction}s.
    * @param recurse Controls whether or not to yield properties in descendant
    * nodes. Defaults to true.
    */
-  *walkProperties(recurse: boolean = true): Generator<AnyProperty, void, undefined> {
+  *walkProperties(recurse: boolean = true): Generator<TensorProperty, void, undefined> {
     for (const action of this.walkActions(recurse)) {
       if (action instanceof Action) {
         yield* action.properties1
@@ -11768,7 +11796,7 @@ class BasicNode extends NodeWithConfigs {
   }
 
   getColor(opts: NodeColorOptions = {}): Vector4Property | null {
-    let colorProp: Property<ValueType.Vector4, PropertyFunction> = new ConstantProperty([1, 1, 1, 1])
+    let colorProp: Property<Vector4, PropertyFunction> = new ConstantProperty([1, 1, 1, 1])
     let modified = false
     const config = this.getActiveConfig(opts.activeState ?? 0)
     if (config instanceof BasicConfig) {
@@ -12135,7 +12163,7 @@ class NodeConfig implements IConfig {
       return new NodeConfig(obj.type, obj.actions.map((e: any) => Action.fromJSON(e)))
     } else switch (obj.type) {
       case ConfigType.LevelsOfDetail:
-        return new LevelsOfDetailConfig(Property.fromJSON<ValueType.Scalar>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
+        return new LevelsOfDetailConfig(Property.fromJSON<number>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
       case ConfigType.Basic: {
         const actions: Partial<Props<BasicConfig>> = {}
         if ('nodeAttributes' in obj) actions.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
@@ -12480,13 +12508,13 @@ class BasicConfig implements IConfig {
   recolor(
     funcOrPalette: Recolor.RecolorFunction | Recolor.ColorPalette,
     __durationFallback?: (action: any, secondary?: any) => () => any,
-    __proc?: <T>(paletteProp: AnyValue, c: T, k: keyof T, durationFallback?: () => number) => void
+    __proc?: <T>(paletteProp: TensorValue, c: T, k: keyof T, durationFallback?: () => number) => void
   ): this
 
   recolor(
     funcOrPalette: Recolor.RecolorFunction | Recolor.ColorPalette,
     __durationFallback?: (action: any, secondary?: any) => () => any,
-    __proc?: <T>(paletteProp: AnyValue, c: T, k: keyof T, durationFallback?: () => number) => void
+    __proc?: <T>(paletteProp: TensorValue, c: T, k: keyof T, durationFallback?: () => number) => void
   ): this {
     if (typeof funcOrPalette === 'function') {
       for (const action of this.walkActions()) if (action instanceof DataAction) {
@@ -12773,12 +12801,12 @@ class Action implements IAction {
     public type: ActionType = ActionType.None,
     public fields1: Field<FieldType>[] = [],
     public fields2: Field<FieldType>[] = [],
-    public properties1: AnyProperty[] = [],
-    public properties2: AnyProperty[] = [],
+    public properties1: TensorProperty[] = [],
+    public properties2: TensorProperty[] = [],
     public section10s: number[][] = [],
   ) {}
 
-  withFields1(...fields: { index: number, field: Field<FieldType> | PropertyValue | boolean }[]) {
+  withFields1(...fields: { index: number, field: Field<FieldType> | Tensor | boolean }[]) {
     for (const { index, field } of fields) {
       if (field instanceof Field) {
         this.fields1[index] = field
@@ -12789,7 +12817,7 @@ class Action implements IAction {
     return this
   }
 
-  withFields2(...fields: { index: number, field: Field<FieldType> | PropertyValue | boolean }[]) {
+  withFields2(...fields: { index: number, field: Field<FieldType> | Tensor | boolean }[]) {
     for (const { index, field } of fields) {
       if (field instanceof Field) {
         this.fields2[index] = field
@@ -12800,7 +12828,7 @@ class Action implements IAction {
     return this
   }
 
-  withProperties1(...props: { index: number, property: PropertyValue | AnyProperty }[]) {
+  withProperties1(...props: { index: number, property: Tensor | TensorProperty }[]) {
     for (const { index, property } of props) {
       if (property instanceof Property) {
         this.properties1[index] = property
@@ -12811,7 +12839,7 @@ class Action implements IAction {
     return this
   }
 
-  withProperties2(...props: { index: number, property: PropertyValue | AnyProperty }[]) {
+  withProperties2(...props: { index: number, property: Tensor | TensorProperty }[]) {
     for (const { index, property } of props) {
       if (property instanceof Property) {
         this.properties2[index] = property
@@ -13014,7 +13042,7 @@ class DataAction implements IAction {
     })
   }
 
-  getProperties(game: Game, list: 'properties1' | 'properties2', props: Props<this> = this): AnyProperty[] {
+  getProperties(game: Game, list: 'properties1' | 'properties2', props: Props<this> = this): TensorProperty[] {
     const data = getActionGameData(this.type, game)
     const ade = this.$data
     return (data[list] ?? []).map((name: string) => {
@@ -13128,10 +13156,7 @@ class DataAction implements IAction {
    */
   recolorProperty(key: string, func: Recolor.RecolorFunction, context?: BasicConfig) {
     let prop: Vector4Value = this[key]
-    if (
-      prop instanceof Property && prop.valueType !== ValueType.Vector4 ||
-      Array.isArray(prop) && prop.length !== 4
-    ) {
+    if (getComponentCount(prop) !== 4) {
       throw new Error('Cannot recolor non-color property: ' + key)
     }
     if (Array.isArray(prop)) {
@@ -13139,7 +13164,7 @@ class DataAction implements IAction {
       return this
     }
     if (prop instanceof ComponentSequenceProperty) {
-      prop = this[key] = prop.combineComponents()
+      prop = this[key] = (prop as ComponentSequenceProperty<Vector4>).combineComponents()
     }
     if (prop instanceof ValueProperty) {
       prop.value = func(prop.value, context, this, key as any)
@@ -13154,18 +13179,22 @@ class DataAction implements IAction {
       mod instanceof RandomFractionModifier
     ))
     for (const mod of prop.modifiers) {
-      if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
-        if (mod.factor instanceof ComponentSequenceProperty) {
+      if (
+        isTensorType<ExternalValue1Modifier<Vector4>>(mod, ExternalValue1Modifier) ||
+        isTensorType<ExternalValue2Modifier<Vector4>>(mod, ExternalValue2Modifier)
+      ) {
+        if (!(mod.factor instanceof Property)) {
+          throw new Error('Property external value modifier factor must be an instance of Property.')
+        }
+        if (isTensorType<ComponentSequenceProperty<Vector4>>(mod.factor, ComponentSequenceProperty)) {
           mod.factor = mod.factor.combineComponents()
         }
-        if (mod.factor instanceof ValueProperty) {
+        if (isTensorType<ValueProperty<Vector4>>(mod.factor, ValueProperty)) {
           mod.factor.value = func(mod.factor.value, context, this, key as any)
-        } else if (mod.factor instanceof SequenceProperty) {
+        } else if (isTensorType<SequenceProperty<Vector4, any>>(mod.factor, SequenceProperty)) {
           for (const keyframe of mod.factor.keyframes) {
             keyframe.value = func(keyframe.value as Vector4, context, this, key as any)
           }
-        } else {
-          mod.factor = func(mod.factor, context, this, key as any)
         }
       }
     }
@@ -13193,39 +13222,46 @@ class DataAction implements IAction {
       for (const [k, v] of Object.entries(this.$data.props)) {
         if ('color' in v) {
           let prop: Vector4Value = this[k]
-          if (Array.isArray(prop)) {
+          if (!(prop instanceof Property)) {
             yield prop
             continue
           }
-          if (prop instanceof ComponentSequenceProperty) {
+          if (isTensorType<ComponentSequenceProperty<Vector4>>(prop, ComponentSequenceProperty)) {
             prop = prop.combineComponents()
           }
-          if (prop instanceof ValueProperty) {
+          if (isTensorType<ValueProperty<Vector4>>(prop, ValueProperty)) {
             yield prop.value
-          } else if (prop instanceof SequenceProperty) {
+          } else if (isTensorType<SequenceProperty<Vector4, SequencePropertyFunction>>(prop, SequenceProperty)) {
             for (const keyframe of prop.keyframes) {
               yield keyframe.value
             }
           }
           for (const mod of prop.modifiers) {
-            if (mod instanceof RandomDeltaModifier || mod instanceof RandomFractionModifier) {
+            if (
+              isTensorType<RandomDeltaModifier<Vector4>>(mod, RandomDeltaModifier) ||
+              isTensorType<RandomFractionModifier<Vector4>>(mod, RandomFractionModifier)
+            ) {
               yield mod.max
-            } else if (mod instanceof RandomRangeModifier) {
+            } else if (isTensorType<RandomRangeModifier<Vector4>>(mod, RandomRangeModifier)) {
               yield mod.min
               yield mod.max
-            } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+            } else if (
+              isTensorType<ExternalValue1Modifier<Vector4>>(mod, ExternalValue1Modifier) ||
+              isTensorType<ExternalValue2Modifier<Vector4>>(mod, ExternalValue2Modifier)
+            ) {
               let factor = mod.factor
-              if (factor instanceof ComponentSequenceProperty) {
-                factor.combineComponents()
+              if (!(factor instanceof Property)) {
+                throw new Error('Property external value modifier factor must be an instance of Property.')
               }
-              if (factor instanceof ValueProperty) {
+              if (isTensorType<ComponentSequenceProperty<Vector4>>(factor, ComponentSequenceProperty)) {
+                factor = factor.combineComponents()
+              }
+              if (isTensorType<ValueProperty<Vector4>>(factor, ValueProperty)) {
                 yield factor.value
               } else if (factor instanceof SequenceProperty) {
                 for (const keyframe of factor.keyframes) {
                   yield keyframe.value
                 }
-              } else {
-                yield factor
               }
             }
           }
@@ -20569,7 +20605,7 @@ class Distortion extends DataAction {
    */
   radius: ScalarValue
   /**
-   * Horizontal offset for the {@link normalMap normal map}.
+   * Horizontal UV offset for the {@link normalMap normal map}.
    * 
    * **Default**: `0`
    * 
@@ -20577,7 +20613,7 @@ class Distortion extends DataAction {
    */
   normalMapOffsetU: ScalarValue
   /**
-   * Vertical offset for the {@link normalMap normal map}.
+   * Vertical UV offset for the {@link normalMap normal map}.
    * 
    * **Default**: `0`
    * 
@@ -20585,7 +20621,7 @@ class Distortion extends DataAction {
    */
   normalMapOffsetV: ScalarValue
   /**
-   * Horizontal offset speed for the {@link normalMap normal map}.
+   * Horizontal UV offset speed for the {@link normalMap normal map}.
    * 
    * **Default**: `0`
    * 
@@ -20593,7 +20629,7 @@ class Distortion extends DataAction {
    */
   normalMapSpeedU: ScalarValue
   /**
-   * Vertical offset speed for the {@link normalMap normal map}.
+   * Vertical UV offset speed for the {@link normalMap normal map}.
    * 
    * **Default**: `0`
    * 
@@ -20651,17 +20687,17 @@ class Distortion extends DataAction {
    */
   alphaThreshold: ScalarValue
   /**
-   * Unknown scalar.
+   * Horizontal UV scale for the {@link normalMap normal map}.
    * 
    * **Default**: `1`
    */
-  unk_er_p2_7: ScalarValue
+  normalMapScaleU: ScalarValue
   /**
-   * Unknown scalar.
+   * Vertical UV scale for the {@link normalMap normal map}.
    * 
    * **Default**: `1`
    */
-  unk_er_p2_8: ScalarValue
+  normalMapScaleV: ScalarValue
   /**
    * Controls what type of distortion to apply. See {@link DistortionMode} for more details.
    * 
@@ -32824,100 +32860,121 @@ class Vector4Field extends Field<FieldType.Vector4> {
 }
 
 //#region Keyframe
-class Keyframe<T extends ValueType> implements IBasicKeyframe<T> {
+class Keyframe<T extends Tensor> implements IBasicKeyframe<T> {
 
   constructor(
     public position: number,
-    public value: TypeMap.PropertyValue[T]
+    public value: T
   ) {}
 
-  static copy<T extends ValueType, K extends AnyKeyframe<T>>(orig: K): K {
+  static copy<T extends AnyKeyframe<Tensor>>(orig: T): T {
     if ('p1' in orig) {
-      return new BezierKeyframe(orig.position, orig.value, orig.p1, orig.p2) as K
+      return new BezierKeyframe(orig.position, orig.value, orig.p1, orig.p2) as T
     } else if ('t1' in orig) {
-      return new HermiteKeyframe(orig.position, orig.value, orig.t1, orig.t2) as K
+      return new HermiteKeyframe(orig.position, orig.value, orig.t1, orig.t2) as T
     }
-    return new Keyframe(orig.position, orig.value) as K
+    return new Keyframe(orig.position, orig.value) as T
   }
 
-  static component<T extends ValueType, K extends AnyKeyframe<T>>(kf: K, i: number): ScalarKeyframeFromAny<K, T> {
+  static component<
+    T extends AnyKeyframe<Tensor>,
+    F extends PropertyFunction
+  >(kf: T, i: number): TypeMap.KeyframeOfFunction<TypeMap.TensorOfKeyframe<number>, F> {
     if (Array.isArray(kf.value)) {
       if (i < 0 || i >= kf.value.length) {
         throw new Error('Index of keyframe component out of range.')
       }
       if ('p1' in kf) {
-        return new BezierKeyframe(kf.position, kf.value[i], kf.p1[i], kf.p2[i]) as ScalarKeyframeFromAny<K, T>
+        return (
+          new BezierKeyframe(kf.position, kf.value[i], kf.p1[i], kf.p2[i])
+        ) as TypeMap.KeyframeOfFunction<TypeMap.TensorOfKeyframe<number>, F>
       } else if ('t1' in kf) {
-        return new HermiteKeyframe(kf.position, kf.value[i], kf.t1[i], kf.t2[i]) as ScalarKeyframeFromAny<K, T>
+        return (
+          new HermiteKeyframe(kf.position, kf.value[i], kf.t1[i], kf.t2[i])
+        ) as TypeMap.KeyframeOfFunction<TypeMap.TensorOfKeyframe<number>, F>
       }
-      return new Keyframe(kf.position, kf.value[i]) as ScalarKeyframeFromAny<K, T>
+      return (
+        new Keyframe(kf.position, kf.value[i])
+      ) as TypeMap.KeyframeOfFunction<TypeMap.TensorOfKeyframe<number>, F>
     } else {
       if (i !== 0) {
         throw new Error('Index of keyframe component out of range.')
       }
-      return kf as unknown as ScalarKeyframeFromAny<K, T>
+      return kf as unknown as TypeMap.KeyframeOfFunction<TypeMap.TensorOfKeyframe<number>, F>
     }
   }
 
-  static scale<T extends AnyKeyframe<ValueType>>(kf: AnyKeyframe<ValueType>, factor: PropertyValue): T {
+  static scale<T extends Tensor, K extends AnyKeyframe<T>>(kf: K, factor: T): K
+  static scale<T extends Tensor, K extends AnyKeyframe<T>>(kf: K, factor: number): K
+  static scale<T extends Vector, K extends AnyKeyframe<number>>(kf: K, factor: T): AnyKeyframe<T>
+  static scale<T extends Tensor, K extends AnyKeyframe<T>>(kf: K, factor: Tensor): K {
+    if (typeof factor !== 'number' && !Array.isArray(factor)) {
+      throw new Error(`Invalid property value: ${factor}`)
+    }
     if (typeof kf.value === 'number') {
-      kf.value = typeof factor === 'number' ? kf.value * factor : factor.map(e => (kf.value as number) * e) as Vector
+      kf.value = (typeof factor === 'number' ? kf.value * factor : factor.map(e => (kf.value as number) * e)) as T
     } else {
-      kf.value = (typeof factor === 'number' ? kf.value.map(e => e * factor) : kf.value.map((e, i) => e * factor[i])) as Vector
+      kf.value = (typeof factor === 'number' ? kf.value.map(e => e * factor) : kf.value.map((e, i) => e * factor[i])) as T
     }
     if ('p1' in kf) {
       if (typeof kf.p1 === 'number') {
-        kf.p1 = typeof factor === 'number' ? kf.p1 * factor : factor.map(e => (kf.p1 as number) * e) as Vector
+        kf.p1 = (typeof factor === 'number' ? kf.p1 * factor : factor.map(e => (kf.p1 as number) * e)) as T
       } else {
-        kf.p1 = (typeof factor === 'number' ? kf.p1.map(e => e * factor) : kf.p1.map((e, i) => e * factor[i])) as Vector
+        kf.p1 = (typeof factor === 'number' ? kf.p1.map(e => e * factor) : kf.p1.map((e, i) => e * factor[i])) as T
       }
       if (typeof kf.p2 === 'number') {
-        kf.p2 = typeof factor === 'number' ? kf.p2 * factor : factor.map(e => (kf.p2 as number) * e) as Vector
+        kf.p2 = (typeof factor === 'number' ? kf.p2 * factor : factor.map(e => (kf.p2 as number) * e)) as T
       } else {
-        kf.p2 = (typeof factor === 'number' ? kf.p2.map(e => e * factor) : kf.p2.map((e, i) => e * factor[i])) as Vector
+        kf.p2 = (typeof factor === 'number' ? kf.p2.map(e => e * factor) : kf.p2.map((e, i) => e * factor[i])) as T
       }
     }
-    return kf as T
+    return kf
   }
 
-  static add<T extends AnyKeyframe<ValueType>>(kf: AnyKeyframe<ValueType>, summand: PropertyValue): T {
+  static add<T extends Tensor, K extends AnyKeyframe<T>>(kf: K, summand: T): K
+  static add<T extends Tensor, K extends AnyKeyframe<T>>(kf: K, summand: number): K
+  static add<T extends Vector, K extends AnyKeyframe<number>>(kf: K, summand: T): AnyKeyframe<T>
+  static add<T extends Tensor, K extends AnyKeyframe<T>>(kf: K, summand: Tensor): K {
     if (typeof kf.value === 'number') {
-      kf.value = typeof summand === 'number' ? kf.value + summand : summand.map(e => (kf.value as number) + e) as Vector
+      kf.value = (typeof summand === 'number' ? kf.value + summand : summand.map(e => (kf.value as number) + e)) as T
     } else {
-      kf.value = (typeof summand === 'number' ? kf.value.map(e => e + summand) : kf.value.map((e, i) => e + summand[i])) as Vector
+      kf.value = (typeof summand === 'number' ? kf.value.map(e => e + summand) : kf.value.map((e, i) => e + summand[i])) as T
     }
-    return kf as T
+    return kf as K
   }
 
-  static equal<T extends ValueType, K extends IBasicKeyframe<T> | IBezierKeyframe<T>>(kf1: K, kf2: K) {
+  static equal<T extends IBasicKeyframe<Tensor> | IBezierKeyframe<Tensor> | IHermiteKeyframe<Tensor>>(kf1: T, kf2: T) {
     return propValueEqual(kf1.value, kf2.value) && (
       !('p1' in kf1 && 'p1' in kf2) ||
       propValueEqual(kf1.p1, kf2.p1) && propValueEqual(kf1.p2, kf2.p2)
+    ) && (
+      !('t1' in kf1 && 't1' in kf2) ||
+      propValueEqual(kf1.t1, kf2.t1) && propValueEqual(kf1.t2, kf2.t2)
     )
   }
 
 }
 
-class BezierKeyframe<T extends ValueType> extends Keyframe<T> implements IBezierKeyframe<T> {
+class BezierKeyframe<T extends Tensor> extends Keyframe<T> implements IBezierKeyframe<T> {
 
   constructor(
     position: number,
-    value: TypeMap.PropertyValue[T],
-    public p1: TypeMap.PropertyValue[T],
-    public p2: TypeMap.PropertyValue[T],
+    value: T,
+    public p1: T,
+    public p2: T,
   ) {
     super(position, value)
   }
 
 }
 
-class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermiteKeyframe<T> {
+class HermiteKeyframe<T extends Tensor> extends Keyframe<T> implements IHermiteKeyframe<T> {
 
   constructor(
     position: number,
-    value: TypeMap.PropertyValue[T],
-    public t1: TypeMap.PropertyValue[T],
-    public t2: TypeMap.PropertyValue[T],
+    value: T,
+    public t1: T,
+    public t2: T,
   ) {
     super(position, value)
   }
@@ -32928,7 +32985,7 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
    * 
    * Similar to {@link easeInOut}, but this starts slightly faster.
    */
-  static ease<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+  static ease<T extends Tensor>(position: number, value: T) {
     const valType = getValueType(value)
     return new HermiteKeyframe(position, value, valueWithType(valType, 21.8 * deg2rad), valueWithType(valType, 0))
   }
@@ -32937,7 +32994,7 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
    * Creates a new keyframe with an easing function that starts slow and speeds
    * up towards the end.
    */
-  static easeIn<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+  static easeIn<T extends Tensor>(position: number, value: T) {
     const valType = getValueType(value)
     return new HermiteKeyframe(position, value, valueWithType(valType, 0), valueWithType(valType, 45 * deg2rad))
   }
@@ -32946,7 +33003,7 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
    * Creates a new keyframe with an easing function that starts fast and slows
    * down towards the end.
    */
-  static easeOut<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+  static easeOut<T extends Tensor>(position: number, value: T) {
     const valType = getValueType(value)
     return new HermiteKeyframe(position, value, valueWithType(valType, 45 * deg2rad), valueWithType(valType, 0))
   }
@@ -32957,7 +33014,7 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
    * 
    * Similar to {@link ease}, but this starts slightly slower.
    */
-  static easeInOut<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+  static easeInOut<T extends Tensor>(position: number, value: T) {
     const valType = getValueType(value)
     return new HermiteKeyframe(position, value, valueWithType(valType, 0), valueWithType(valType, 0))
   }
@@ -32966,7 +33023,7 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
    * Creates a new keyframe with an easing function that starts very slow, but
    * speeds up very quickly near the end.
    */
-  static launch<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+  static launch<T extends Tensor>(position: number, value: T) {
     const valType = getValueType(value)
     return new HermiteKeyframe(position, value, valueWithType(valType, 0), valueWithType(valType, 90 * deg2rad))
   }
@@ -32975,7 +33032,7 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
    * Creates a new keyframe with an easing function that starts very fast, but
    * very quickly slows down.
    */
-  static explosive<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+  static explosive<T extends Tensor>(position: number, value: T) {
     const valType = getValueType(value)
     return new HermiteKeyframe(position, value, valueWithType(valType, 90 * deg2rad), valueWithType(valType, 0))
   }
@@ -32983,7 +33040,7 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
   /**
    * Creates a new keyframe with a linear easing function.
    */
-  static linear<T extends ValueType>(position: number, value: TypeMap.PropertyValue[T]) {
+  static linear<T extends Tensor>(position: number, value: T) {
     const valType = getValueType(value)
     return new HermiteKeyframe(position, value, valueWithType(valType, 45 * deg2rad), valueWithType(valType, 45 * deg2rad))
   }
@@ -32991,18 +33048,16 @@ class HermiteKeyframe<T extends ValueType> extends Keyframe<T> implements IHermi
 }
 
 //#region Property
-abstract class Property<T extends ValueType, F extends PropertyFunction> implements IModifiableProperty<T, F> {
+abstract class Property<T extends Tensor, F extends PropertyFunction> implements IModifiableProperty<T, F> {
 
-  valueType: T
+  abstract valueType: TypeMap.ValueTypeOfTensor<T>
   function: F
   modifiers: IModifier<T>[]
 
   constructor(
-    valueType: T,
     func: F,
     modifiers: IModifier<T>[] = []
   ) {
-    this.valueType = valueType
     this.function = func
     this.modifiers = modifiers
   }
@@ -33014,7 +33069,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
-  static fromJSON<T extends ValueType>(obj: any) {
+  static fromJSON<T extends Tensor>(obj: any) {
     if (obj instanceof Property) {
       return obj
     }
@@ -33059,7 +33114,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
           for (const [i, v] of comps.entries()) {
             summand[i] += v
           }
-          return new RandomDeltaModifier<any>(comps.length === 1 ? comps[0] : comps, mod.seed)
+          return new RandomDeltaModifier<T>(comps.length === 1 ? comps[0] : comps, mod.seed)
         }
         return mod.clone()
       })
@@ -33070,7 +33125,7 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
     return this
   }
 
-  clamp(min: TypeMap.PropertyValue[T], max: TypeMap.PropertyValue[T]): Property<T, PropertyFunction> {
+  clamp(min: T, max: T): Property<T, PropertyFunction> {
     return clampProp(this, min, max)
   }
 
@@ -33079,29 +33134,30 @@ abstract class Property<T extends ValueType, F extends PropertyFunction> impleme
   abstract fieldCount: number
   abstract fields: NumericalField[]
   abstract serialize(options?: FXRSerializeOptions): any
-  abstract scale(factor: PropertyValue): this
-  abstract add(summand: PropertyValue): this
-  abstract valueAt(arg: number): TypeMap.PropertyValue[T]
+  abstract scale(factor: T | number): this
+  abstract add(summand: T | number): this
+  abstract valueAt(arg: number): T
   abstract clone(): Property<T, F>
-  abstract separateComponents(): Property<ValueType.Scalar, F>[]
-  abstract min(): TypeMap.PropertyValue[T]
-  abstract max(): TypeMap.PropertyValue[T]
+  abstract separateComponents(): Property<number, F>[]
+  abstract min(): T
+  abstract max(): T
   abstract minify(): Property<T, PropertyFunction>
 
 }
 
-class ValueProperty<T extends ValueType>
+class ValueProperty<T extends Tensor>
   extends Property<T, ValuePropertyFunction>
   implements IModifiableProperty<T, ValuePropertyFunction> {
 
-  value: TypeMap.PropertyValue[T]
+  valueType: TypeMap.ValueTypeOfTensor<T>
+  value: T
 
   constructor(
-    valueType: T,
-    value: TypeMap.PropertyValue[T],
+    value: T,
     modifiers: IModifier<T>[] = []
   ) {
-    super(valueType, PropertyFunction.Constant, modifiers)
+    super(PropertyFunction.Constant, modifiers)
+    this.valueType = getValueType(value)
     this.value = value
   }
 
@@ -33125,19 +33181,19 @@ class ValueProperty<T extends ValueType>
     return (this.value as Vector).map(e => new FloatField(e))
   }
 
-  static fromFields<T extends ValueType>(
-    valueType: T,
+  static fromFields<T extends Tensor>(
+    valueType: TypeMap.ValueTypeOfTensor<T>,
     func: ValuePropertyFunction,
     modifiers: IModifier<T>[],
     fieldValues: number[]
   ): ValueProperty<T> {
     switch (func) {
       case PropertyFunction.Zero:
-        return new ConstantProperty(valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0) as Vector).withModifiers(
+        return new ConstantProperty((valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0)) as T).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.One:
-        return new ConstantProperty(valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1) as Vector).withModifiers(
+        return new ConstantProperty((valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1)) as T).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.Constant:
@@ -33149,16 +33205,16 @@ class ValueProperty<T extends ValueType>
     }
   }
 
-  static fromJSON<T extends ValueType>(obj: {
-    value: PropertyValue
+  static fromJSON<T extends Tensor>(obj: {
+    value: T
     modifiers?: any[]
-  } | PropertyValue): ConstantProperty<T> {
+  } | T): ConstantProperty<T> {
     if (Array.isArray(obj)) {
-      return new ConstantProperty(obj as TypeMap.PropertyValue[T])
+      return new ConstantProperty(obj as unknown as T)
     } else if (typeof obj === 'number') {
-      return new ConstantProperty(obj as TypeMap.PropertyValue[T])
+      return new ConstantProperty(obj as T)
     }
-    return new ConstantProperty<T>(obj.value as TypeMap.PropertyValue[T]).withModifiers(
+    return new ConstantProperty<T>(obj.value as T).withModifiers(
       ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e) as IModifier<T>)
     )
   }
@@ -33174,57 +33230,57 @@ class ValueProperty<T extends ValueType>
     }
   }
 
-  scale(factor: TypeMap.PropertyValue[T] | number) {
+  scale(factor: T | number) {
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) *= factor as number
     } else {
       if (typeof factor === 'number') {
-        this.value = (this.value as Vector).map(e => e * factor) as TypeMap.PropertyValue[T]
+        this.value = (this.value as Vector).map(e => e * factor) as T
       } else {
-        this.value = (this.value as Vector).map((e, i) => e * factor[i]) as TypeMap.PropertyValue[T]
+        this.value = (this.value as Vector).map((e, i) => e * factor[i]) as T
       }
     }
     scalePropMods(this, factor)
     return this
   }
 
-  add(summand: TypeMap.PropertyValue[T] | number) {
+  add(summand: T | number) {
     if (this.valueType === ValueType.Scalar) {
       (this.value as number) += summand as number
     } else {
       if (typeof summand === 'number') {
-        this.value = (this.value as Vector).map(e => e + summand) as TypeMap.PropertyValue[T]
+        this.value = (this.value as Vector).map(e => e + summand) as T
       } else {
-        this.value = (this.value as Vector).map((e, i) => e + summand[i]) as TypeMap.PropertyValue[T]
+        this.value = (this.value as Vector).map((e, i) => e + summand[i]) as T
       }
     }
     return this
   }
 
-  valueAt(arg: number): TypeMap.PropertyValue[T] {
+  valueAt(arg: number): T {
     return this.value
   }
 
   clone(): ValueProperty<T> {
-    return new ValueProperty(this.valueType, this.value, this.modifiers.map(e => e.clone()))
+    return new ValueProperty(this.value, this.modifiers.map(e => e.clone()))
   }
 
-  separateComponents(): ValueProperty<ValueType.Scalar>[] {
+  separateComponents(): ValueProperty<number>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [this.clone() as ValueProperty<ValueType.Scalar>]
+      return [this.clone() as ValueProperty<number>]
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
-      return (this.value as Vector).map((e, i) => new ConstantProperty<ValueType.Scalar>(e).withModifiers(
+      return (this.value as Vector).map((e, i) => new ConstantProperty(e).withModifiers(
         ...mods.map(comps => comps[i]).filter(Modifier.isEffective)
       ))
     }
   }
 
-  min(): TypeMap.PropertyValue[T] {
+  min(): T {
     return this.value
   }
 
-  max(): TypeMap.PropertyValue[T] {
+  max(): T {
     return this.value
   }
 
@@ -33236,18 +33292,24 @@ class ValueProperty<T extends ValueType>
 
 }
 
-class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
+class SequenceProperty<T extends Tensor, F extends SequencePropertyFunction>
   extends Property<T, F>
   implements IModifiableProperty<T, F> {
 
   constructor(
-    valueType: T,
     func: F,
     public loop: boolean = false,
-    public keyframes: TypeMap.Keyframe<T>[F][] = [],
+    public keyframes: TypeMap.KeyframeOfFunction<T, F>[] = [],
     modifiers: IModifier<T>[] = []
   ) {
-    super(valueType, func, modifiers)
+    super(func, modifiers)
+  }
+
+  get valueType(): TypeMap.ValueTypeOfTensor<T> {
+    if (this.keyframes.length === 0) {
+      throw new Error('Sequence properties must have at least one keyframe.')
+    }
+    return getValueType(this.keyframes[0].value)
   }
 
   sortKeyframes() {
@@ -33331,8 +33393,8 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  static fromFields<T extends ValueType, F extends SequencePropertyFunction>(
-    valueType: T,
+  static fromFields<T extends Tensor, F extends SequencePropertyFunction>(
+    valueType: TypeMap.ValueTypeOfTensor<T>,
     func: F,
     loop: boolean,
     modifiers: IModifier<T>[],
@@ -33341,53 +33403,52 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     switch (func) {
       case PropertyFunction.Stepped:
       case PropertyFunction.Linear:
-        return new SequenceProperty(valueType, func, loop, arrayOf(
+        return new SequenceProperty(func, loop, arrayOf(
           fieldValues[0],
           i => new Keyframe(
             fieldValues[1 + 2 * (valueType + 1) + i],
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as TypeMap.PropertyValue[T]
-          ) as TypeMap.Keyframe<T>[F]
+            ) as T
+          ) as TypeMap.KeyframeOfFunction<T, F>
         ), modifiers)
       case PropertyFunction.Bezier:
       case PropertyFunction.Hermite:
-        return new SequenceProperty(valueType, func, loop, arrayOf(
+        return new SequenceProperty(func, loop, arrayOf(
           fieldValues[0],
           i => new (func === PropertyFunction.Bezier ? BezierKeyframe : HermiteKeyframe)(
             fieldValues[1 + 2 * (valueType + 1) + i],
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i) * (valueType + 1) + fieldValues[0], 1 + (2 + i) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as TypeMap.PropertyValue[T],
+            ) as T,
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as TypeMap.PropertyValue[T],
+            ) as T,
             (valueType === ValueType.Scalar ?
               fieldValues[1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0]] :
               fieldValues.slice(1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0], 1 + (2 + i + 2 * fieldValues[0]) * (valueType + 1) + fieldValues[0] + (valueType + 1)) as Vector
-            ) as TypeMap.PropertyValue[T],
-          ) as TypeMap.Keyframe<T>[F]
+            ) as T,
+          ) as TypeMap.KeyframeOfFunction<T, F>
         ), modifiers)
       default:
         throw new Error('Incompatible or unknown function in property: ' + func)
     }
   }
 
-  static fromJSON<T extends ValueType>(obj: {
+  static fromJSON<T extends Tensor>(obj: {
     function: string
     modifiers?: any[]
     keyframes?: AnyKeyframe<T>[]
     loop?: boolean
   }): SequenceProperty<T, any> {
     return new SequenceProperty(
-      (Array.isArray(obj.keyframes[0].value) ? obj.keyframes[0].value.length - 1 : ValueType.Scalar) as T,
       PropertyFunction[obj.function],
       obj.loop ?? false,
       obj.keyframes,
-      (obj.modifiers ?? []).map(mod => Modifier.fromJSON(mod))
+      (obj.modifiers ?? []).map(mod => Modifier.fromJSON<T>(mod))
     )
   }
 
@@ -33452,7 +33513,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  scale(factor: TypeMap.PropertyValue[T] | number) {
+  scale(factor: T | number) {
     if (this.valueType === ValueType.Scalar && Array.isArray(factor)) {
       throw new Error([
         'Scalar properties cannot be scaled by a vector.',
@@ -33467,7 +33528,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     return this
   }
 
-  add(summand: TypeMap.PropertyValue[T] | number) {
+  add(summand: T | number) {
     if (this.valueType === ValueType.Scalar && Array.isArray(summand)) {
       throw new Error([
         'Vectors cannot be added to scalar properties.',
@@ -33481,7 +33542,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     return this
   }
 
-  valueAt(arg: number): TypeMap.PropertyValue[T] {
+  valueAt(arg: number): T {
     if (this.loop) {
       const duration = this.duration
       if (duration === 0) {
@@ -33491,7 +33552,7 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
           this.valueType === ValueType.Scalar ?
             NaN :
             arrayOf(this.componentCount, _ => NaN)
-        ) as TypeMap.PropertyValue[T]
+        ) as T
       }
       arg %= duration
     } else if (arg > this.duration) {
@@ -33511,7 +33572,6 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
   clone(): SequenceProperty<T, F> {
     return new SequenceProperty(
-      this.valueType,
       this.function,
       this.loop,
       this.keyframes.map(e => Keyframe.copy(e)),
@@ -33519,16 +33579,15 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     )
   }
 
-  separateComponents(): SequenceProperty<ValueType.Scalar, F>[] {
+  separateComponents(): SequenceProperty<number, F>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [this.clone() as SequenceProperty<ValueType.Scalar, F>]
+      return [this.clone() as SequenceProperty<number, F>]
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
       return arrayOf(this.componentCount, i => new SequenceProperty(
-        ValueType.Scalar,
         this.function,
         this.loop,
-        this.keyframes.map(kf => Keyframe.component(kf, i) as TypeMap.Keyframe<ValueType.Scalar>[F])
+        this.keyframes.map(kf => Keyframe.component(kf, i) as TypeMap.KeyframeOfFunction<number, F>)
       ).withModifiers(
           ...mods.map(comps => comps[i]).filter(Modifier.isEffective)
         )
@@ -33536,21 +33595,21 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
     }
   }
 
-  min(): TypeMap.PropertyValue[T] {
+  min(): T {
     const cc = this.componentCount
     if (cc === 1) {
-      return Math.min(...this.keyframes.map(e => e.value as number)) as TypeMap.PropertyValue[T]
+      return Math.min(...this.keyframes.map(e => e.value as number)) as T
     } else {
-      return arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i]))) as TypeMap.PropertyValue[T]
+      return arrayOf(cc, i => Math.min(...this.keyframes.map(e => e.value[i]))) as T
     }
   }
 
-  max(): TypeMap.PropertyValue[T] {
+  max(): T {
     const cc = this.componentCount
     if (cc === 1) {
-      return Math.max(...this.keyframes.map(e => e.value as number)) as TypeMap.PropertyValue[T]
+      return Math.max(...this.keyframes.map(e => e.value as number)) as T
     } else {
-      return arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i]))) as TypeMap.PropertyValue[T]
+      return arrayOf(cc, i => Math.max(...this.keyframes.map(e => e.value[i]))) as T
     }
   }
 
@@ -33584,23 +33643,25 @@ class SequenceProperty<T extends ValueType, F extends SequencePropertyFunction>
 
 }
 
-class ComponentSequenceProperty<T extends ValueType>
+class ComponentSequenceProperty<T extends Tensor>
   extends Property<T, PropertyFunction.ComponentHermite>
   implements IModifiableProperty<T, PropertyFunction.ComponentHermite> {
 
   declare function: PropertyFunction.ComponentHermite
 
-  components: GenComponents<HermiteProperty<ValueType.Scalar>, T>
+  valueType: TypeMap.ValueTypeOfTensor<T>
+  components: TypeMap.ComponentsOfTensor<HermiteProperty<number>, T>
 
   constructor(
     public loop: boolean = false,
-    components: GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>,
+    components: TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], T>,
     modifiers: IModifier<T>[] = []
   ) {
-    super(components.length - 1 as T, PropertyFunction.ComponentHermite, modifiers)
+    super(PropertyFunction.ComponentHermite, modifiers)
+    this.valueType = components.length - 1 as TypeMap.ValueTypeOfTensor<T>
     this.components = components.map(
       e => new HermiteProperty(false, e)
-    ) as GenComponents<HermiteProperty<ValueType.Scalar>, T>
+    ) as TypeMap.ComponentsOfTensor<HermiteProperty<number>, T>
   }
 
   sortComponentKeyframes() {
@@ -33629,8 +33690,8 @@ class ComponentSequenceProperty<T extends ValueType>
     ]
   }
 
-  static fromFields<T extends ValueType>(
-    valueType: T,
+  static fromFields<T extends Tensor>(
+    valueType: TypeMap.ValueTypeOfTensor<T>,
     loop: boolean,
     modifiers: IModifier<T>[],
     fieldValues: number[]
@@ -33641,14 +33702,14 @@ class ComponentSequenceProperty<T extends ValueType>
         fieldValues[1 + i], 0, 0,
         ...fieldValues.slice(offset, offset = offset + 4 * fieldValues[1 + i])
       ]).keyframes
-    }) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>, modifiers)
+    }) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], T>, modifiers)
   }
 
   serialize(options?: FXRSerializeOptions) {
     const o: {
       function: 'ComponentHermite'
       loop: boolean
-      components: IHermiteKeyframe<ValueType.Scalar>[][]
+      components: IHermiteKeyframe<number>[][]
       modifiers?: any[]
     } = {
       function: PropertyFunction[this.function] as 'ComponentHermite',
@@ -33664,12 +33725,12 @@ class ComponentSequenceProperty<T extends ValueType>
     return o
   }
 
-  static fromJSON<T extends ValueType>({
+  static fromJSON<T extends Tensor>({
     components,
     loop = false,
     modifiers = []
   }: {
-    components: GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>
+    components: TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], T>
     loop: boolean
     modifiers?: any[]
   }): ComponentSequenceProperty<T> {
@@ -33680,7 +33741,7 @@ class ComponentSequenceProperty<T extends ValueType>
     )
   }
 
-  scale(factor: TypeMap.PropertyValue[T] | number) {
+  scale(factor: T | number) {
     for (const [i, comp] of this.components.entries()) {
       comp.scale(typeof factor === 'number' ? factor : factor[i])
     }
@@ -33688,14 +33749,14 @@ class ComponentSequenceProperty<T extends ValueType>
     return this
   }
 
-  add(summand: TypeMap.PropertyValue[T] | number) {
+  add(summand: T | number) {
     for (const [i, comp] of this.components.entries()) {
       comp.add(typeof summand === 'number' ? summand : summand[i])
     }
     return this
   }
 
-  valueAt(arg: number): TypeMap.PropertyValue[T] {
+  valueAt(arg: number): T {
     if (this.loop) {
       const duration = this.duration
       if (duration === 0) {
@@ -33705,7 +33766,7 @@ class ComponentSequenceProperty<T extends ValueType>
           this.valueType === ValueType.Scalar ?
             NaN :
             arrayOf(this.componentCount, _ => NaN)
-        ) as TypeMap.PropertyValue[T]
+        ) as T
       }
       arg %= duration
     }
@@ -33713,7 +33774,7 @@ class ComponentSequenceProperty<T extends ValueType>
       this.valueType === ValueType.Scalar ?
         this.components[0].valueAt(arg)
       : this.components.map(e => e.valueAt(arg))
-    ) as TypeMap.PropertyValue[T]
+    ) as T
   }
 
   clone(): ComponentSequenceProperty<T> {
@@ -33721,14 +33782,14 @@ class ComponentSequenceProperty<T extends ValueType>
       this.loop,
       this.components.map(
         e => e.keyframes.map(f => Keyframe.copy(f))
-      ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], T>,
+      ) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], T>,
       this.modifiers.map(e => e.clone())
     )
   }
 
-  separateComponents(): ComponentSequenceProperty<ValueType.Scalar>[] {
+  separateComponents(): ComponentSequenceProperty<number>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [this.clone() as ComponentSequenceProperty<ValueType.Scalar>]
+      return [this.clone() as ComponentSequenceProperty<number>]
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
       return arrayOf(this.componentCount, i => new ComponentSequenceProperty(
@@ -33768,15 +33829,15 @@ class ComponentSequenceProperty<T extends ValueType>
     if (this.canBeSimplified()) {
       if (this.valueType === ValueType.Scalar) {
         return new HermiteProperty(this.loop, this.components[0].keyframes).withModifiers(
-          ...(this.modifiers as IModifier<ValueType.Scalar>[])
+          ...(this.modifiers as IModifier<number>[])
         ) as HermiteProperty<T>
       }
       return new HermiteProperty(this.loop, arrayOf(this.components[0].keyframes.length, i => new HermiteKeyframe(
         this.components[0].keyframes[i].position,
-        this.components.map(c => c.keyframes[i].value) as Vector,
-        this.components.map(c => c.keyframes[i].t1) as Vector,
-        this.components.map(c => c.keyframes[i].t2) as Vector,
-      ))).withModifiers(...this.modifiers) as HermiteProperty<T>
+        this.components.map(c => c.keyframes[i].value) as T,
+        this.components.map(c => c.keyframes[i].t1) as T,
+        this.components.map(c => c.keyframes[i].t2) as T,
+      ))).withModifiers(...this.modifiers)
     }
     const positions = new Set<number>
     for (const comp of this.components) {
@@ -33789,19 +33850,19 @@ class ComponentSequenceProperty<T extends ValueType>
     return new LinearProperty(this.loop, keyframes).withModifiers(...this.modifiers.map(mod => mod.clone()))
   }
 
-  min(): TypeMap.PropertyValue[T] {
+  min(): T {
     if (this.valueType == ValueType.Scalar) {
-      return this.components[0].min() as TypeMap.PropertyValue[T]
+      return this.components[0].min() as T
     } else {
-      return this.components.map(c => c.min()) as TypeMap.PropertyValue[T]
+      return this.components.map(c => c.min()) as T
     }
   }
 
-  max(): TypeMap.PropertyValue[T] {
+  max(): T {
     if (this.valueType == ValueType.Scalar) {
-      return this.components[0].max() as TypeMap.PropertyValue[T]
+      return this.components[0].max() as T
     } else {
-      return this.components.map(c => c.max()) as TypeMap.PropertyValue[T]
+      return this.components.map(c => c.max()) as T
     }
   }
 
@@ -33814,8 +33875,8 @@ class ComponentSequenceProperty<T extends ValueType>
     ) {
       return new ConstantProperty<T>(
         this.valueType === ValueType.Scalar ?
-          this.components[0].keyframes[0].value as TypeMap.PropertyValue[T] :
-          this.components.map(c => c.keyframes[0].value) as TypeMap.PropertyValue[T]
+          this.components[0].keyframes[0].value as T :
+          this.components.map(c => c.keyframes[0].value) as T
       ).withModifiers(
         ...this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
       )
@@ -33838,22 +33899,12 @@ class ComponentSequenceProperty<T extends ValueType>
 
 }
 
-class ConstantProperty<T extends ValueType> extends ValueProperty<T> {
+class ConstantProperty<T extends Tensor> extends ValueProperty<T> {}
 
-  constructor(value: TypeMap.PropertyValue[T], modifiers?: IModifier<T>[]) {
-    super(getValueType(value), value, modifiers)
-  }
-
-}
-
-class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Stepped> {
+class SteppedProperty<T extends Tensor> extends SequenceProperty<T, PropertyFunction.Stepped> {
 
   constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
-    if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframe.')
-    }
-    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
-    super(comps - 1 as T, PropertyFunction.Stepped, loop, keyframes)
+    super(PropertyFunction.Stepped, loop, keyframes)
   }
 
   /**
@@ -33862,10 +33913,10 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static basic<T extends ValueType>(
+  static basic<T extends Tensor>(
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): SteppedProperty<T> {
     return new SteppedProperty(false, [
       new Keyframe(0, startValue),
@@ -33875,14 +33926,10 @@ class SteppedProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
 
 }
 
-class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Linear> {
+class LinearProperty<T extends Tensor> extends SequenceProperty<T, PropertyFunction.Linear> {
 
   constructor(loop: boolean, keyframes: IBasicKeyframe<T>[]) {
-    if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframe.')
-    }
-    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
-    super(comps - 1 as T, PropertyFunction.Linear, loop, keyframes)
+    super(PropertyFunction.Linear, loop, keyframes)
   }
 
   /**
@@ -33893,11 +33940,11 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static basic<T extends ValueType>(
+  static basic<T extends Tensor>(
     loop: boolean,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): LinearProperty<T> {
     return new LinearProperty(loop, [
       new Keyframe(0, startValue),
@@ -33913,11 +33960,11 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static withSpeed<T extends ValueType>(
+  static withSpeed<T extends Tensor>(
     loop: boolean,
     speed: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): LinearProperty<T> {
     if (getComponentCount(startValue) !== getComponentCount(endValue)) {
       throw new Error('Start and end values do not have the same number of components.')
@@ -33947,13 +33994,13 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static power<T extends ValueType>(
+  static power<T extends Tensor>(
     loop: boolean,
     exponent: number,
     keyframeCount: number,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): LinearProperty<T> {
     if (keyframeCount < 2) {
       throw new Error('Property stop count must be greater than or equal to 2.')
@@ -33961,12 +34008,12 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
     if (Array.isArray(startValue) && Array.isArray(endValue)) {
       return new LinearProperty(loop, arrayOf(keyframeCount, i => new Keyframe(
         i / (keyframeCount - 1) * duration,
-        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (keyframeCount - 1)) ** exponent)) as TypeMap.PropertyValue[T]
+        startValue.map((e: number, j: number) => lerp(e, endValue[j], (i / (keyframeCount - 1)) ** exponent)) as T
       )))
     } else if (typeof startValue === 'number' && typeof endValue === 'number') {
       return new LinearProperty(loop, arrayOf(keyframeCount, i => new Keyframe(
         i / (keyframeCount - 1) * duration,
-        lerp(startValue, endValue, (i / (keyframeCount - 1)) ** exponent) as TypeMap.PropertyValue[T]
+        lerp(startValue, endValue, (i / (keyframeCount - 1)) ** exponent) as T
       )))
     } else {
       throw new Error('startValue and endValue must be of the same type.')
@@ -33983,9 +34030,9 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
    * @param stops The number of stops to use to approximate the sine wave.
    * Higher values result in a smoother curve. Defaults to 21.
    */
-  static sine<T extends ValueType>(
-    min: TypeMap.PropertyValue[T],
-    max: TypeMap.PropertyValue[T],
+  static sine<T extends Tensor>(
+    min: T,
+    max: T,
     period: number,
     phaseShift: number = 0,
     stops: number = 21
@@ -33995,14 +34042,14 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
         i / (stops - 1) * period,
         min.map((e, j) => (max[j] + e) / 2 + (max[j] - e) / 2 * Math.sin(
           (i / (stops - 1) + phaseShift) * Math.PI * 2
-        )) as TypeMap.PropertyValue[T]
+        )) as T
       )))
     } else if (typeof min === 'number' && typeof max === 'number') {
       return new LinearProperty(true, arrayOf(stops, i => new Keyframe(
         i / (stops - 1) * period,
         (max + min) / 2 + (max - min) / 2 * Math.sin(
           (i / (stops - 1) + phaseShift) * Math.PI * 2
-        ) as TypeMap.PropertyValue[T]
+        ) as T
       )))
     } else {
       throw new Error('min and max must be of the same type.')
@@ -34011,26 +34058,18 @@ class LinearProperty<T extends ValueType> extends SequenceProperty<T, PropertyFu
 
 }
 
-class BezierProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Bezier> {
+class BezierProperty<T extends Tensor> extends SequenceProperty<T, PropertyFunction.Bezier> {
 
   constructor(loop: boolean, keyframes: IBezierKeyframe<T>[]) {
-    if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframe.')
-    }
-    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
-    super(comps - 1 as T, PropertyFunction.Bezier, loop, keyframes)
+    super(PropertyFunction.Bezier, loop, keyframes)
   }
 
 }
 
-class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyFunction.Hermite> {
+class HermiteProperty<T extends Tensor> extends SequenceProperty<T, PropertyFunction.Hermite> {
 
   constructor(loop: boolean, keyframes: IHermiteKeyframe<T>[]) {
-    if (keyframes.length === 0) {
-      throw new Error ('Sequence properties must have at least one keyframe.')
-    }
-    const comps = Array.isArray(keyframes[0].value) ? keyframes[0].value.length : 1
-    super(comps - 1 as T, PropertyFunction.Hermite, loop, keyframes)
+    super(PropertyFunction.Hermite, loop, keyframes)
   }
 
   /**
@@ -34045,11 +34084,11 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static ease<T extends ValueType>(
+  static ease<T extends Tensor>(
     loop: boolean,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): HermiteProperty<T> {
     return new HermiteProperty(loop, [
       HermiteKeyframe.ease(0, startValue),
@@ -34069,11 +34108,11 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static easeIn<T extends ValueType>(
+  static easeIn<T extends Tensor>(
     loop: boolean,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): HermiteProperty<T> {
     return new HermiteProperty(loop, [
       HermiteKeyframe.easeIn(0, startValue),
@@ -34093,11 +34132,11 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static easeOut<T extends ValueType>(
+  static easeOut<T extends Tensor>(
     loop: boolean,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): HermiteProperty<T> {
     return new HermiteProperty(loop, [
       HermiteKeyframe.easeOut(0, startValue),
@@ -34117,11 +34156,11 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static easeInOut<T extends ValueType>(
+  static easeInOut<T extends Tensor>(
     loop: boolean,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): HermiteProperty<T> {
     return new HermiteProperty(loop, [
       HermiteKeyframe.easeInOut(0, startValue),
@@ -34138,11 +34177,11 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static launch<T extends ValueType>(
+  static launch<T extends Tensor>(
     loop: boolean,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): HermiteProperty<T> {
     return new HermiteProperty(loop, [
       HermiteKeyframe.launch(0, startValue),
@@ -34159,11 +34198,11 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
    * @param startValue The value at the start of the animation.
    * @param endValue The value at the end of the animation.
    */
-  static explosive<T extends ValueType>(
+  static explosive<T extends Tensor>(
     loop: boolean,
     duration: number,
-    startValue: TypeMap.PropertyValue[T],
-    endValue: TypeMap.PropertyValue[T]
+    startValue: T,
+    endValue: T
   ): HermiteProperty<T> {
     return new HermiteProperty(loop, [
       HermiteKeyframe.explosive(0, startValue),
@@ -34184,10 +34223,10 @@ class HermiteProperty<T extends ValueType> extends SequenceProperty<T, PropertyF
  * random seed. See {@link randomSeed} if you want a random seed *and* to link
  * multiple values together.
  */
-function RandomDeltaProperty<T extends ValueType>(
-  mean: TypeMap.PropertyValue[T],
-  devation: TypeMap.PropertyValue[T],
-  seed?: TypeMap.PropertyValue[T]
+function RandomDeltaProperty<T extends Tensor>(
+  mean: T,
+  devation: T,
+  seed?: T
 ): ConstantProperty<T> {
   return new ConstantProperty<T>(mean).withModifiers(
     new RandomDeltaModifier(devation, seed)
@@ -34206,13 +34245,13 @@ function RandomDeltaProperty<T extends ValueType>(
  * random seed. See {@link randomSeed} if you want a random seed *and* to link
  * multiple values together.
  */
-function RandomRangeProperty<T extends ValueType>(
-  minValue: TypeMap.PropertyValue[T],
-  maxValue: TypeMap.PropertyValue[T],
-  seed?: TypeMap.PropertyValue[T]
+function RandomRangeProperty<T extends Tensor>(
+  minValue: T,
+  maxValue: T,
+  seed?: T
 ): ConstantProperty<T> {
   return new ConstantProperty<T>(
-    (Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0) as TypeMap.PropertyValue[T]
+    (Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0) as T
   ).withModifiers(
     new RandomRangeModifier(minValue, maxValue, seed)
   )
@@ -34230,10 +34269,10 @@ function RandomRangeProperty<T extends ValueType>(
  * random seed. See {@link randomSeed} if you want a random seed *and* to link
  * multiple values together.
  */
-function RandomFractionProperty<T extends ValueType>(
-  mean: TypeMap.PropertyValue[T],
-  devationFract: TypeMap.PropertyValue[T],
-  seed?: TypeMap.PropertyValue[T]
+function RandomFractionProperty<T extends Tensor>(
+  mean: T,
+  devationFract: T,
+  seed?: T
 ): ConstantProperty<T> {
   return new ConstantProperty<T>(mean).withModifiers(
     new RandomFractionModifier(devationFract, seed)
@@ -34272,20 +34311,20 @@ function RainbowProperty(duration: number = 4, loop: boolean = true) {
  * is set to "Off".
  * @returns 
  */
-function BloodVisibilityProperty<T extends ValueType>(
-  onValue: TypeMap.PropertyValue[T],
-  mildValue: TypeMap.PropertyValue[T],
-  offValue: TypeMap.PropertyValue[T]
+function BloodVisibilityProperty<T extends Tensor>(
+  onValue: T,
+  mildValue: T,
+  offValue: T
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>((typeof onValue === 'number' ? 1 : onValue.map(() => 1)) as TypeMap.PropertyValue[T]).withModifiers(
+  return new ConstantProperty<T>((typeof onValue === 'number' ? 1 : onValue.map(() => 1)) as T, [
     BloodVisibilityModifier(onValue, mildValue, offValue)
-  )
+  ])
 }
 
 //#region Modifier
 namespace Modifier {
 
-  export function fromJSON<T extends ValueType>(obj: any): IModifier<T> {
+  export function fromJSON<T extends Tensor>(obj: any): IModifier<T> {
     if ('fields' in obj || 'properties' in obj || !(obj.type in ModifierType)) {
       return new GenericModifier(
         obj.type,
@@ -34299,15 +34338,15 @@ namespace Modifier {
     }
     switch (ModifierType[obj.type as string]) {
       case ModifierType.RandomDelta:
-        return new RandomDeltaModifier(obj.max, obj.seed)
+        return new RandomDeltaModifier<T>(obj.max, obj.seed)
       case ModifierType.RandomRange:
-        return new RandomRangeModifier(obj.min, obj.max, obj.seed)
+        return new RandomRangeModifier<T>(obj.min, obj.max, obj.seed)
       case ModifierType.RandomFraction:
-        return new RandomFractionModifier(obj.max, obj.seed)
+        return new RandomFractionModifier<T>(obj.max, obj.seed)
       case ModifierType.ExternalValue1:
-        return new ExternalValue1Modifier(obj.externalValue, Property.fromJSON(obj.factor) as any)
+        return new ExternalValue1Modifier<T>(obj.externalValue, Property.fromJSON(obj.factor))
       case ModifierType.ExternalValue2:
-        return new ExternalValue2Modifier(obj.externalValue, Property.fromJSON(obj.factor) as any)
+        return new ExternalValue2Modifier<T>(obj.externalValue, Property.fromJSON(obj.factor))
     }
   }
 
@@ -34354,46 +34393,46 @@ namespace Modifier {
     return (type >>> 4 | 0b1100) << 12 | (type & 0b1111) << 4 | valueType
   }
 
-  export function vectorFromScalar<T extends ValueType>(mod: IModifier<ValueType.Scalar>, vt: T): IModifier<any> {
+  export function vectorFromScalar<T extends Tensor>(mod: IModifier<number>, vt: TypeMap.ValueTypeOfTensor<T>): IModifier<T> {
     const cc = vt + 1
     if (mod instanceof RandomDeltaModifier) {
       return new RandomDeltaModifier(
-        arrayOf(cc, () => mod.max) as TypeMap.PropertyValue[T],
-        arrayOf(cc, () => mod.seed) as TypeMap.PropertyValue[T],
+        arrayOf(cc, () => mod.max) as T,
+        arrayOf(cc, () => mod.seed) as T,
       )
     } else if (mod instanceof RandomRangeModifier) {
       return new RandomRangeModifier(
-        arrayOf(cc, () => mod.min) as TypeMap.PropertyValue[T],
-        arrayOf(cc, () => mod.max) as TypeMap.PropertyValue[T],
-        arrayOf(cc, () => mod.seed) as TypeMap.PropertyValue[T],
+        arrayOf(cc, () => mod.min) as T,
+        arrayOf(cc, () => mod.max) as T,
+        arrayOf(cc, () => mod.seed) as T,
       )
     } else if (mod instanceof RandomFractionModifier) {
       return new RandomFractionModifier(
-        arrayOf(cc, () => mod.max) as TypeMap.PropertyValue[T],
-        arrayOf(cc, () => mod.seed) as TypeMap.PropertyValue[T],
+        arrayOf(cc, () => mod.max) as T,
+        arrayOf(cc, () => mod.seed) as T,
       )
     } else if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
       let prop = mod.factor
       if (prop instanceof ValueProperty) {
-        prop = new ValueProperty(vt, arrayOf(cc,
-          () => (prop as ValueProperty<ValueType.Scalar>).value as number
-        ) as TypeMap.PropertyValue[T])
+        prop = new ValueProperty(arrayOf(cc,
+          () => (prop as ValueProperty<number>).value
+        ) as T)
       } else if (prop instanceof SequenceProperty) {
-        prop = new SequenceProperty(vt, prop.function, prop.loop, prop.keyframes.map(kf =>
-          new Keyframe(kf.position, arrayOf(cc, () => kf.value) as TypeMap.PropertyValue[T])
+        prop = new SequenceProperty(prop.function, prop.loop, prop.keyframes.map(kf =>
+          new Keyframe(kf.position, arrayOf(cc, () => kf.value) as T)
         ))
       } else if (prop instanceof ComponentSequenceProperty) {
         prop = new ComponentSequenceProperty(prop.loop,
           arrayOf(cc,
             () => (prop as ComponentSequenceProperty<any>).components[0].keyframes.map(kf => Keyframe.copy(kf))
-          ) as GenComponents<IHermiteKeyframe<ValueType.Scalar>[], ValueType>
+          ) as TypeMap.ComponentsOfTensor<IHermiteKeyframe<number>[], ValueType>
         )
       }
       return new (mod.constructor as any)(mod.externalValue, prop)
     }
   }
 
-  export function multPropertyValue<T extends ValueType>(mod: IModifier<T>, v: TypeMap.PropertyValue[T] | number): IModifier<T> {
+  export function multTensor<T extends Tensor>(mod: IModifier<T>, v: T | number): IModifier<T> {
     mod = mod.clone()
     if (typeof v === 'number') {
       if (mod instanceof RandomDeltaModifier) {
@@ -34415,14 +34454,14 @@ namespace Modifier {
       if (mod instanceof RandomDeltaModifier) {
         if (mod.valueType === ValueType.Scalar) {
           mod.max *= v[0]
-        } else for (let i = mod.valueType; i >= 0; i--) {
+        } else for (let i: number = mod.valueType; i >= 0; i--) {
           mod.max[i] *= v[i]
         }
       } else if (mod instanceof RandomRangeModifier) {
         if (mod.valueType === ValueType.Scalar) {
           mod.min *= v[0]
           mod.max *= v[0]
-        } else for (let i = mod.valueType; i >= 0; i--) {
+        } else for (let i: number = mod.valueType; i >= 0; i--) {
           mod.min[i] *= v[i]
           mod.max[i] *= v[i]
         }
@@ -34431,7 +34470,7 @@ namespace Modifier {
     return mod
   }
 
-  export function isEffective(mod: IModifier<ValueType>): boolean {
+  export function isEffective(mod: IModifier<Tensor>): boolean {
     if (mod instanceof GenericModifier) {
       return true
     }
@@ -34439,7 +34478,7 @@ namespace Modifier {
       if (mod.valueType === ValueType.Scalar) {
         return mod.max !== 0 && mod.seed !== 0
       } else {
-        type T = RandomDeltaModifier<VectorValueType> | RandomFractionModifier<VectorValueType>
+        type T = RandomDeltaModifier<Vector> | RandomFractionModifier<Vector>
         return (
           (mod as T).max.some(e => e !== 0) &&
           (mod as T).seed.some(e => e !== 0)
@@ -34450,7 +34489,7 @@ namespace Modifier {
       if (mod.valueType === ValueType.Scalar) {
         return (mod.min !== 0 || mod.max !== 0) && mod.seed !== 0
       } else {
-        type T = RandomRangeModifier<VectorValueType>
+        type T = RandomRangeModifier<Vector>
         return (
           (
             (mod as T).min.some(e => e !== 0) ||
@@ -34461,6 +34500,12 @@ namespace Modifier {
       }
     }
     if (mod instanceof ExternalValue1Modifier || mod instanceof ExternalValue2Modifier) {
+      function isOne(value: Tensor) {
+        if (isVector(value)) {
+          return value.every(e => e === 1)
+        }
+        return value === 1
+      }
       if (mod.factor instanceof ValueProperty) {
         return !mod.factor.isOne
       }
@@ -34469,10 +34514,13 @@ namespace Modifier {
           case PropertyFunction.Stepped:
           case PropertyFunction.Linear:
           case PropertyFunction.Hermite:
-            return mod.factor.keyframes.some(e => e.value !== 1)
+            return mod.factor.keyframes.some(kf => !isOne(kf.value))
         }
       }
-      return mod.factor !== 1
+      if (mod.factor instanceof ComponentSequenceProperty) {
+        return mod.factor.components.some(comp => comp.keyframes.some(kf => !isOne(kf.value)))
+      }
+      throw new Error('Property external value modifier factor must be an instance of Property.')
     }
   }
 
@@ -34484,11 +34532,11 @@ namespace Modifier {
  * research, and usage of it will greatly limit various functions in the
  * library. Do not use it unless you know what you're doing.
  */
-class GenericModifier<T extends ValueType> implements IModifier<T> {
+class GenericModifier<T extends Tensor> implements IModifier<T> {
 
   constructor(
     public readonly type: ModifierType,
-    public readonly valueType: T,
+    public readonly valueType: TypeMap.ValueTypeOfTensor<T>,
     public fields: Field<FieldType>[],
     public properties: IProperty<T, PropertyFunction>[],
   ) {}
@@ -34505,8 +34553,8 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
     return this.properties.length
   }
 
-  getProperties(game: Game): AnyProperty[] {
-    return this.properties.map(prop => prop.for(game) as AnyProperty)
+  getProperties(game: Game): UnmodifiableTensorProperty[] {
+    return this.properties.map(prop => prop.for(game) as UnmodifiableTensorProperty)
   }
 
   toJSON() { return this.serialize() }
@@ -34514,7 +34562,7 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
   serialize(options?: FXRSerializeOptions) {
     const o: {
       type: string
-      valueType: T
+      valueType: TypeMap.ValueTypeOfTensor<T>
       fields?: any[]
       properties?: any[]
     } = {
@@ -34539,7 +34587,7 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
     )
   }
 
-  separateComponents(): IModifier<ValueType.Scalar>[] {
+  separateComponents(): IModifier<number>[] {
     throw new Error('Generic modifiers cannot be split into component modifiers.')
   }
 
@@ -34555,14 +34603,14 @@ class GenericModifier<T extends ValueType> implements IModifier<T> {
  * and `max` is the {@link max maximum difference}, the property's modified
  * value will be between `p - max` and `p + max`.
  */
-class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
+class RandomDeltaModifier<T extends Tensor> implements IModifier<T> {
 
   readonly type: ModifierType = ModifierType.RandomDelta
-  readonly valueType: T
+  readonly valueType: TypeMap.ValueTypeOfTensor<T>
 
   constructor(
-    public max: TypeMap.PropertyValue[T],
-    public seed: TypeMap.PropertyValue[T] = randomSeed(getValueType(max)) as TypeMap.PropertyValue[T]
+    public max: T,
+    public seed: T = randomSeed(getValueType(max))
   ) {
     this.valueType = getValueType(max)
     if (this.valueType !== getValueType(seed)) {
@@ -34592,7 +34640,7 @@ class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
     return 0
   }
 
-  getProperties(game: Game): AnyProperty[] {
+  getProperties(game: Game): TensorProperty[] {
     return []
   }
 
@@ -34608,14 +34656,14 @@ class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
 
   clone(): RandomDeltaModifier<T> {
     return new RandomDeltaModifier(
-      typeof this.max === 'number' ? this.max : this.max.slice() as TypeMap.PropertyValue[T],
-      typeof this.seed === 'number' ? this.seed : this.seed.slice() as TypeMap.PropertyValue[T]
+      typeof this.max === 'number' ? this.max : this.max.slice() as T,
+      typeof this.seed === 'number' ? this.seed : this.seed.slice() as T
     )
   }
 
-  separateComponents(): IModifier<ValueType.Scalar>[] {
+  separateComponents(): IModifier<number>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [ this.clone() as IModifier<ValueType.Scalar> ]
+      return [ this.clone() as IModifier<number> ]
     } else {
       return (this.max as Vector).map((e, i) => new RandomDeltaModifier(e, (this.seed as Vector)[i]))
     }
@@ -34630,15 +34678,15 @@ class RandomDeltaModifier<T extends ValueType> implements IModifier<T> {
 /**
  * Adds a random value in a given range to a property's value.
  */
-class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
+class RandomRangeModifier<T extends Tensor> implements IModifier<T> {
 
   readonly type: ModifierType = ModifierType.RandomRange
-  readonly valueType: T
+  readonly valueType: TypeMap.ValueTypeOfTensor<T>
 
   constructor(
-    public min: TypeMap.PropertyValue[T],
-    public max: TypeMap.PropertyValue[T],
-    public seed: TypeMap.PropertyValue[T] = randomSeed(getValueType(min)) as TypeMap.PropertyValue[T]
+    public min: T,
+    public max: T,
+    public seed: T = randomSeed(getValueType(min))
   ) {
     this.valueType = getValueType(min)
     if (this.valueType !== getValueType(seed)) {
@@ -34670,7 +34718,7 @@ class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
     return 0
   }
 
-  getProperties(game: Game): AnyProperty[] {
+  getProperties(game: Game): TensorProperty[] {
     return []
   }
 
@@ -34687,15 +34735,15 @@ class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
 
   clone(): RandomRangeModifier<T> {
     return new RandomRangeModifier(
-      typeof this.min === 'number' ? this.min : this.min.slice() as TypeMap.PropertyValue[T],
-      typeof this.max === 'number' ? this.max : this.max.slice() as TypeMap.PropertyValue[T],
-      typeof this.seed === 'number' ? this.seed : this.seed.slice() as TypeMap.PropertyValue[T]
+      typeof this.min === 'number' ? this.min : this.min.slice() as T,
+      typeof this.max === 'number' ? this.max : this.max.slice() as T,
+      typeof this.seed === 'number' ? this.seed : this.seed.slice() as T
     )
   }
 
-  separateComponents(): IModifier<ValueType.Scalar>[] {
+  separateComponents(): IModifier<number>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [ this.clone() as IModifier<ValueType.Scalar> ]
+      return [ this.clone() as IModifier<number> ]
     } else {
       return (this.min as Vector).map((e, i) => new RandomRangeModifier(e, (this.max as Vector)[i], (this.seed as Vector)[i]))
     }
@@ -34713,14 +34761,14 @@ class RandomRangeModifier<T extends ValueType> implements IModifier<T> {
  * base value and `max` is the {@link max maximum fraction}, the property's
  * modified value will be between `p - p * max` and `p + p * max`.
  */
-class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
+class RandomFractionModifier<T extends Tensor> implements IModifier<T> {
 
   readonly type: ModifierType = ModifierType.RandomFraction
-  readonly valueType: T
+  readonly valueType: TypeMap.ValueTypeOfTensor<T>
 
   constructor(
-    public max: TypeMap.PropertyValue[T],
-    public seed: TypeMap.PropertyValue[T] = randomSeed(getValueType(max)) as TypeMap.PropertyValue[T]
+    public max: T,
+    public seed: T = randomSeed(getValueType(max))
   ) {
     this.valueType = getValueType(max)
     if (this.valueType !== getValueType(seed)) {
@@ -34750,7 +34798,7 @@ class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
     return 0
   }
 
-  getProperties(game: Game): AnyProperty[] {
+  getProperties(game: Game): TensorProperty[] {
     return []
   }
 
@@ -34766,14 +34814,14 @@ class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
 
   clone(): RandomFractionModifier<T> {
     return new RandomFractionModifier(
-      typeof this.max === 'number' ? this.max : this.max.slice() as TypeMap.PropertyValue[T],
-      typeof this.seed === 'number' ? this.seed : this.seed.slice() as TypeMap.PropertyValue[T]
+      typeof this.max === 'number' ? this.max : this.max.slice() as T,
+      typeof this.seed === 'number' ? this.seed : this.seed.slice() as T
     )
   }
 
-  separateComponents(): IModifier<ValueType.Scalar>[] {
+  separateComponents(): IModifier<number>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [ this.clone() as IModifier<ValueType.Scalar> ]
+      return [ this.clone() as IModifier<number> ]
     }
     return (this.max as Vector).map((e, i) => new RandomFractionModifier(e, (this.seed as Vector)[i]))
   }
@@ -34788,16 +34836,16 @@ class RandomFractionModifier<T extends ValueType> implements IModifier<T> {
  * Modifies a property's value by multiplying it with different values
  * depending on an {@link ExternalValue external value}.
  */
-class ExternalValue1Modifier<T extends ValueType> implements IModifier<T> {
+class ExternalValue1Modifier<T extends Tensor> implements IModifier<T> {
 
   readonly type: ModifierType = ModifierType.ExternalValue1
-  readonly valueType: T
+  readonly valueType: TypeMap.ValueTypeOfTensor<T>
 
   constructor(
     public externalValue: AnyExternalValue,
-    public factor: TypeMap.Property[T]
+    public factor: Property<T, PropertyFunction>
   ) {
-    this.valueType = factor.valueType as T
+    this.valueType = factor.valueType
   }
 
   getFieldCount(): number {
@@ -34814,7 +34862,7 @@ class ExternalValue1Modifier<T extends ValueType> implements IModifier<T> {
     return 1
   }
 
-  getProperties(game: Game): AnyProperty[] {
+  getProperties(game: Game): UnmodifiableTensorProperty[] {
     return [
       this.factor.for(game)
     ]
@@ -34833,35 +34881,35 @@ class ExternalValue1Modifier<T extends ValueType> implements IModifier<T> {
   clone(): ExternalValue1Modifier<T> {
     return new ExternalValue1Modifier(
       this.externalValue,
-      this.factor.clone() as TypeMap.Property[T]
+      this.factor.clone()
     )
   }
 
-  separateComponents(): IModifier<ValueType.Scalar>[] {
+  separateComponents(): IModifier<number>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [ this.clone() as IModifier<ValueType.Scalar> ]
+      return [ this.clone() as IModifier<number> ]
     }
     return this.factor.separateComponents().map(e => new ExternalValue1Modifier(this.externalValue, e))
   }
 
   minify(): ExternalValue1Modifier<T> {
     const clone = this.clone()
-    clone.factor = clone.factor.minify() as TypeMap.Property[T]
+    clone.factor = clone.factor.minify()
     return clone
   }
 
 }
 
-class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
+class ExternalValue2Modifier<T extends Tensor> implements IModifier<T> {
 
   readonly type: ModifierType = ModifierType.ExternalValue2
-  readonly valueType: T
+  readonly valueType: TypeMap.ValueTypeOfTensor<T>
 
   constructor(
     public externalValue: AnyExternalValue,
-    public factor: TypeMap.Property[T]
+    public factor: Property<T, PropertyFunction>
   ) {
-    this.valueType = factor.valueType as T
+    this.valueType = factor.valueType
   }
 
   getFieldCount(): number {
@@ -34878,7 +34926,7 @@ class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
     return 1
   }
 
-  getProperties(game: Game): AnyProperty[] {
+  getProperties(game: Game): UnmodifiableTensorProperty[] {
     return [
       this.factor.for(game)
     ]
@@ -34897,20 +34945,20 @@ class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
   clone(): ExternalValue2Modifier<T> {
     return new ExternalValue2Modifier(
       this.externalValue,
-      this.factor.clone() as TypeMap.Property[T]
+      this.factor.clone()
     )
   }
 
-  separateComponents(): IModifier<ValueType.Scalar>[] {
+  separateComponents(): IModifier<number>[] {
     if (this.valueType === ValueType.Scalar) {
-      return [ this.clone() as IModifier<ValueType.Scalar> ]
+      return [ this.clone() as IModifier<number> ]
     }
     return this.factor.separateComponents().map(e => new ExternalValue2Modifier(this.externalValue, e))
   }
 
   minify(): ExternalValue2Modifier<T> {
     const clone = this.clone()
-    clone.factor = clone.factor.minify() as TypeMap.Property[T]
+    clone.factor = clone.factor.minify()
     return clone
   }
 
@@ -34925,17 +34973,17 @@ class ExternalValue2Modifier<T extends ValueType> implements IModifier<T> {
  * @param modifierConstructor 
  * @returns 
  */
-function BloodVisibilityModifier<T extends ValueType>(
-  onValue: TypeMap.PropertyValue[T],
-  mildValue: TypeMap.PropertyValue[T],
-  offValue: TypeMap.PropertyValue[T],
+function BloodVisibilityModifier<T extends Tensor>(
+  onValue: T,
+  mildValue: T,
+  offValue: T,
   modifierConstructor: typeof ExternalValue1Modifier<T> | typeof ExternalValue2Modifier<T> = ExternalValue2Modifier<T>
 ): ExternalValue1Modifier<T> | ExternalValue2Modifier<T> {
-  return new modifierConstructor(ExternalValue.EldenRing.BloodVisibility, new SteppedProperty<T>(false, [
+  return new modifierConstructor(ExternalValue.EldenRing.BloodVisibility, new SteppedProperty(false, [
     new Keyframe<T>(-1, offValue),
     new Keyframe<T>(0, onValue),
     new Keyframe<T>(1, mildValue),
-  ]) as unknown as TypeMap.Property[T])
+  ]))
 }
 
 /**
@@ -34946,14 +34994,14 @@ function BloodVisibilityModifier<T extends ValueType>(
  * @param clear The value when it's not raining or snowing.
  * @param precip The value when it's raining or snowing.
  */
-function PrecipitationModifier<T extends ValueType>(
-  clear: TypeMap.PropertyValue[T],
-  precip: TypeMap.PropertyValue[T]
+function PrecipitationModifier<T extends Tensor>(
+  clear: T,
+  precip: T
 ): ExternalValue1Modifier<T> {
-  return new ExternalValue1Modifier(ExternalValue.EldenRing.Precipitation, new SteppedProperty<T>(false, [
+  return new ExternalValue1Modifier(ExternalValue.EldenRing.Precipitation, new SteppedProperty(false, [
     new Keyframe<T>(0, clear),
     new Keyframe<T>(1, precip),
-  ]) as unknown as TypeMap.Property[T])
+  ]))
 }
 
 //#region Recolor
@@ -35053,7 +35101,7 @@ namespace Recolor {
       const obj: any = {}
       for (const entry of entries) {
         for (const p of Object.keys(entry)) if (p !== 'weight') {
-          obj[p] = anyValueSum<AnyProperty>(
+          obj[p] = anyValueSum<TensorProperty>(
             Property.fromJSON(obj[p] ?? 0),
             anyValueMult(entry.weight / weightSum, Property.fromJSON(entry[p]))
           ).toJSON()
@@ -35073,7 +35121,7 @@ namespace Recolor {
    */
   export function generatePalette(sources: (FXR | Node)[], mode: PaletteMode = PaletteMode.Average) {
     const palette: Recolor.ColorPalette = {}
-    function normalize<T>(val: AnyValue): T {
+    function normalize<T>(val: TensorValue): T {
       if (val instanceof SequenceProperty || val instanceof ComponentSequenceProperty) {
         let clone = val.clone().minify()
         const extValMods = clone.modifiers.filter(mod => 
@@ -35085,7 +35133,7 @@ namespace Recolor {
           mod instanceof ExternalValue2Modifier
         ))
         for (const mod of extValMods) {
-          clone = anyValueMult(mod.factor.valueAt(0), clone as AnyValue)
+          clone = anyValueMult(mod.factor.valueAt(0), clone as TensorValue)
         }
         if (clone instanceof SequenceProperty || clone instanceof ComponentSequenceProperty) {
           clone.duration = 1
@@ -36310,23 +36358,23 @@ namespace FXRUtility {
           )) {
             const emShape = config.emitterShape
             if (emShape instanceof DiskEmitterShape) {
-              const radius = constantValueOf(emShape.radius)
+              const radius = constantValueOf<number>(emShape.radius)
               n.nodes.push(ellipse(radius, radius, 16, color, lineWidth, args))
             } else if (emShape instanceof RectangleEmitterShape) {
-              const width = constantValueOf(emShape.sizeX)
-              const height = constantValueOf(emShape.sizeY)
+              const width = constantValueOf<number>(emShape.sizeX)
+              const height = constantValueOf<number>(emShape.sizeY)
               n.nodes.push(rect(width, height, color, lineWidth, args))
             } else if (emShape instanceof SphereEmitterShape) {
-              const radius = constantValueOf(emShape.radius)
+              const radius = constantValueOf<number>(emShape.radius)
               n.nodes.push(ellipsoid(radius, radius, radius, 16, color, lineWidth, args))
             } else if (emShape instanceof BoxEmitterShape) {
-              const x = constantValueOf(emShape.sizeX)
-              const y = constantValueOf(emShape.sizeY)
-              const z = constantValueOf(emShape.sizeZ)
+              const x = constantValueOf<number>(emShape.sizeX)
+              const y = constantValueOf<number>(emShape.sizeY)
+              const z = constantValueOf<number>(emShape.sizeZ)
               n.nodes.push(box([0, 0, 0], [x, y, z], color, lineWidth, args))
             } else if (emShape instanceof CylinderEmitterShape) {
-              const radius = constantValueOf(emShape.radius)
-              const height = constantValueOf(emShape.height)
+              const radius = constantValueOf<number>(emShape.radius)
+              const height = constantValueOf<number>(emShape.height)
               n.nodes.push(cylinder(radius, radius, height, 16, color, lineWidth, args))
             }
           }
@@ -36447,15 +36495,15 @@ namespace FXRUtility {
       throw new Error(`The 'rotation' parameter for NodeAnimatedRotation cannot be a stepped property.`)
     }
 
-    const prop: SequenceProperty<ValueType.Vector3, SequencePropertyFunction> =
+    const prop: SequenceProperty<Vector3, SequencePropertyFunction> =
       rotation instanceof SequenceProperty ? rotation :
-      (rotation as ComponentSequenceProperty<ValueType.Vector3>).combineComponents()
+      (rotation as ComponentSequenceProperty<Vector3>).combineComponents()
     const keyframes = prop.function === PropertyFunction.Linear ?
-      prop.keyframes as Keyframe<ValueType.Vector3>[] :
+      prop.keyframes :
       filterMillisecondDiffs(
         interpolateSegments(prop.keyframes.map(e => e.position), 0.1, 40)
-      ).map(pos => new Keyframe<ValueType.Vector3>(pos, prop.valueAt(pos)))
-    const speeds: Keyframe<ValueType.Vector3>[] = []
+      ).map(pos => new Keyframe(pos, prop.valueAt(pos)))
+    const speeds: Keyframe<Vector3>[] = []
 
     for (let i = 0; i < keyframes.length; i++) {
       if (i === keyframes.length - 1) {
@@ -36468,7 +36516,7 @@ namespace FXRUtility {
       }
     }
 
-    const angularSpeed = separateComponents(new LinearProperty<ValueType.Vector3>(prop.loop, speeds))
+    const angularSpeed = separateComponents(new LinearProperty(prop.loop, speeds))
 
     return new NodeSpin({
       angularSpeedX: angularSpeed[0],
