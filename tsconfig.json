@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig-base.json",
+  "extends": "./tsconfig-build.json",
   "compilerOptions": {
     "target": "ES2023",
     "module": "NodeNext",

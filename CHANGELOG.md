@@ -20,6 +20,11 @@ The `valueType` field in properties is now read-only and automatically inferred 
 
 As a side-effect, this means that `ConstantProperty` and `ValueProperty` are now identical, but `ConstantProperty` has been left in, just in case it needs to change in the future, and to not break existing scripts using it.
 
+#### Dropped CommonJS Support
+In this release, CommonJS support has been dropped to reduce the package size and build time. If you really need to use the library in CJS, either use a dynamic import or build the library for CJS yourself.
+
+CJS support was only added because some earlier projects using the library required it, but those projects have long since been dropped in favor of FXR Playground, which supersedes them and is fully ESM-based.
+
 ### Bug fixes
 - Fixed some logic in various utility functions. The cases where these bugs would happen are so niche that it's unlikely to have ever happened before.
 
