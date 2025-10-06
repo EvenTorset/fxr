@@ -7138,7 +7138,6 @@ function writeModifier(modifier: IModifier<Tensor>, bw: BinaryWriter, game: Game
 function writeModifierProperties(modifier: IModifier<Tensor>, bw: BinaryWriter, game: Game, index: number, properties: IProperty<any, any>[]) {
   bw.fill(`Section8Section9sOffset${index}`, bw.position)
   for (const property of modifier.getProperties(game)) {
-    // Modifier props can't have modifiers, so it's safe to not use .for(game) here
     writeProperty(property, bw, game, properties, true)
   }
 }
@@ -9592,7 +9591,11 @@ class BinaryReader extends DataView<ArrayBufferLike> {
   }
 
   getInt32s(offset: number, count: number) {
-    return arrayOf(count, i => this.getInt32(offset + i * 4))
+    const int32s: number[] = Array(count)
+    for (let i = 0; i < count; i++) {
+      int32s[i] = this.getInt32(offset + i * 4)
+    }
+    return int32s
   }
 
   assertUint8(...ui8s: number[]) {
@@ -10392,7 +10395,7 @@ class FXR {
     bw.fill('NodeCount', nodes.length)
     bw.pad(16)
     bw.fill('ConfigOffset', bw.position)
-    let counter = { value: 0 }
+    const counter = { value: 0 }
     for (let i = 0; i < nodes.length; ++i) {
       writeNodeConfigs(nodes[i], bw, game, i, counter)
     }
