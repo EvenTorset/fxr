@@ -1,5 +1,11 @@
 # Changelog
 
+## [v30.0.0](https://github.com/EvenTorset/fxr/compare/v29.0.0...v30.0.0) - 2025-11-01
+
+### Breaking Changes
+A previously unknown field of `BillboardEx`, `MultiTextureBillboardEx`, `LegacyTracer`, and `Tracer` was figured out since the last update, and has now been renamed and documented. Its default value is now `false`, which is the opposite of the previous default. To update scripts to this version without changing the output, make sure to set `premultiplyAlpha` to `true` when constructing any of these four actions.
+- `unk_ds3_f2_27` -> `premultiplyAlpha`
+
 ## [v29.0.0](https://github.com/EvenTorset/fxr/compare/v28.0.1...v29.0.0) - 2025-09-26
 
 ### Breaking Changes

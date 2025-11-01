@@ -483,9 +483,11 @@ properties:
   unkDepthBlend2:
     field: float
     scale: distance
-  unk_ds3_f2_27:
-    field: int
-    default: 1
+  premultiplyAlpha:
+    field: bool
+    default: false
+    desc: |
+      If enabled, the texture's color will be multiplied by its alpha value, making more transparent parts of the texture darker.
   unk_ds3_f2_28:
     field: int
   unk_ds3_f2_29:
@@ -612,7 +614,7 @@ games:
       - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
-      - unk_ds3_f2_27
+      - premultiplyAlpha
       - unk_ds3_f2_28
       - unk_ds3_f2_29
     properties1:
@@ -695,7 +697,7 @@ games:
       - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
-      - unk_ds3_f2_27
+      - premultiplyAlpha
       - unk_ds3_f2_28
       - unk_ds3_f2_29
       - shadowDarkness
@@ -771,7 +773,7 @@ games:
       - unk_ds3_f2_24
       - unkDepthBlend1
       - unkDepthBlend2
-      - unk_ds3_f2_27
+      - premultiplyAlpha
       - unk_ds3_f2_28
       - unk_ds3_f2_29
       - shadowDarkness
