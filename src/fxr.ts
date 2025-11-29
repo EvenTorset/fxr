@@ -6307,16 +6307,19 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   const fieldCount = br.readInt32()
   br.assertInt32(0)
   const fieldOffset = br.readOffset()
-  const modifiers: IModifier<any>[] = []
+  let modifiers: IModifier<any>[]
   if (!modifierProp) {
     const modOffset = br.readOffset()
     const modCount = br.readInt32()
+    modifiers = Array(modCount)
     br.assertInt32(0)
     br.stepIn(modOffset)
     for (let i = 0; i < modCount; ++i) {
-      modifiers.push(readModifier(br))
+      modifiers[i] = readModifier(br)
     }
     br.stepOut()
+  } else {
+    modifiers = []
   }
   const fields = readFieldsAt(br, fieldOffset, fieldCount, [func, type]).map(f => f.value)
   switch (func) {
@@ -6420,20 +6423,20 @@ function readAction(
   br.position += 8 // Unknown offset
 
   br.stepIn(propertyOffset)
-  const properties1: TensorProperty[] = []
-  const properties2: TensorProperty[] = []
+  const properties1: TensorProperty[] = Array(propertyCount1)
+  const properties2: TensorProperty[] = Array(propertyCount2)
   for (let i = 0; i < propertyCount1; ++i) {
-    properties1.push(readProperty(br, false))
+    properties1[i] = readProperty(br, false)
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    properties2.push(readProperty(br, false))
+    properties2[i] = readProperty(br, false)
   }
   br.stepOut()
 
   br.stepIn(section10Offset)
-  const section10s: number[][] = []
+  const section10s: number[][] = Array(section10Count)
   for (let i = 0; i < section10Count; ++i) {
-    section10s.push(readSection10(br))
+    section10s[i] = readSection10(br)
   }
   br.stepOut()
 
@@ -6533,23 +6536,23 @@ function readDataAction(
   } = {
     fields1: [],
     fields2: [],
-    properties1: [],
-    properties2: [],
-    section10s: [],
+    properties1: Array(propertyCount1),
+    properties2: Array(propertyCount2),
+    section10s: Array(section10Count),
   }
 
   br.stepIn(propertyOffset)
   for (let i = 0; i < propertyCount1; ++i) {
-    c.properties1.push(readProperty(br, false))
+    c.properties1[i] = readProperty(br, false)
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    c.properties2.push(readProperty(br, false))
+    c.properties2[i] = readProperty(br, false)
   }
   br.stepOut()
 
   br.stepIn(section10Offset)
   for (let i = 0; i < section10Count; ++i) {
-    c.section10s.push(readSection10(br))
+    c.section10s[i] = readSection10(br)
   }
   br.stepOut()
 
@@ -6821,21 +6824,21 @@ function readNode(br: BinaryReader): Node {
   const actionOffset = br.readOffset()
   const nodeOffset = br.readOffset()
   br.stepIn(nodeOffset)
-  const nodes = []
+  const nodes = Array(nodeCount)
   for (let i = 0; i < nodeCount; ++i) {
-    nodes.push(readNode(br))
+    nodes[i] = readNode(br)
   }
   br.stepOut()
   br.stepIn(configOffset)
-  const configs = []
+  const configs = Array(configCount)
   for (let i = 0; i < configCount; ++i) {
-    configs.push(readConfig(br))
+    configs[i] = readConfig(br)
   }
   br.stepOut()
   br.stepIn(actionOffset)
-  const actions = []
+  const actions = Array(actionCount)
   for (let i = 0; i < actionCount; ++i) {
-    actions.push(readAnyAction(br))
+    actions[i] = readAnyAction(br)
   }
   br.stepOut()
   if (br.game !== Game.Generic) switch (type) {
@@ -6976,9 +6979,9 @@ function readConfig(br: BinaryReader): IConfig {
   br.assertInt32(0)
   const actionOffset = br.readOffset()
   br.stepIn(actionOffset)
-  const actions = []
+  const actions = Array(actionCount)
   for (let i = 0; i < actionCount; ++i) {
-    actions.push(readAnyAction(br))
+    actions[i] = readAnyAction(br)
   }
   br.stepOut()
   if (br.game === Game.Generic) {
@@ -7040,9 +7043,9 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
   const fieldOffset = br.readOffset()
   const propertyOffset = br.readOffset()
   br.stepIn(propertyOffset)
-  const properties = []
+  const properties = Array(propertyCount)
   for (let i = 0; i < propertyCount; ++i) {
-    properties.push(readProperty(br, true))
+    properties[i] = readProperty(br, true)
   }
   br.stepOut()
   if (br.game === Game.Generic) {
@@ -7158,10 +7161,10 @@ function readSection10(br: BinaryReader) {
   const offset = br.readOffset()
   const count = br.readInt32()
   br.assertInt32(0)
-  const values: number[] = []
+  const values: number[] = Array(count)
   br.stepIn(offset)
-  for (let i = count; i > 0; i--) {
-    values.push(br.readInt32())
+  for (let i = 0; i < count; ++i) {
+    values[i] = br.readInt32()
   }
   br.stepOut()
   return values
@@ -7194,9 +7197,9 @@ function readState(br: BinaryReader) {
   const count = br.readInt32()
   const offset = br.readOffset()
   br.stepIn(offset)
-  const conditions: StateCondition[] = []
+  const conditions: StateCondition[] = Array(count)
   for (let i = 0; i < count; ++i) {
-    conditions.push(readStateCondition(br))
+    conditions[i] = readStateCondition(br)
   }
   br.stepOut()
   return new State(conditions)
@@ -7390,9 +7393,9 @@ function readField(br: BinaryReader, context: any, index: number) {
 }
 
 function readFields(br: BinaryReader, count: number, context: any) {
-  const fields: NumericalField[] = []
+  const fields: NumericalField[] = Array(count)
   for (let i = 0; i < count; ++i) {
-    fields.push(readField(br, context, i))
+    fields[i] = readField(br, context, i)
   }
   return fields
 }
@@ -7405,40 +7408,40 @@ function readFieldsAt(br: BinaryReader, offset: number, count: number, context: 
 }
 
 function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field<FieldType>[] {
-  const fields: Field<FieldType>[] = []
+  const fields: Field<FieldType>[] = Array(count)
   for (let i = 0, j = 0; i < count; j++) {
     switch (types[j]) {
       case FieldType.Boolean:
         i++
-        fields.push(new BoolField(!!br.assertInt32(0, 1)))
+        fields[j] = new BoolField(!!br.assertInt32(0, 1))
         break
       case FieldType.Integer:
         i++
-        fields.push(new IntField(br.readInt32()))
+        fields[j] = new IntField(br.readInt32())
         break
       case FieldType.Float:
         i++
-        fields.push(new FloatField(br.readFloat32()))
+        fields[j] = new FloatField(br.readFloat32())
         break
       case FieldType.Vector2:
         i += 2
-        fields.push(new Vector2Field([ br.readFloat32(), br.readFloat32() ]))
+        fields[j] = new Vector2Field([ br.readFloat32(), br.readFloat32() ])
         break
       case FieldType.Vector3:
         i += 3
-        fields.push(new Vector3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
+        fields[j] = new Vector3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ])
         break
       case FieldType.Vector4:
         i += 4
-        fields.push(new Vector4Field([
+        fields[j] = new Vector4Field([
           br.readFloat32(),
           br.readFloat32(),
           br.readFloat32(),
           br.readFloat32()
-        ]))
+        ])
         break
       default:
-        fields.push(readField(br, context, 0))
+        fields[j] = readField(br, context, 0)
     }
   }
   return fields
@@ -9489,7 +9492,8 @@ class BinaryReader extends DataView<ArrayBufferLike> {
   littleEndian: boolean = true
   round: boolean = false
   game: Game = Game.Heuristic
-  steps: number[] = []
+  steps = new Uint32Array(256)
+  stepDepth = 0
   memOffset: bigint = 0n
 
   getInt16(offset: number) {
@@ -9643,218 +9647,219 @@ class BinaryReader extends DataView<ArrayBufferLike> {
     throw new Error(`Read: ${value} | Expected: ${ui32s.join(', ')} | Position: ${ocp}`)
   }
 
-  assertASCII(ascii: string) {
-    const ocp = this.position
-    const value: string = String.fromCharCode.apply(null, ascii.split('').map(() => this.readUint8()))
-    if (value !== ascii) {
-      throw new Error(`Read: ${value} | Expected: ${ascii} | Position: ${ocp}`)
-    }
-    return value
-  }
-
   stepIn(offset: number) {
-    this.steps.push(this.position)
+    const d = this.stepDepth
+    this.steps[d] = this.position
+    this.stepDepth = d + 1
     this.position = offset
   }
 
   stepOut() {
-    if (this.steps.length === 0) {
+    const d = this.stepDepth - 1
+    if (d < 0) {
       throw new Error('Reader is already stepped all the way out.')
     }
-    this.position = this.steps.pop() ?? 0
+    this.position = this.steps[d]
+    this.stepDepth = d
   }
 
-}
-
-interface ReservationList {
-  [name: string]: { offset: number, size: 1 | 2 | 4, func?: string }
 }
 
 class BinaryWriter {
 
-  static #te = new TextEncoder
-
   littleEndian: boolean
-  array: number[] = []
-  reservations: ReservationList = {}
+  reservations: Record<string, {
+    offset: number
+    size: number
+    func?: 'setInt16' | 'setUint16' | 'setInt32' | 'setUint32' | 'setFloat32'
+  }> = {}
 
-  #transBuf = new ArrayBuffer(4)
-  #transDV = new DataView(this.#transBuf)
-  #transArr16 = new Int8Array(this.#transBuf, 0, 2)
-  #transArr32 = new Int8Array(this.#transBuf, 0, 4)
+  #buf: Uint8Array
+  #capacity: number
+  #len: number
+  #dv: DataView
 
   convertedDataActions = new Map<DataAction, any>
 
-  constructor(littleEndian: boolean = true) {
+  constructor(littleEndian = true, initialCapacity = 2048) {
     this.littleEndian = littleEndian
+    this.#capacity = initialCapacity
+    this.#buf = new Uint8Array(this.#capacity)
+    this.#dv = new DataView(this.#buf.buffer)
+    this.#len = 0
   }
 
   get position() {
-    return this.array.length
+    return this.#len
+  }
+
+  #ensure(n: number) {
+    const needed = this.#len + n
+    if (needed <= this.#capacity) return
+
+    let newCap = this.#capacity * 2
+    while (newCap < needed) newCap *= 2
+
+    const newBuf = new Uint8Array(newCap)
+    newBuf.set(this.#buf)
+    this.#buf = newBuf
+    this.#dv = new DataView(this.#buf.buffer)
+    this.#capacity = newCap
   }
 
   writeBool(b: boolean) {
-    this.array.push(+b)
+    this.writeUint8(+b)
   }
 
   writeInt8(i8: number) {
-    this.array.push(i8)
+    this.writeUint8(i8)
   }
 
   writeUint8(ui8: number) {
-    this.array.push(ui8)
+    this.#ensure(1)
+    this.#buf[this.#len++] = ui8 & 0xFF
   }
 
   writeInt16(i16: number) {
-    this.#transDV.setInt16(0, i16, this.littleEndian)
-    this.array.push(...this.#transArr16)
+    this.#ensure(2)
+    this.#dv.setInt16(this.#len, i16, this.littleEndian)
+    this.#len += 2
   }
 
   writeUint16(ui16: number) {
-    this.#transDV.setUint16(0, ui16, this.littleEndian)
-    this.array.push(...this.#transArr16)
+    this.#ensure(2)
+    this.#dv.setUint16(this.#len, ui16, this.littleEndian)
+    this.#len += 2
   }
 
   writeInt32(i32: number) {
-    this.#transDV.setInt32(0, i32, this.littleEndian)
-    this.array.push(...this.#transArr32)
+    this.#ensure(4)
+    this.#dv.setInt32(this.#len, i32, this.littleEndian)
+    this.#len += 4
   }
 
   writeUint32(ui32: number) {
-    this.#transDV.setUint32(0, ui32, this.littleEndian)
-    this.array.push(...this.#transArr32)
+    this.#ensure(4)
+    this.#dv.setUint32(this.#len, ui32, this.littleEndian)
+    this.#len += 4
   }
 
   writeFloat32(f32: number) {
     // Make sure that the value is not -0
     f32 = f32 === 0 ? 0 : f32
-    this.#transDV.setFloat32(0, f32, this.littleEndian)
-    this.array.push(...this.#transArr32)
+    this.#ensure(4)
+    this.#dv.setFloat32(this.#len, f32, this.littleEndian)
+    this.#len += 4
   }
 
-  writeInt8s(i8s: number[]) {
-    for (const i8 of i8s) this.writeInt8(i8)
+  writeInt8s(arr: number[]) {
+    this.#ensure(arr.length)
+    for (let i = 0; i < arr.length; i++) {
+      this.#buf[this.#len++] = arr[i] & 0xFF
+    }
   }
 
-  writeUint8s(ui8s: number[]) {
-    for (const ui8 of ui8s) this.writeUint8(ui8)
+  writeUint8s(arr: number[]) {
+    this.writeInt8s(arr)
   }
 
-  writeInt16s(i16s: number[]) {
-    for (const i16 of i16s) this.writeInt16(i16)
+  writeInt16s(arr: number[]) {
+    this.#ensure(arr.length * 2)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setInt16(this.#len, arr[i], this.littleEndian)
+      this.#len += 2
+    }
   }
 
-  writeUint16s(ui16s: number[]) {
-    for (const ui16 of ui16s) this.writeUint16(ui16)
+  writeUint16s(arr: number[]) {
+    this.#ensure(arr.length * 2)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setUint16(this.#len, arr[i], this.littleEndian)
+      this.#len += 2
+    }
   }
 
-  writeInt32s(i32s: number[]) {
-    for (const i32 of i32s) this.writeInt32(i32)
+  writeInt32s(arr: number[]) {
+    this.#ensure(arr.length * 4)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setInt32(this.#len, arr[i], this.littleEndian)
+      this.#len += 4
+    }
   }
 
-  writeUint32s(ui32s: number[]) {
-    for (const ui32 of ui32s) this.writeUint32(ui32)
+  writeUint32s(arr: number[]) {
+    this.#ensure(arr.length * 4)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setUint32(this.#len, arr[i], this.littleEndian)
+      this.#len += 4
+    }
   }
 
-  writeFloat32s(f32s: number[]) {
-    for (const f32 of f32s) this.writeFloat32(f32)
-  }
-
-  writeString(s: string) {
-    this.array.push(...BinaryWriter.#te.encode(s))
+  writeFloat32s(arr: number[]) {
+    this.#ensure(arr.length * 4)
+    for (let i = 0; i < arr.length; i++) {
+      const v = arr[i] === 0 ? 0 : arr[i]
+      this.#dv.setFloat32(this.#len, v, this.littleEndian)
+      this.#len += 4
+    }
   }
 
   reserveInt8(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 1
-    }
+    this.reservations[name] = { offset: this.#len, size: 1 }
     this.writeInt8(0)
   }
 
   reserveUint8(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 1
-    }
+    this.reservations[name] = { offset: this.#len, size: 1 }
     this.writeUint8(0)
   }
 
   reserveInt16(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 2,
-      func: 'setInt16'
-    }
+    this.reservations[name] = { offset: this.#len, size: 2, func: 'setInt16' }
     this.writeInt16(0)
   }
 
   reserveUint16(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 2,
-      func: 'setUint16'
-    }
+    this.reservations[name] = { offset: this.#len, size: 2, func: 'setUint16' }
     this.writeUint16(0)
   }
 
   reserveInt32(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 4,
-      func: 'setInt32'
-    }
+    this.reservations[name] = { offset: this.#len, size: 4, func: 'setInt32' }
     this.writeInt32(0)
   }
 
   reserveUint32(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 4,
-      func: 'setUint32'
-    }
+    this.reservations[name] = { offset: this.#len, size: 4, func: 'setUint32' }
     this.writeUint32(0)
   }
 
   reserveFloat32(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 4,
-      func: 'setFloat32'
-    }
+    this.reservations[name] = { offset: this.#len, size: 4, func: 'setFloat32' }
     this.writeFloat32(0)
   }
 
   fill(name: string, value: number) {
-    if (!(name in this.reservations)) {
-      throw new Error('Key is not reserved: ' + name)
+    const r = this.reservations[name]
+    if (!r) {
+      throw new Error(`Key is not reserved: ${name}`)
     }
-    const reservation = this.reservations[name]
-    switch (reservation.size) {
-      case 1: {
-        this.array.splice(reservation.offset, 1, value)
-        break
-      }
-      case 2: {
-        this.#transDV[reservation.func as string](0, value, this.littleEndian)
-        this.array.splice(reservation.offset, 2, ...this.#transArr16)
-        break
-      }
-      case 4: {
-        this.#transDV[reservation.func as string](0, value, this.littleEndian)
-        this.array.splice(reservation.offset, 4, ...this.#transArr32)
-        break
-      }
+
+    if (r.size === 1) {
+      this.#buf[r.offset] = value & 0xFF
+    } else {
+      this.#dv[r.func!](r.offset, value, this.littleEndian)
     }
+
     delete this.reservations[name]
   }
 
   pad(align: number) {
-    while (this.array.length % align > 0) this.writeInt8(0)
+    while (this.#len % align !== 0) this.writeUint8(0)
   }
 
   getArrayBuffer() {
-    return new Uint8Array(this.array).buffer
+    return this.#buf.slice(0, this.#len).buffer
   }
 
 }
@@ -10156,7 +10161,7 @@ class FXR {
     br.round = round
     br.game = game
 
-    br.assertASCII('FXR\0')
+    br.assertUint32(0x00525846) // 'FXR\0'
 
     if (game === Game.Heuristic) {
       const unk4 = br.assertInt16(0, 1) // Minor version???
@@ -10239,9 +10244,9 @@ class FXR {
     const statesPtr = br.readInt64()
     br.memOffset = statesPtr - BigInt(statesOffset)
     br.stepIn(statesOffset)
-    const states: State[] = []
+    const states: State[] = Array(stateCount)
     for (let i = 0; i < stateCount; ++i) {
-      states.push(readState(br))
+      states[i] = readState(br)
     }
     br.stepOut()
 
@@ -10283,7 +10288,7 @@ class FXR {
     assertValidFXRID(this.id)
     const version = GameVersionMap[game]
     const bw = new BinaryWriter
-    bw.writeString('FXR\0')
+    bw.writeUint32(0x00525846) // 'FXR\0'
     bw.writeInt16(game === Game.Nightreign ? 1 : 0)
     bw.writeUint16(version)
     bw.writeInt32(1)
@@ -33120,11 +33125,11 @@ abstract class Property<T extends Tensor, F extends PropertyFunction> implements
       const mods = this.modifiers.map(mod => {
         if (mod instanceof RandomRangeModifier) {
           const vt = mod.valueType
-          const comps = []
+          const comps = Array(vt + 1)
           if (vt === ValueType.Scalar) {
-            comps.push(mod.min*0.5 + mod.max*0.5)
+            comps[0] = mod.min*0.5 + mod.max*0.5
           } else for (let i = 0; i <= vt; i++) {
-            comps.push(mod.min[i]*0.5 + mod.max[i]*0.5)
+            comps[i] = mod.min[i]*0.5 + mod.max[i]*0.5
           }
           for (const [i, v] of comps.entries()) {
             summand[i] += v
@@ -35101,12 +35106,12 @@ namespace Recolor {
   export function weightedAveragePalette(palette: WeightedColorPalette): ColorPalette {
     const p: ColorPalette = {}
     for (const [k, v] of Object.entries(palette) as Entries<Recolor.WeightedColorPalette>) {
-      const entries = []
-      for (const entry of v) {
-        entries.push({
+      const entries = Array(v.length)
+      for (let i = 0; i < v.length; ++i) {
+        entries[i] = {
           weight: 1,
-          ...entry
-        })
+          ...entries[i]
+        }
       }
       if (entries.length === 1) {
         p[k] = entries

@@ -5,6 +5,9 @@
 ### Breaking Changes
 - The return type of the `getActiveConfig` methods on `LevelsOfDetailNode`, `BasicNode`, and `NodeEmitterNode` now match their respective config lists. For example, the method in `BasicNode` now returns `BasicConfig | null` instead of `IConfig | null`. This is not a functional change, only the type was changed to be more accurate.
 
+### Improvements
+- Turning an FXR object into an ArrayBuffer, which is done in order to save it to a file, is now more than twice as fast as before. Similar optimizations were done to reading FXR files, but it doesn't seem to have made much of a difference.
+
 ## [v30.0.0](https://github.com/EvenTorset/fxr/compare/v29.0.0...v30.0.0) - 2025-11-01
 
 ### Breaking Changes
