@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v30.0.0...HEAD)
+
+### Breaking Changes
+- The return type of the `getActiveConfig` methods on `LevelsOfDetailNode`, `BasicNode`, and `NodeEmitterNode` now match their respective config lists. For example, the method in `BasicNode` now returns `BasicConfig | null` instead of `IConfig | null`. This is not a functional change, only the type was changed to be more accurate.
+
 ## [v30.0.0](https://github.com/EvenTorset/fxr/compare/v29.0.0...v30.0.0) - 2025-11-01
 
 ### Breaking Changes

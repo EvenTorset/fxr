@@ -11737,6 +11737,10 @@ class LevelsOfDetailNode extends NodeWithConfigs {
     ).mapStates(...this.stateConfigMap)
   }
 
+  getActiveConfig(stateIndex: number): LevelsOfDetailConfig | null {
+    return super.getActiveConfig(stateIndex) as LevelsOfDetailConfig | null
+  }
+
 }
 
 /**
@@ -12030,6 +12034,10 @@ class BasicNode extends NodeWithConfigs {
     return start
   }
 
+  getActiveConfig(stateIndex: number): BasicConfig | null {
+    return super.getActiveConfig(stateIndex) as BasicConfig | null
+  }
+
 }
 
 /**
@@ -12097,6 +12105,10 @@ class NodeEmitterNode extends NodeWithConfigs {
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     ).mapStates(...this.stateConfigMap)
+  }
+
+  getActiveConfig(stateIndex: number): NodeEmitterConfig | null {
+    return super.getActiveConfig(stateIndex) as NodeEmitterConfig | null
   }
 
 }
