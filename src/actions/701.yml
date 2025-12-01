@@ -4,18 +4,26 @@ slot: Termination
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
+desc:
+  en-US: |
+    Allows the effect to continue playing normally after it terminates, but its opacity will gradually fade out over a given duration.
 
-  Note: An effect terminates when it reaches {@link State} -1.
+    Note: An effect terminates when it reaches {@link State} -1.
+  zh-CN: |
+    允许特效在终止后继续正常播放，但其不透明度将在给定的持续时间内逐渐淡出。
+
+    注意：当特效达到 {@link State 状态} -1 时即为终止。
 properties:
   duration:
     type: ScalarValue
     default: 1
     argument: Constant0
     time: inv
-    desc: |
-      The duration of the fade out in seconds.
+    desc:
+      en-US: |
+        The duration of the fade out in seconds.
+      zh-CN: |
+        淡出的持续时间（秒）。
 games:
   ER:
     properties1:
