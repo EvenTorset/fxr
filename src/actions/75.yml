@@ -4,24 +4,36 @@ slot: NodeAudio
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Plays a sound effect when the node activates.
+desc:
+  en-US: |
+    Plays a sound effect when the node activates.
+  zh-CN: |
+    当节点激活时播放音效。
 properties:
   sound:
     field: int
     resource: sound
-    desc: |
-      The ID of the sound event to play.
+    desc:
+      en-US: |
+        The ID of the sound event to play.
+      zh-CN: |
+        要播放的声音事件 ID。
   unk_ds3_f1_1:
     field: float
     default: 1
-    desc: |
-      Volume multiplier in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
+    desc:
+      en-US: |
+        Volume multiplier in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
+      zh-CN: |
+        《黑暗之魂 3》和《只狼》中的音量乘数，在后续游戏中似乎没有任何作用。
   unk_ds3_f1_2:
     field: bool
     default: false
-    desc: |
-      Controls whether the sound will repeat or not in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
+    desc:
+      en-US: |
+        Controls whether the sound will repeat or not in Dark Souls 3 and possibly Sekiro, and seemingly does nothing in later games.
+      zh-CN: |
+        控制《黑暗之魂 3》和《只狼》中声音是否会重复，在后续游戏中似乎没有任何作用。
 games:
   DS3:
     fields1:
