@@ -4,8 +4,11 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
-desc: |
-  Simple line particle. It automatically rotates to match the direction it's moving.
+desc:
+  en-US: |
+    Simple line particle. It automatically rotates to match the direction it's moving.
+  zh-CN: |
+    简单的线条粒子。它会自动旋转以匹配其移动方向。
 properties:
   blendMode:
     type: BlendMode | ScalarProperty
@@ -13,15 +16,21 @@ properties:
     enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
-    desc: |
-      Blend mode.
+    desc:
+      en-US: |
+        Blend mode.
+      zh-CN: |
+        混合模式。
   length:
     type: ScalarValue
     default: 1
     argument: EmissionTime
     scale: instanceSize
-    desc: |
-      The length of the line.
+    desc:
+      en-US: |
+        The length of the line.
+      zh-CN: |
+        线条的长度。
     see:
       - lengthMultiplier
   color1:
@@ -30,10 +39,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: primary
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+        Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color2}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值将被限制在 0-1 范围内。这似乎与 {@link color2} 相同。此动作中没有不受限制的颜色属性，但可以使用 {@link rgbMultiplier} 和 {@link alphaMultiplier} 来缩放颜色。
     see:
       - color2
       - color3
@@ -45,10 +59,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+        Values in this will be clamped to the 0-1 range. This is seemingly identical to {@link color1}. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值将被限制在 0-1 范围内。这似乎与 {@link color1} 相同。此动作中没有不受限制的颜色属性，但可以使用 {@link rgbMultiplier} 和 {@link alphaMultiplier} 来缩放颜色。
     see:
       - color1
       - color3
@@ -60,10 +79,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: ActiveTime
     color: true
-    desc: |
-      The color for the start of the line.
+    desc:
+      en-US: |
+        The color for the start of the line.
 
-      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+        Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+      zh-CN: |
+        线条开始处的颜色。
+
+        此处的数值将被限制在 0-1 范围内。此动作中没有不受限制的颜色属性，但可以使用 {@link rgbMultiplier} 和 {@link alphaMultiplier} 来缩放颜色。
     see:
       - color1
       - color2
@@ -75,10 +99,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: ActiveTime
     color: true
-    desc: |
-      The color for the end of the line.
+    desc:
+      en-US: |
+        The color for the end of the line.
 
-      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+        Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+      zh-CN: |
+        线条结束处的颜色。
+
+        此处的数值将被限制在 0-1 范围内。此动作中没有不受限制的颜色属性，但可以使用 {@link rgbMultiplier} 和 {@link alphaMultiplier} 来缩放颜色。
     see:
       - color1
       - color2
@@ -88,18 +117,26 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    desc: |
-      Multiplier for the line {@link length}.
+    desc:
+      en-US: |
+        Multiplier for the line {@link length}.
+      zh-CN: |
+        线条 {@link length 长度}的乘数。
   color3:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
     argument: ActiveTime
     color: true
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+        Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值将被限制在 0-1 范围内。此动作中没有不受限制的颜色属性，但可以使用 {@link rgbMultiplier} 和 {@link alphaMultiplier} 来缩放颜色。
     see:
       - color1
       - color2
@@ -109,14 +146,20 @@ properties:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+    desc:
+      en-US: |
+        Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+      zh-CN: |
+        不影响 Alpha 的颜色标量乘数。实际上是亮度乘数。
   alphaMultiplier:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Alpha multiplier.
+    desc:
+      en-US: |
+        Alpha multiplier.
+      zh-CN: |
+        Alpha 乘数。
   unk_ds3_p2_2:
     type: ScalarValue
     default: 0
@@ -135,10 +178,15 @@ properties:
   alphaThreshold:
     type: ScalarValue
     argument: ActiveTime
-    desc: |
-      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+    desc:
+      en-US: |
+        Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
 
-      This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+        This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+      zh-CN: |
+        不透明度低于此阈值的粒子部分将不可见。范围是 0-255。
+
+        此阈值在可见和不可见之间创建一个硬性截止，这与某些类似动作中的 alpha *淡入淡出* 阈值属性不同。
   unk_ds3_f1_1:
     field: int
     default: -1
@@ -162,14 +210,23 @@ properties:
     default: 0
   bloom:
     field: bool
-    desc: |
-      Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
+    desc:
+      en-US: |
+        Controls whether or not the particles have an additional bloom effect controlled by {@link bloomColor}.
 
-      When enabled, this also allows bloom from other particles to be seen through this particle.
+        When enabled, this also allows bloom from other particles to be seen through this particle.
 
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
+        Note:
+        - This has no effect if the "Effects Quality" setting is set to "Low".
+        - This does not affect the natural bloom effect from high color values.
+      zh-CN: |
+        控制粒子是否具有由 {@link bloomColor} 控制的额外泛光效果。
+
+        启用时，这也允许透过此粒子看到其他粒子的泛光。
+
+        注意：
+        - 如果“特效质量”设置设为“低”，则此项无效。
+        - 这不影响高颜色值产生的自然泛光效果。
     see:
       - bloomColor
   bloomColor:
@@ -177,12 +234,19 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+    desc:
+      en-US: |
+        Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
+        Note:
+        - This has no effect if the "Effects Quality" setting is set to "Low".
+        - This does not affect the natural bloom effect from high color values.
+      zh-CN: |
+        控制额外泛光效果的颜色。粒子的颜色将与此颜色相乘，以获得泛光效果的最终颜色。
+
+        注意：
+        - 如果“特效质量”设置设为“低”，则此项无效。
+        - 这不影响高颜色值产生的自然泛光效果。
     see:
       - bloom
   unk_ds3_f2_9:
@@ -203,10 +267,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link minDistance 最小视图距离} 附近衰减为 0 的点。在 {@link minDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link minDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minDistance
       - maxFadeDistance
@@ -217,12 +286,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link minFadeDistance} to be set to a positive value or 0.
+        This requires {@link minFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link minFadeDistance} 设置为正值或 0。
+
+        这与 {@link minDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - maxFadeDistance
@@ -233,10 +309,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link maxDistance 最大视图距离} 附近衰减为 0 的点。在 {@link maxDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link maxDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minFadeDistance
       - minDistance
@@ -247,12 +328,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link maxFadeDistance} to be set to a positive value or 0.
+        This requires {@link maxFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link maxFadeDistance} 设置为正值或 0。
+
+        这与 {@link maxDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - minDistance
@@ -263,8 +351,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -275,8 +366,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -314,25 +408,40 @@ properties:
   unk_ds3_f2_29:
     field: float
     scale: distance
-    desc: |
-      Unknown float.
+    desc:
+      en-US: |
+        Unknown float.
 
-      This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+        This seems to be some sort of distance threshold. When the camera is within this distance, some things will look different in some ways. For example, when within the distance and the {@link blendMode blend mode} is set to {@link BlendMode.Subtract}, the opacity doesn't work the way it normally does. Other effects have been found as well, but what exactly this threshold is for is unknown.
+      zh-CN: |
+        未知浮点数。
+
+        这似乎是某种距离阈值。当摄像机在此距离内时，某些东西看起来会有所不同。例如，当在距离内且 {@link blendMode 混合模式} 设置为 {@link BlendMode.Subtract 减去} 时，不透明度不会按正常方式工作。还发现了其他影响，但此阈值的具体作用未知。
   unk_sdt_f2_30:
     field: int
     default: 0
   unkHideIndoors:
     field: int
-    desc: |
-      When set to 1, this stops the particles from being shown indoors.
+    desc:
+      en-US: |
+        When set to 1, this stops the particles from being shown indoors.
 
-      Other values are used in AC6, but what they do is unknown.
+        Other values are used in AC6, but what they do is unknown.
+      zh-CN: |
+        当设置为 1 时，这将停止粒子在室内显示。
+
+        AC6 中使用了其他值，但具体作用未知。
   unk_sdt_f2_32:
     field: bool
-    desc: |
-      Unknown boolean.
+    desc:
+      en-US: |
+        Unknown boolean.
 
-      When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
+        When enabled, it seems to stop {@link unk_ds3_f2_29} from doing whatever it is doing, and it can also cause some ugly "outline" effects on things seen through particles, but it also fixes an issue where some other particles can be seen through this particle.
+      zh-CN: |
+        未知布尔值。
+
+        当启用时，它似乎会停止 {@link unk_ds3_f2_29} 的作用，并且可能会对透过粒子看到的内容产生一些难看的“轮廓”效果，但它也修复了某些其他粒子可以透过此粒子看到的问题。
   unk_sdt_f2_33:
     field: int
     default: 0
