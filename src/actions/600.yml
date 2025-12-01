@@ -10,7 +10,7 @@ desc:
 
     The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearancePointSprite".
   zh-CN: |
-    定义了一个非常基础的点精灵粒子。类似于 {@link BillboardEx}，但要简单得多。
+    定义一个非常基础的点精灵粒子。类似于 {@link BillboardEx}，但要简单得多。
 
     名称来自《艾尔登法环》的 RTTI，其中被命名为 "GXFXCGAppearancePointSprite"。
 properties:
