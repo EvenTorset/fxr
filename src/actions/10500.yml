@@ -4,26 +4,38 @@ slot: Unknown10500
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Unknown root node action.
+desc:
+  en-US: |
+    Unknown root node action.
+  zh-CN: |
+    未知根节点行为。
 properties:
   rateOfTime:
     type: ScalarValue
     field: float
     default: 1
     argument: ActiveTime
-    desc: |
-      Controls how fast time passes for the entire effect.
+    desc:
+      en-US: |
+        Controls how fast time passes for the entire effect.
+      zh-CN: |
+        控制整个特效的时间流逝速度。
   limitViewDistance:
     field: bool
     default: false
-    desc: |
-      When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
+    desc:
+      en-US: |
+        When enabled, this limits visibility of nodes outside of the distance defined by {@link maxViewDistance}.
+      zh-CN: |
+        启用时，限制 {@link maxViewDistance} 定义的距离之外的节点可见性。
   maxViewDistance:
     field: float
     scale: distance
-    desc: |
-      All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
+    desc:
+      en-US: |
+        All nodes that are farther away from the camera than this will not be visible. This restriction requires {@link limitViewDistance} to be enabled.
+      zh-CN: |
+        所有距离摄像机超过此距离的节点将不可见。此限制需要启用 {@link limitViewDistance}。
   unk_ds3_f1_2:
     field: float
   unk_ds3_f1_3:
@@ -44,12 +56,19 @@ properties:
       NR: int
     lib: float
     time: inv
-    desc: |
-      The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.
+    desc:
+      en-US: |
+        The game will simulate playing the effect for this amount of time in seconds before actually displaying the effect. This does not mean that it will delay displaying the effect, just that the effect will start as if it had already been playing for this time, kind of like skipping ahead in the animation. This doesn't affect everything in the effect, and a list of things affected has not been made, but it does affect periodic emitters at least.
 
-      Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
+        Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
 
-      In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
+        In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
+      zh-CN: |
+        在实际显示特效之前，游戏将模拟播放特效这么长时间（秒）。这并不意味着会延迟显示特效，而是特效开始时就像已经播放了这么长时间一样，类似于动画中的快进。这不会影响特效中的所有内容（受影响内容的列表尚未制作），但至少会影响周期性发射器。
+
+        将此值设置得非常高可能会导致游戏在生成特效时出现明显的卡顿，因为它必须模拟播放特效这么长时间。
+
+        在《黑暗之魂 3》、《只狼》和《艾尔登法环》中，由于文件格式中的存储方式，此值将四舍五入到最接近的 1/30 秒。《装甲核心 6》中的存储方式不同，因此不会进行四舍五入。
   unk_ds3_f1_8:
     field: int
   unk_sdt_f1_9:
