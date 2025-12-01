@@ -4,14 +4,20 @@ slot: SFXReference
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  References another SFX by its ID.
+desc:
+  en-US: |
+    References another SFX by its ID.
+  zh-CN: |
+    通过 ID 引用另一个 SFX。
 properties:
   sfx:
     field: int
     default: 0
-    desc: |
-      The ID of the referenced SFX.
+    desc:
+      en-US: |
+        The ID of the referenced SFX.
+      zh-CN: |
+        引用的 SFX 的 ID。
 games:
   DS3:
     fields1:
