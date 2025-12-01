@@ -4,12 +4,19 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
-desc: |
-  Defines a particle that distorts anything seen through it.
+desc:
+  en-US: |
+    Defines a particle that distorts anything seen through it.
 
-  Note: This particle is not visible if the "Effects" setting is set to "Low".
+    Note: This particle is not visible if the "Effects" setting is set to "Low".
+  
+    The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceDistortion".
+  zh-CN: |
+    定义了一个粒子，它会扭曲透过它看到的一切。
 
-  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceDistortion".
+    注意：如果“效果”设置为“低”，则此粒子不可见。
+    
+    该名称来自《艾尔登法环》的 RTTI，其中它被命名为 "GXFfxAppearanceDistortion"。
 properties:
   blendMode:
     type: BlendMode | ScalarProperty
