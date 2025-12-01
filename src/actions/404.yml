@@ -4,42 +4,60 @@ slot: EmitterShape
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Makes the emitter cuboidal.
+desc:
+  en-US: |
+    Makes the emitter cuboidal.
+  zh-CN: |
+    使发射器呈长方体。
 properties:
   sizeX:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      Width of the cuboid.
+    desc:
+      en-US: |
+        Width of the cuboid.
+      zh-CN: |
+        长方体的宽度。
   sizeY:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      Height of the cuboid.
+    desc:
+      en-US: |
+        Height of the cuboid.
+      zh-CN: |
+        长方体的高度。
   sizeZ:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      Depth of the cuboid.
+    desc:
+      en-US: |
+        Depth of the cuboid.
+      zh-CN: |
+        长方体的深度。
   direction:
     type: InitialDirection
     field: int
     enum: InitialDirection
     default: InitialDirection.Emitter
-    desc: |
-      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+    desc:
+      en-US: |
+        Controls the initial direction for particles. See {@link InitialDirection} for more information.
+      zh-CN: |
+        控制粒子的初始方向。有关更多信息，请参阅 {@link InitialDirection}。
   emitInside:
     field: bool
     default: true
-    desc: |
-      If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
+    desc:
+      en-US: |
+        If true, particles will be emitted from anywhere within the cuboid. Otherwise the particles will be emitted only from the surface of the cuboid.
+      zh-CN: |
+        如果为真，粒子将从长方体内的任何位置发射。否则，粒子将仅从长方体表面发射。
 games:
   DS3:
     fields1:

@@ -4,8 +4,11 @@ slot: Unknown130
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Unknown action that is in every basic config in every game, and still literally nothing is known about it.
+desc:
+  en-US: |
+    Unknown action that is in every basic config in every game, and still literally nothing is known about it.
+  zh-CN: |
+    未知行为，存在于每款游戏的每个基础配置中，但目前对其仍一无所知。
 properties:
   unk_ds3_p1_0:
     type: ScalarValue

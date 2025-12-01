@@ -16,17 +16,25 @@ properties:
     default: 80201
     argument: Constant0
     resource: model
-    desc: |
-      Model ID.
+    desc:
+      en-US: |
+        Model ID.
+      zh-CN: |
+        模型 ID。
   sizeX:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     scale: instanceSize
-    desc: |
-      The width of the particle.
+    desc:
+      en-US: |
+        The width of the particle.
 
-      If {@link uniformScale} is enabled, this also controls the height and depth.
+        If {@link uniformScale} is enabled, this also controls the height and depth.
+      zh-CN: |
+        粒子的宽度。
+
+        如果启用了 {@link uniformScale}，这也会控制高度和深度。
     see:
       - scaleVariationX
       - sizeY
@@ -36,10 +44,15 @@ properties:
     default: 1
     argument: ParticleAge
     scale: instanceSize
-    desc: |
-      The height of the particle.
+    desc:
+      en-US: |
+        The height of the particle.
 
-      If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+        If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+      zh-CN: |
+        粒子的高度。
+
+        如果启用了 {@link uniformScale}，{@link sizeX} 也会控制高度，此属性将被忽略。
     see:
       - scaleVariationY
       - sizeX
@@ -49,10 +62,15 @@ properties:
     default: 1
     argument: ParticleAge
     scale: instanceSize
-    desc: |
-      The depth of the particle.
+    desc:
+      en-US: |
+        The depth of the particle.
 
-      If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+        If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+      zh-CN: |
+        粒子的深度。
+
+        如果启用了 {@link uniformScale}，{@link sizeX} 也会控制深度，此属性将被忽略。
     see:
       - scaleVariationZ
       - sizeX
@@ -60,24 +78,33 @@ properties:
   rotationX:
     type: ScalarValue
     argument: Constant0
-    desc: |
-      Rotation around the X-axis in degrees.
+    desc:
+      en-US: |
+        Rotation around the X-axis in degrees.
+      zh-CN: |
+        绕 X 轴的旋转角度（度）。
     see:
       - angularSpeedX
       - angularSpeedMultiplierX
   rotationY:
     type: ScalarValue
     argument: Constant0
-    desc: |
-      Rotation around the Y-axis in degrees.
+    desc:
+      en-US: |
+        Rotation around the Y-axis in degrees.
+      zh-CN: |
+        绕 Y 轴的旋转角度（度）。
     see:
       - angularSpeedY
       - angularSpeedMultiplierY
   rotationZ:
     type: ScalarValue
     argument: Constant0
-    desc: |
-      Rotation around the Z-axis in degrees.
+    desc:
+      en-US: |
+        Rotation around the Z-axis in degrees.
+      zh-CN: |
+        绕 Z 轴的旋转角度（度）。
     see:
       - angularSpeedZ
       - angularSpeedMultiplierZ
@@ -85,8 +112,11 @@ properties:
     type: ScalarValue
     argument: ParticleAge
     time: true
-    desc: |
-      Angular speed around the X-axis in degrees per second.
+    desc:
+      en-US: |
+        Angular speed around the X-axis in degrees per second.
+      zh-CN: |
+        绕 X 轴的角速度（度/秒）。
     see:
       - rotationX
       - angularSpeedMultiplierX
@@ -94,16 +124,22 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    desc: |
-      Multiplier for {@link angularSpeedX}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedX}.
+      zh-CN: |
+        {@link angularSpeedX} 的乘数。
     see:
       - rotationX
   angularSpeedY:
     type: ScalarValue
     argument: ParticleAge
     time: true
-    desc: |
-      Angular speed around the Y-axis in degrees per second.
+    desc:
+      en-US: |
+        Angular speed around the Y-axis in degrees per second.
+      zh-CN: |
+        绕 Y 轴的角速度（度/秒）。
     see:
       - rotationY
       - angularSpeedMultiplierY
@@ -111,16 +147,22 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    desc: |
-      Multiplier for {@link angularSpeedY}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedY}.
+      zh-CN: |
+        {@link angularSpeedY} 的乘数。
     see:
       - rotationY
   angularSpeedZ:
     type: ScalarValue
     argument: ParticleAge
     time: true
-    desc: |
-      Angular speed around the Z-axis in degrees per second.
+    desc:
+      en-US: |
+        Angular speed around the Z-axis in degrees per second.
+      zh-CN: |
+        绕 Z 轴的角速度（度/秒）。
     see:
       - rotationZ
       - angularSpeedMultiplierZ
@@ -128,8 +170,11 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    desc: |
-      Multiplier for {@link angularSpeedZ}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedZ}.
+      zh-CN: |
+        {@link angularSpeedZ} 的乘数。
     see:
       - rotationZ
   color1:
@@ -138,10 +183,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+        Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link color3}.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值将被限制在 0-1 范围内。要使用超出此范围的值，请参阅 {@link color3}。
     see:
       - color2
       - color3
@@ -151,10 +201,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: EmissionTime
     color: true
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+        Values in this will be clamped to the 0-1 range. There is no equivalent property with unrestricted values based on the emission time of the particle, but {@link color3} is still multiplicative with this and can be used to scale the values indirectly.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值将被限制在 0-1 范围内。虽然没有基于粒子发射时间的不受限制值的等效属性，但 {@link color3} 仍可与其相乘，并可用于间接缩放数值。
     see:
       - color1
       - color3
@@ -164,10 +219,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: primary
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+        Values in this are unrestricted and can go above 1. If you want values to be clamped to the 0-1 range, see {@link color1}.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值不设限，可以超过 1。如果希望将数值限制在 0-1 范围内，请参阅 {@link color1}。
     see:
       - color1
       - color2
@@ -179,8 +239,11 @@ properties:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Seemingly identical to {@link rgbMultiplier}?
+    desc:
+      en-US: |
+        Seemingly identical to {@link rgbMultiplier}?
+      zh-CN: |
+        似乎与 {@link rgbMultiplier} 相同？
   unk_er_p1_19:
     type: ScalarValue
   unk_er_p1_20:
@@ -190,8 +253,11 @@ properties:
     components: 2
     default: [0, 0]
     argument: Constant0
-    desc: |
-      Offset for the UV coordinates of the model.
+    desc:
+      en-US: |
+        Offset for the UV coordinates of the model.
+      zh-CN: |
+        模型 UV 坐标的偏移。
     see:
       - speedUV
   speedUV:
@@ -200,8 +266,11 @@ properties:
     default: [0, 0]
     argument: ParticleAge
     time: true
-    desc: |
-      Scroll speed for the model's texture.
+    desc:
+      en-US: |
+        Scroll speed for the model's texture.
+      zh-CN: |
+        模型纹理的滚动速度。
     see:
       - speedMultiplierUV
   speedMultiplierUV:
@@ -209,8 +278,11 @@ properties:
     components: 2
     default: [1, 1]
     argument: ParticleAge
-    desc: |
-      Multiplier for {@link speedUV}
+    desc:
+      en-US: |
+        Multiplier for {@link speedUV}
+      zh-CN: |
+        {@link speedUV} 的乘数
   unk_nr_p1_24:
     type: ScalarValue
   unk_nr_p1_25:
@@ -256,8 +328,11 @@ properties:
     type: ScalarValue
     default: 0
     argument: Constant0
-    desc: |
-      Horizontal offset for the UV coordinates of the model.
+    desc:
+      en-US: |
+        Horizontal offset for the UV coordinates of the model.
+      zh-CN: |
+        模型 UV 坐标的水平偏移。
     see:
       - speedU
       - offsetV
@@ -266,15 +341,21 @@ properties:
     type: ScalarValue
     default: 0
     argument: Constant0
-    desc: |
-      Vertical offset for the UV coordinates of the model.
+    desc:
+      en-US: |
+        Vertical offset for the UV coordinates of the model.
+      zh-CN: |
+        模型 UV 坐标的垂直偏移。
   speedU:
     omitClassProp: true
     type: ScalarValue
     default: 0
     argument: ParticleAge
-    desc: |
-      Horiztonal scroll speed for the model's texture.
+    desc:
+      en-US: |
+        Horiztonal scroll speed for the model's texture.
+      zh-CN: |
+        模型纹理的水平滚动速度。
     see:
       - speedMultiplierU
       - offsetU
@@ -283,15 +364,21 @@ properties:
     type: ScalarValue
     default: 0
     argument: ParticleAge
-    desc: |
-      Multiplier for {@link speedU}.
+    desc:
+      en-US: |
+        Multiplier for {@link speedU}.
+      zh-CN: |
+        {@link speedU} 的乘数。
   speedV:
     omitClassProp: true
     type: ScalarValue
     default: 0
     argument: ParticleAge
-    desc: |
-      Vertical scroll speed for the model's texture.
+    desc:
+      en-US: |
+        Vertical scroll speed for the model's texture.
+      zh-CN: |
+        模型纹理的垂直滚动速度。
     see:
       - speedMultiplierV
       - offsetV
@@ -300,20 +387,29 @@ properties:
     type: ScalarValue
     default: 0
     argument: ParticleAge
-    desc: |
-      Multiplier for {@link speedV}.
+    desc:
+      en-US: |
+        Multiplier for {@link speedV}.
+      zh-CN: |
+        {@link speedV} 的乘数。
   rgbMultiplier:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+    desc:
+      en-US: |
+        Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+      zh-CN: |
+        不影响 Alpha 的颜色标量乘数。实际上是亮度乘数。
   alphaMultiplier:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Alpha multiplier.
+    desc:
+      en-US: |
+        Alpha multiplier.
+      zh-CN: |
+        Alpha 乘数。
   unk_er_p2_2:
     type: ScalarValue
   unk_er_p2_3:
@@ -335,43 +431,64 @@ properties:
     field: int
     enum: RichModelOrientationMode
     default: RichModelOrientationMode.ParticleDirection
-    desc: |
-      Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
+    desc:
+      en-US: |
+        Rich model orientation mode. See {@link RichModelOrientationMode} for more information.
+      zh-CN: |
+        Rich Model 朝向模式。有关更多信息，请参阅 {@link RichModelOrientationMode}。
   scaleVariationX:
     field: float
     default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+    desc:
+      en-US: |
+        Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
 
-      If {@link uniformScale} is enabled, this also affects the height.
+        If {@link uniformScale} is enabled, this also affects the height.
+      zh-CN: |
+        每个粒子将在此值和 1 之间选取一个随机数，粒子的宽度将乘以该数。例如，将其设置为 0.5 将使粒子随机变细，最细为一半宽度。将其设置为 2 将使它们随机变宽，最宽为两倍宽度。
+
+        如果启用了 {@link uniformScale}，这也会影响高度。
     see:
       - scaleVariationY
       - scaleVariationZ
   scaleVariationY:
     field: float
     default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+    desc:
+      en-US: |
+        Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
 
-      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+        If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+      zh-CN: |
+        每个粒子将在此值和 1 之间选取一个随机数，粒子的高度将乘以该数。例如，将其设置为 0.5 将使粒子随机变矮，最矮为一半高度。将其设置为 2 将使它们随机变高，最高为两倍高度。
+
+        如果启用了 {@link uniformScale}，{@link scaleVariationX} 也会影响高度，此字段将被忽略。
     see:
       - scaleVariationX
       - scaleVariationZ
   scaleVariationZ:
     field: float
     default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+    desc:
+      en-US: |
+        Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
 
-      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+        If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+      zh-CN: |
+        每个粒子将在此值和 1 之间选取一个随机数，粒子的深度将乘以该数。例如，将其设置为 0.5 将使粒子随机变浅，最浅为一半深度。将其设置为 2 将使它们随机变深，最深为两倍深度。
+
+        如果启用了 {@link uniformScale}，{@link scaleVariationX} 也会影响深度，此字段将被忽略。
     see:
       - scaleVariationX
       - scaleVariationY
   uniformScale:
     field: bool
     default: false
-    desc: |
-      If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+    desc:
+      en-US: |
+        If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+      zh-CN: |
+        如果启用，粒子 X 轴缩放相关的属性和字段将控制所有轴的缩放，Y 和 Z 轴对应的属性将被忽略。
     see:
       - sizeX
       - sizeY
@@ -387,8 +504,11 @@ properties:
     default: 1
   dither:
     field: bool
-    desc: |
-      If enabled, this allows control of the model's opacity regardless of its material by using dithered transparency. If disabled, changes to the alpha values that affect the particle will not have any effect unless the material allows it, but it will look better than the dithered transparency.
+    desc:
+      en-US: |
+        If enabled, this allows control of the model's opacity regardless of its material by using dithered transparency. If disabled, changes to the alpha values that affect the particle will not have any effect unless the material allows it, but it will look better than the dithered transparency.
+      zh-CN: |
+        如果启用，这允许使用抖动透明度来控制模型的不透明度，而不管其材质如何。如果禁用，除非材质允许，否则影响粒子的 Alpha 值的更改将不会产生任何效果，但它看起来会比抖动透明度更好。
   unk_er_f1_8:
     field: int
     default: -2
@@ -398,16 +518,22 @@ properties:
   anibnd:
     field: int
     resource: anibnd
-    desc: |
-      Anibnd ID.
+    desc:
+      en-US: |
+        Anibnd ID.
+      zh-CN: |
+        Anibnd ID。
     see:
       - animation
       - loopAnimation
       - animationSpeed
   animation:
     field: int
-    desc: |
-      Controls which animation in the {@link anibnd} to play.
+    desc:
+      en-US: |
+        Controls which animation in the {@link anibnd} to play.
+      zh-CN: |
+        控制播放 {@link anibnd} 中的哪个动画。
     see:
       - anibnd
       - loopAnimation
@@ -415,8 +541,11 @@ properties:
   loopAnimation:
     field: bool
     default: true
-    desc: |
-      If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
+    desc:
+      en-US: |
+        If disabled, the {@link animation} will only play once and then freeze on the last frame. If enabled, the animation will loop.
+      zh-CN: |
+        如果禁用，{@link animation} 只会播放一次，然后冻结在最后一帧。如果启用，动画将循环播放。
     see:
       - anibnd
       - animation
@@ -425,8 +554,11 @@ properties:
     field: float
     default: 1
     time: true
-    desc: |
-      Controls the speed at which the {@link animation} plays.
+    desc:
+      en-US: |
+        Controls the speed at which the {@link animation} plays.
+      zh-CN: |
+        控制 {@link animation} 的播放速度。
     see:
       - anibnd
       - animation
@@ -451,10 +583,15 @@ properties:
     field: int
   unkBlendMode:
     field: int
-    desc: |
-      Unknown integer.
+    desc:
+      en-US: |
+        Unknown integer.
 
-      This is somewhat similar to the `blendMode` property of other appearance actions, but the values do not match the ones in {@link BlendMode}.
+        This is somewhat similar to the `blendMode` property of other appearance actions, but the values do not match the ones in {@link BlendMode}.
+      zh-CN: |
+        未知整数。
+
+        这与其他外观动作的 `blendMode` 属性有些相似，但值与 {@link BlendMode} 中的值不匹配。
   unk_ac6_f1_24:
     field: float
   unk_ac6_f1_25:
@@ -541,12 +678,19 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+    desc:
+      en-US: |
+        Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
+        Note:
+        - This has no effect if the "Effects Quality" setting is set to "Low".
+        - This does not affect the natural bloom effect from high color values.
+      zh-CN: |
+        控制额外泛光效果的颜色。粒子的颜色将与此颜色相乘，以获得泛光效果的最终颜色。
+
+        注意：
+        - 如果“特效质量”设置设为“低”，则此项无效。
+        - 这不影响高颜色值产生的自然泛光效果。
   unk_er_f2_8:
     field: int
   unk_er_f2_9:
@@ -563,10 +707,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link minDistance 最小视图距离} 附近衰减为 0 的点。在 {@link minDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link minDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minDistance
       - maxFadeDistance
@@ -577,12 +726,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link minFadeDistance} to be set to a positive value or 0.
+        This requires {@link minFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link minFadeDistance} 设置为正值或 0。
+
+        这与 {@link minDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - maxFadeDistance
@@ -593,10 +749,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link maxDistance 最大视图距离} 附近衰减为 0 的点。在 {@link maxDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link maxDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minFadeDistance
       - minDistance
@@ -607,12 +768,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link maxFadeDistance} to be set to a positive value or 0.
+        This requires {@link maxFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link maxFadeDistance} 设置为正值或 0。
+
+        这与 {@link maxDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - minDistance
@@ -623,8 +791,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -635,8 +806,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -792,12 +966,29 @@ games:
       - rgbMultiplier2
       - unk_er_p1_19
       - unk_er_p1_20
-      - offsetU
-      - offsetV
-      - speedU
-      - speedMultiplierU
-      - speedV
-      - speedMultiplierV
+      - offsetUV
+      - speedUV
+      - speedMultiplierUV
+      - unk_nr_p1_24
+      - unk_nr_p1_25
+      - unk_nr_p1_26
+      - unk_nr_p1_27
+      - unk_nr_p1_28
+      - unk_nr_p1_29
+      - unk_nr_p1_30
+      - unk_nr_p1_31
+      - unk_nr_p1_32
+      - unk_nr_p1_33
+      - unk_nr_p1_34
+      - unk_nr_p1_35
+      - unk_nr_p1_36
+      - unk_nr_p1_37
+      - unk_nr_p1_38
+      - unk_nr_p1_39
+      - unk_nr_p1_40
+      - unk_nr_p1_41
+      - unk_nr_p1_42
+      - unk_nr_p1_43
     properties2:
       - rgbMultiplier
       - alphaMultiplier

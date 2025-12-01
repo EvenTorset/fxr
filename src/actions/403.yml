@@ -4,21 +4,30 @@ slot: EmitterShape
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Makes the emitter spherical.
+desc:
+  en-US: |
+    Makes the emitter spherical.
+  zh-CN: |
+    使发射器呈球形。
 properties:
   radius:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      Radius of the sphere.
+    desc:
+      en-US: |
+        Radius of the sphere.
+      zh-CN: |
+        球体半径。
   emitInside:
     field: bool
     default: true
-    desc: |
-      If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
+    desc:
+      en-US: |
+        If true, particles will be emitted from anywhere within the sphere. Otherwise the particles will be emitted only from the surface of the sphere.
+      zh-CN: |
+        如果为真，粒子将从球体内的任何位置发射。否则，粒子将仅从球体表面发射。
 games:
   DS3:
     fields1:

@@ -4,14 +4,20 @@ slot: NodeMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Attaches the node to the camera.
+desc:
+  en-US: |
+    Attaches the node to the camera.
+  zh-CN: |
+    将节点附着到摄像机。
 properties:
   followRotation:
     field: bool
     default: true
-    desc: |
-      Disable this to stop the node from following the rotation of the camera.
+    desc:
+      en-US: |
+        Disable this to stop the node from following the rotation of the camera.
+      zh-CN: |
+        禁用此项以停止节点跟随摄像机的旋转。
   unk_ds3_f1_1:
     field: int
     default: 1

@@ -4,41 +4,69 @@ slot: ParticleForceMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
+desc:
+  en-US: |
+    Enables particles emitted by the node to collide with surfaces, and controls how those collisions affect the movement of the particles.
 
-  Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
+    Note that this works very differently from the collision-related fields in the GPU particle appearance actions. The collision detection for those are entriely based on the distances between the camera and everything in its view, so if a particle is farther away from the camera than an object, the particle will be able to collide with it. The collision detection used in this action is based on the real 3D geometry of the scene, so particles can collide with anything, even while they are out of view.
 
-  Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
+    Also note that this action seems to cause the game to crash very easily. If a particle affected by this action despawns due to its limited duration, the game will crash no matter what.
+  zh-CN: |
+    使节点发射的粒子能够与表面碰撞，并控制这些碰撞如何影响粒子的运动。
+
+    请注意，这与 GPU 粒子外观动作中与碰撞相关的字段的工作方式截然不同。后者的碰撞检测完全基于摄像机与其视野中所有物体之间的距离，因此如果粒子比物体离摄像机更远，粒子将能够与其碰撞（深度缓冲碰撞）。而此动作中使用的碰撞检测是基于场景的真实 3D 几何体的，因此粒子可以与任何物体碰撞，即使它们在视野之外。
+
+    另请注意，此行为似乎很容易导致游戏崩溃。如果受此动作影响的粒子因其有限的持续时间而消失，游戏无论如何都会崩溃。
 properties:
   radius:
     field: float
     default: 1
     scale: rawInstanceSize
-    desc: |
-      The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
+    desc:
+      en-US: |
+        The collision radius of the particles. This controls the maximum distance between the particles and a surface they can collide with for a collision to be detected.
+      zh-CN: |
+        粒子的碰撞半径。这控制粒子与它们可以碰撞的表面之间的最大距离，以便检测到碰撞。
   friction:
     field: float
     default: 0.5
-    desc: |
-      The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
-      | Values | Behavior |
-      |-|-|
-      | <0 | The particles will accelerate as they slide, going faster and faster over time. |
-      | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
-      | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
-      | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
+    desc:
+      en-US: |
+        The friction coefficient of the particles. This controls how quickly particles stop while sliding against a surface.
+        | Values | Behavior |
+        |-|-|
+        | <0 | The particles will accelerate as they slide, going faster and faster over time. |
+        | 0 | The particles will not decelerate at all as they slide. They will just keep sliding forever unless something else stops them. |
+        | 0-1 | The particles will decelerate as they slide, causing them to eventually come to a stop. |
+        | ≥1 | The particles will stop immediately if they contact a surface. They may still {@link bounciness bounce}, but they will never slide along the surface. |
+      zh-CN: |
+        粒子的摩擦系数。这控制粒子在表面滑动时停止的速度。
+        | 值 | 行为 |
+        |-|-|
+        | <0 | 粒子在滑动时会加速，随着时间的推移越来越快。 |
+        | 0 | 粒子在滑动时完全不会减速。除非有其他东西阻止它们，否则它们将永远滑动。 |
+        | 0-1 | 粒子在滑动时会减速，最终停止。 |
+        | ≥1 | 如果粒子接触表面，它们将立即停止。它们可能仍会{@link bounciness 反弹}，但绝不会沿表面滑动。 |
   bounciness:
     field: float
     default: 0.5
-    desc: |
-      The coefficient of restitution of the particles, or how "bouncy" they are.
-      | Values | Behavior |
-      |-|-|
-      | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
-      | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
-      | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
-      | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
+    desc:
+      en-US: |
+        The coefficient of restitution of the particles, or how "bouncy" they are.
+        | Values | Behavior |
+        |-|-|
+        | ≤0 | Completely inelastic collision. The particles will not bounce if they hit something. They will just stop or slide.
+        | 0-1 | Partially elastic collision. The particles will bounce, but they will lose some energy from the collision, causing them to bounce back at a reduced speed compared to the speed they had before the collision. |
+        | 1 | Perfectly elastic collision. No energy is lost from any collision, causing the particles to bounce off at the same speed they hit the surface. |
+        | >1 | Hyper-elastic collision. The particles will gain energy from every collision, causing them to speed up every time they collide with something. Hitting something at an angle may in some cases still cause them to lose some energy. |
+      zh-CN: |
+        粒子的恢复系数，即它们的“弹性”程度。
+        | 值 | 行为 |
+        |-|-|
+        | ≤0 | 完全非弹性碰撞。粒子如果击中某物不会反弹。它们只会停止或滑动。
+        | 0-1 | 部分弹性碰撞。粒子会反弹，但会在碰撞中损失一些能量，导致反弹速度低于碰撞前的速度。 |
+        | 1 | 完全弹性碰撞。碰撞中没有任何能量损失，粒子以撞击表面时的相同速度反弹。 |
+        | >1 | 超弹性碰撞。粒子将从每次碰撞中获得能量，导致它们每次与某物碰撞时都会加速。以一定角度撞击某物在某些情况下可能仍会导致它们损失一些能量。 |
 games:
   AC6:
     fields1:

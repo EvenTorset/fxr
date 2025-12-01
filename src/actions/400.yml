@@ -4,16 +4,22 @@ slot: EmitterShape
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Makes the emitter a single point.
+desc:
+  en-US: |
+    Makes the emitter a single point.
+  zh-CN: |
+    使发射器成为单个点。
 properties:
   direction:
     type: InitialDirection
     field: int
     enum: InitialDirection
     default: InitialDirection.Emitter
-    desc: |
-      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+    desc:
+      en-US: |
+        Controls the initial direction for particles. See {@link InitialDirection} for more information.
+      zh-CN: |
+        控制粒子的初始方向。有关更多信息，请参阅 {@link InitialDirection}。
 games:
   DS3:
     fields1:

@@ -4,21 +4,30 @@ slot: NodeAttributes
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls various things about the node, like its duration, and how it is attached to the parent node.
+desc:
+  en-US: |
+    Controls various things about the node, like its duration, and how it is attached to the parent node.
+  zh-CN: |
+    控制节点的各种属性，如持续时间以及如何附着到父节点。
 properties:
   duration:
     type: ScalarValue
     default: -1
     argument: Constant0
     time: invIfPositive
-    desc: |
-      The node duration in seconds. Can be set to -1 to make the node last forever.
+    desc:
+      en-US: |
+        The node duration in seconds. Can be set to -1 to make the node last forever.
+      zh-CN: |
+        节点持续时间（秒）。设置为 -1 可以使节点永久存在。
   delay:
     field: float
     time: inv
-    desc: |
-      The delay in seconds before the node becomes active.
+    desc:
+      en-US: |
+        The delay in seconds before the node becomes active.
+      zh-CN: |
+        节点激活前的延迟（秒）。
   unk_ds3_f1_1:
     field: int
     default: 1
@@ -27,17 +36,27 @@ properties:
     field: int
     enum: AttachMode
     default: AttachMode.Parent
-    desc: |
-      Controls how the node is attached to the parent node.
+    desc:
+      en-US: |
+        Controls how the node is attached to the parent node.
+      zh-CN: |
+        控制节点如何附着到父节点。
   depthBias:
     field: float
     scale: true
-    desc: |
-      Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
+    desc:
+      en-US: |
+        Controls the rendering order of this node. Lower values will cause the node to be drawn in front of nodes with a higher value. This only affects the node with this action, it is not inherited by descendant nodes.
 
-      This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
+        This does not affect the actual depth of the node in the scene. It will still draw behind other objects even with a big negative bias. It only affects the order it is rendered in relative to other effects.
 
-      Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
+        Model particles and light sources are not affected by this in any way. Most, if not all, other types of appearances are affected by it, even GPU particles and lens flares.
+      zh-CN: |
+        控制此节点的渲染顺序。较低的值会导致节点在较高值的节点之前绘制。这只影响具有此动作的节点，不会被后代节点继承。
+
+        这并不影响节点在场景中的实际深度。即使有很大的负偏差，它仍然会绘制在其他物体后面。它只影响相对于其他特效的渲染顺序。
+
+        模型粒子和光源不受此影响。大多数（如果不是全部）其他类型的外观都会受其影响，甚至包括 GPU 粒子和镜头光晕。
 games:
   DS3:
     fields1:

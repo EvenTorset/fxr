@@ -4,39 +4,58 @@ slot: NodeTransform
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the translation and rotation of a node, and can also randomize them.
+desc:
+  en-US: |
+    Controls the translation and rotation of a node, and can also randomize them.
+  zh-CN: |
+    控制节点的平移和旋转，并可以使它们随机化。
 properties:
   offset:
     field: vec3
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      Translation of the node.
+    desc:
+      en-US: |
+        Translation of the node.
 
-      This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+        This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+      zh-CN: |
+        节点的平移。
+
+        此平移发生在所有 {@link rotation 旋转}之后，意味着旋转不会影响平移。
   rotation:
     field: vec3
     components: 3
     default: [0, 0, 0]
-    desc: |
-      The rotation of the node.
+    desc:
+      en-US: |
+        The rotation of the node.
 
-      The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
+        The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
+      zh-CN: |
+        节点的旋转。
+
+        旋转顺序为 Z -> X -> Y，且 {@link offset} 的平移发生在所有旋转之后。
   offsetVariance:
     field: vec3
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
+    desc:
+      en-US: |
+        The maximum random change in translation of the node. A random value between the {@link offset base value} minus this and the base value plus this will be the final offset used.
+      zh-CN: |
+        节点平移的最大随机变化量。将在 {@link offset 基础值} 减去此值与基础值加上此值之间取一个随机值作为最终使用的平移偏移。
   rotationVariance:
     field: vec3
     components: 3
     default: [0, 0, 0]
-    desc: |
-      The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
+    desc:
+      en-US: |
+        The maximum random change in rotation of the node. A random value between the {@link rotation base value} minus this and the base value plus this will be the final rotation used.
+      zh-CN: |
+        节点旋转的最大随机变化量。将在 {@link rotation 基础值} 减去此值与基础值加上此值之间取一个随机值作为最终使用的旋转。
 games:
   DS3:
     fields1:

@@ -4,17 +4,25 @@ slot: StateConfigMap
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Maps states to configs in the parent node.
+desc:
+  en-US: |
+    Maps states to configs in the parent node.
+  zh-CN: |
+    将状态映射到父节点中的配置。
 properties:
   configIndices:
     type: number[]
     default: [0]
     s10: true
-    desc: |
-      A list of config indices.
+    desc:
+      en-US: |
+        A list of config indices.
 
-      The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
+        The index of each value represents the index of the state, and the value represents the index of the config that should be active when the state is active.
+      zh-CN: |
+        配置索引列表。
+
+        每个值的索引代表状态的索引，而值代表该状态激活时应激活的配置索引。
 games:
   DS3:
     section10s:
