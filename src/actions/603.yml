@@ -401,8 +401,11 @@ properties:
   uniformScale:
     field: bool
     default: false
-    desc: |
-      If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+    desc:
+      en-US: |
+        If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+      zh-CN: |
+        如果启用，粒子宽度相关的属性和字段将同时控制粒子的宽度和高度，而高度对应的属性将被忽略。
     see:
       - width
       - height
