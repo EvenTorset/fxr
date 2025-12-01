@@ -4,8 +4,11 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+desc:
+  en-US: |
+    A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+  zh-CN: |
+    一个相当简单的光束效果，仅在《黑暗之魂 3》中使用。如果在《只狼》中转换，它会出现，但在该游戏中似乎无法正常工作。在《艾尔登法环》或《装甲核心 6》中似乎完全不起作用。
 properties:
   width:
     type: ScalarValue
@@ -46,15 +49,21 @@ properties:
     field: int
     resource: texture
     textureType: a
-    desc: |
-      Texture ID.
+    desc:
+      en-US: |
+        Texture ID.
+      zh-CN: |
+        纹理 ID。
   blendMode:
     type: BlendMode
     field: int
     enum: BlendMode
     default: BlendMode.Add
-    desc: |
-      Blend mode.
+    desc:
+      en-US: |
+        Blend mode.
+      zh-CN: |
+        混合模式。
   unk_ds3_f1_2:
     field: float
     default: 0.75
@@ -76,8 +85,11 @@ properties:
   layers:
     field: int
     default: 30
-    desc: |
-      The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
+    desc:
+      en-US: |
+        The number of layers to use for the light shaft effect. Higher values will look better, but will probably perform worse.
+      zh-CN: |
+        用于光束效果的层数。较高的值看起来更好，但可能会降低性能。
   unk_ds3_f1_9:
     field: float
     default: 1
