@@ -4,27 +4,41 @@ slot: NodeForceMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
-  - {@link ActionType.CancelForce CancelForce}
-  - {@link ActionType.WindForce WindForce}
-  - {@link ActionType.GravityForce GravityForce}
-  - {@link ActionType.ForceCollision ForceCollision}
-  - {@link ActionType.TurbulenceForce TurbulenceForce}
+desc:
+  en-US: |
+    Controls how the node is affected by forces. For more information about forces that can affect nodes and particles, see:
+    - {@link ActionType.CancelForce CancelForce}
+    - {@link ActionType.WindForce WindForce}
+    - {@link ActionType.GravityForce GravityForce}
+    - {@link ActionType.ForceCollision ForceCollision}
+    - {@link ActionType.TurbulenceForce TurbulenceForce}
+  zh-CN: |
+    控制节点如何受力影响。有关可影响节点和粒子的力的更多信息，请参阅：
+    - {@link ActionType.CancelForce CancelForce 取消力场}
+    - {@link ActionType.WindForce WindForce 风力场}
+    - {@link ActionType.GravityForce GravityForce 重力场}
+    - {@link ActionType.ForceCollision ForceCollision 力场碰撞}
+    - {@link ActionType.TurbulenceForce TurbulenceForce 湍流力场}
 properties:
   acceleration:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: sq
-    desc: |
-      The acceleration in the direction of the force.
+    desc:
+      en-US: |
+        The acceleration in the direction of the force.
+      zh-CN: |
+        力方向上的加速度。
   accelerationMultiplier:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      A multiplier for {@link acceleration}.
+    desc:
+      en-US: |
+        A multiplier for {@link acceleration}.
+      zh-CN: |
+        {@link acceleration} 的乘数。
   unk_sdt_f1_0:
     field: int
     default: 1
