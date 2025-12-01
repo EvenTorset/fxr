@@ -4,51 +4,72 @@ slot: NodeMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the angular speed of the node.
+desc:
+  en-US: |
+    Controls the angular speed of the node.
+  zh-CN: |
+    控制节点的角速度。
 properties:
   angularSpeedX:
     type: ScalarValue
     argument: ActiveTime
     time: true
-    desc: |
-      The node's angular speed around its local X-axis in degrees per second.
+    desc:
+      en-US: |
+        The node's angular speed around its local X-axis in degrees per second.
+      zh-CN: |
+        节点绕其局部 X 轴的角速度（度/秒）。
     see:
       - angularSpeedMultiplierX
   angularSpeedMultiplierX:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link angularSpeedX}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedX}.
+      zh-CN: |
+        {@link angularSpeedX} 的乘数。
   angularSpeedY:
     type: ScalarValue
     argument: ActiveTime
     time: true
-    desc: |
-      The node's angular speed around its local Y-axis in degrees per second.
+    desc:
+      en-US: |
+        The node's angular speed around its local Y-axis in degrees per second.
+      zh-CN: |
+        节点绕其局部 Y 轴的角速度（度/秒）。
     see:
       - angularSpeedMultiplierY
   angularSpeedMultiplierY:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link angularSpeedY}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedY}.
+      zh-CN: |
+        {@link angularSpeedY} 的乘数。
   angularSpeedZ:
     type: ScalarValue
     argument: ActiveTime
     time: true
-    desc: |
-      The node's angular speed around its local Z-axis in degrees per second.
+    desc:
+      en-US: |
+        The node's angular speed around its local Z-axis in degrees per second.
+      zh-CN: |
+        节点绕其局部 Z 轴的角速度（度/秒）。
     see:
       - angularSpeedMultiplierZ
   angularSpeedMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link angularSpeedZ}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedZ}.
+      zh-CN: |
+        {@link angularSpeedZ} 的乘数。
   unk_ds3_f1_0:
     field: int
 games:
