@@ -343,7 +343,7 @@ export default async function(writeToDist = true) {
        * - **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
        * - **Class**: {@link ${data.name}}
        * 
-       * ${data.desc.trim().replace(/\n/g, '\n   * ')}
+       * ${(typeof data.desc === 'string' ? data.desc : data.desc['en-US']).trim().replace(/\n/g, '\n   * ')}
        */
       ${data.name} = ${data.type},
     `.trim().replace(/^\s{6}/gm, '  '))
@@ -409,7 +409,7 @@ export default async function(writeToDist = true) {
          * ### {@link ActionType.${data.name} Action ${data.type} - ${data.name}}${'slot' in data ? `
          * **Slot**: {@link ActionSlots.${data.slot}Action ${data.slot}}` : ''}
          * 
-         * ${data.desc.trim().replace(/\n/g, '\n * ')}
+         * ${(typeof data.desc === 'string' ? data.desc : data.desc['en-US']).trim().replace(/\n/g, '\n * ')}
          */
         class ${data.name} extends DataAction {
           declare readonly type: ActionType.${data.name}
@@ -418,7 +418,7 @@ export default async function(writeToDist = true) {
               /**
                * ${
                 'desc' in v ?
-                  v.desc.trim().replace(/\n/g, '\n   * ') :
+                  (typeof v.desc === 'string' ? v.desc : v.desc['en-US']).trim().replace(/\n/g, '\n   * ') :
                   `Unknown${'s10' in v ? ' section10' : 'field' in v ? ` ${fieldTypeNameMap[v.field]}` : ` ${propTypeMap[v.components] ?? 'scalar'}`}.`}
                * 
                * **Default**: ${defValString(v)}${
@@ -439,7 +439,7 @@ export default async function(writeToDist = true) {
           /**
            * @param ${propNames[0]} ${
             'desc' in firstProp ?
-              firstProp.desc.trim().replace(/\n/g, '\n   * ') :
+              (typeof firstProp.desc === 'string' ? firstProp.desc : firstProp.desc['en-US']).trim().replace(/\n/g, '\n   * ') :
               `Unknown${'field' in firstProp ? ` ${fieldTypeNameMap[firstProp.field]}` : ''}.`
            }
            *

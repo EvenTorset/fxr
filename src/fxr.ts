@@ -659,7 +659,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link LightShaft}
    * 
-   * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+   * Defines a simple light shafts effect.
+   * 
+   * This is only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or later games.
    */
   LightShaft = 10003,
   /**
@@ -25201,7 +25203,9 @@ class GPUStandardCorrectParticle extends DataAction {
  * ### {@link ActionType.LightShaft Action 10003 - LightShaft}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+ * Defines a simple light shafts effect.
+ * 
+ * This is only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or later games.
  */
 class LightShaft extends DataAction {
   declare readonly type: ActionType.LightShaft
@@ -28454,7 +28458,9 @@ class LensFlare extends DataAction {
   layer1OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer1}. {@link layer1Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer1Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
@@ -28564,7 +28570,9 @@ class LensFlare extends DataAction {
   layer2OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer2}. {@link layer2Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer2Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
@@ -28674,7 +28682,9 @@ class LensFlare extends DataAction {
   layer3OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer3}. {@link layer3Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer3Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
@@ -28784,7 +28794,9 @@ class LensFlare extends DataAction {
   layer4OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer4}. {@link layer4Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer4Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
