@@ -8,7 +8,7 @@ desc:
   en-US: |
     Unknown root node action.
   zh-CN: |
-    未知根节点动作。
+    未知根节点行为。
 properties:
   unk_ds3_f1_0:
     field: int
