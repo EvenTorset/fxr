@@ -1,0 +1,22 @@
+unknown.field:
+  en-US: "Unknown {fieldType}."
+unknown.section10:
+  en-US: Unknown section10.
+unknown.property:
+  en-US: "Unknown {tensorType} property."
+
+fieldType:
+  en-US:
+    bool: boolean
+    int: integer
+    float: float
+    vec2: vector2
+    vec3: vector3
+    vec4: vector4
+
+tensorType:
+  en-US:
+    - scalar
+    - vector2
+    - vector3
+    - vector4
