@@ -4,12 +4,19 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
-desc: |
-  Defines a tracer particle, which leaves a textured trail where it moves.
+desc:
+  en-US: |
+    Defines a tracer particle, which leaves a textured trail where it moves.
 
-  This is an older version of {@link Tracer} with fewer features.
+    This is an older version of {@link Tracer} with fewer features.
+  
+    The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceTracer".
+  zh-CN: |
+    定义一个追踪粒子，它会在移动时留下纹理轨迹。
 
-  The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceTracer".
+    这是 {@link Tracer} 的旧版本，功能较少。
+  
+    该名称来自《艾尔登法环》的 RTTI，其中它被命名为“GXFXCGAppearanceTracer”。
 properties:
   texture:
     type: ScalarValue

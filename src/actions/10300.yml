@@ -4,10 +4,15 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Defines a directional force in a volume, which is most often used for creating wind effects. The direction of the force is based on the direction of the node.
+desc:
+    en-US: |
+       Defines a directional force in a volume, which is most often used for creating wind effects. The direction of the force is based on the direction of the node.
 
-  The name is from Elden Ring's RTTI, where it is named "GXForceFieldWindAreaAppearance".
+       The name is from Elden Ring's RTTI, where it is named "GXForceFieldWindAreaAppearance".
+    zh-CN: |
+       定义一个体积内的定向力，通常用于创建风力效果。力的方向基于节点的方向。
+
+       该名称来自《艾尔登法环》的 RTTI，其中名为“GXForceFieldWindAreaAppearance”。
 properties:
   force:
     type: ScalarValue

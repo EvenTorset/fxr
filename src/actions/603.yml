@@ -4,10 +4,15 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
-desc: |
-  Defines a simple, flat, textured particle. Similar to {@link PointSprite}, but with far more options. This is the most common type of particle in the supported games.
+desc:
+  en-US: |
+    Defines a simple, flat, textured particle. Similar to {@link PointSprite}, but with far more options. This is the most common type of particle in the supported games.
 
-  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "Billboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
+    The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "Billboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
+  zh-CN: |
+    定义一个简单的、扁平的、带纹理的粒子。与 {@link PointSprite} 相似，但选项要多得多。这是所支持游戏中最常见的粒子类型。
+
+    该名称源自《艾尔登法环》的 RTTI，其中被称为 "GXFfxAppearanceBillboardEx"。"Ex" 后缀指的是它是一个名为 "Billboard" 的基类的扩展版本，但这似乎只是某些外观类命名上的不一致。大多数其他外观类都扩展了某个基类，但基类要么带有 "Base" 后缀，要么扩展类和基类共享相同的名称。
 properties:
   texture:
     type: ScalarValue
@@ -396,8 +401,11 @@ properties:
   uniformScale:
     field: bool
     default: false
-    desc: |
-      If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+    desc:
+      en-US: |
+        If enabled, the particle width-related properties and fields will control both the width and height of the particles, and the height counterparts will be ignored.
+      zh-CN: |
+        如果启用，粒子宽度相关的属性和字段将同时控制粒子的宽度和高度，而高度对应的属性将被忽略。
     see:
       - width
       - height

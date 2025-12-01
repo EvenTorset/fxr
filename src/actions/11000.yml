@@ -4,8 +4,11 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Defines a light source with an elliptic cone shape, a spot light.
+desc:
+  en-US: |
+    Defines a light source with an elliptic cone shape, a spot light.
+  zh-CN: |
+    定义了一个具有椭圆锥形状的光源，即聚光灯。
 properties:
   diffuseColor:
     type: Vector4Value

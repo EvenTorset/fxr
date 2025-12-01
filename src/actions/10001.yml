@@ -4,12 +4,19 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Defines a GPU particle system. Very similar to {@link GPUStandardParticle}, with no known differences.
+desc:
+    en-US: |
+       Defines a GPU particle system. Very similar to {@link GPUStandardParticle}, with no known differences.
 
-  The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
+       The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
 
-  Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
+       Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
+    zh-CN: |
+       定义了一个 GPU 粒子系统。与 {@link GPUStandardParticle} 非常相似，没有已知差异。
+
+       此行为的名称来自《艾尔登法环》的 RTTI，其中它被称为“GXVfxStandardCorrectParticleAppearance”。在《黑暗之魂3》中，一个具有相同 ID 的行为名为“WanderingVision”，并且该行为可能仍存在于《黑暗之魂3》中，但在原版游戏中未找到，因此难以进行测试。
+
+       注意：此行为在《黑暗之魂3》或《只狼》中不存在，但它仍然包含以这两款游戏命名的未知字段和属性。这是因为这样可以简化此操作与 {@link GPUStandardParticle} 之间的转换。当为这两款游戏编写时，此操作将被自动转换为另一个操作。
 properties:
   particleFollowFactor:
     type: ScalarValue
