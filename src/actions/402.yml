@@ -4,40 +4,59 @@ slot: EmitterShape
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Makes the emitter rectangular.
+desc:
+  en-US: |
+    Makes the emitter rectangular.
+  zh-CN: |
+    使发射器呈矩形。
 properties:
   sizeX:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      Width of the rectangle.
+    desc:
+      en-US: |
+        Width of the rectangle.
+      zh-CN: |
+        矩形的宽度。
   sizeY:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      Height of the rectangle.
+    desc:
+      en-US: |
+        Height of the rectangle.
+      zh-CN: |
+        矩形的高度。
   distribution:
     type: ScalarValue
     default: 0
     argument: ActiveTime
-    desc: |
-      Controls how the random emission points are distributed within the rectangle.
-      - At 0, particles are equally likely to emit from anywhere inside the rectangle.
-      - At 1, particles have a 100% chance of being emitted from the center point.
-      - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
-      - Values between these smoothly blend between them.
+    desc:
+      en-US: |
+        Controls how the random emission points are distributed within the rectangle.
+        - At 0, particles are equally likely to emit from anywhere inside the rectangle.
+        - At 1, particles have a 100% chance of being emitted from the center point.
+        - At -1, particles have a 100% chance of being emitted from the perimeter of the rectangle.
+        - Values between these smoothly blend between them.
+      zh-CN: |
+        控制随机发射点在矩形内的分布方式。
+        - 值为 0 时，粒子从矩形内任何位置发射的几率相等。
+        - 值为 1 时，粒子有 100% 的几率从中心点发射。
+        - 值为 -1 时，粒子有 100% 的几率从矩形周边发射。
+        - 这些值之间的值会平滑过渡。
   direction:
     type: InitialDirection
     field: int
     enum: InitialDirection
     default: InitialDirection.Emitter
-    desc: |
-      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+    desc:
+      en-US: |
+        Controls the initial direction for particles. See {@link InitialDirection} for more information.
+      zh-CN: |
+        控制粒子的初始方向。有关更多信息，请参阅 {@link InitialDirection}。
 games:
   DS3:
     fields1:
