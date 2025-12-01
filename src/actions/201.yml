@@ -4,17 +4,25 @@ slot: NodeSelector
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
+desc:
+  en-US: |
+    Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit a random child node every emission.
+  zh-CN: |
+    用于 {@link ConfigType.NodeEmitter NodeEmitter 配置}，每次发射时发射一个随机子节点。
 properties:
   weights:
     type: number[]
     default: [1]
     s10: true
-    desc: |
-      Probability weights for each child node to be selected for emission.
+    desc:
+      en-US: |
+        Probability weights for each child node to be selected for emission.
 
-      The weights are stored as integers, so non-integer values in this list will be truncated.
+        The weights are stored as integers, so non-integer values in this list will be truncated.
+      zh-CN: |
+        每个子节点被选中发射的概率权重。
+
+        权重以整数存储，因此列表中的非整数值将被截断。
 games:
   DS3:
     section10s:
