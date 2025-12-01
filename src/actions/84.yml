@@ -33,7 +33,7 @@ properties:
       en-US: |
         The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
       zh-CN: |
-        粒子在当前方向上的加速度。通常是它们的 {@link InitialDirection 初始方向}，但也可能随时间被其他因素改变，例如此动作的 {@link gravity} 重力。
+        粒子在当前方向上的加速度。通常是它们的 {@link InitialDirection 初始方向}，但也可能随时间被其他因素改变，例如此动作的 {@link gravity 重力}。
   accelerationMultiplier:
     type: ScalarValue
     default: 1
@@ -54,7 +54,7 @@ properties:
       zh-CN: |
         粒子将根据 {@link turnInterval} 定义的间隔，基于此值随机转向一定角度。
 
-        此转向会影响粒子的当前方向，进而影响其他方面，例如此动作的 {@link acceleration} 加速度。
+        此转向会影响粒子的当前方向，进而影响其他方面，例如此动作的 {@link acceleration 加速度}。
   unk_ds3_f1_0:
     field: float
   turnInterval:
@@ -69,7 +69,7 @@ properties:
       zh-CN: |
         粒子将以此间隔基于 {@link maxTurnAngle} 随机转向。单位为秒，但由于存储此值的字段的工作方式，该值将四舍五入到最接近的 0.02 秒。
 
-        此转向会影响粒子的当前方向，进而影响其他方面，例如此动作的 {@link acceleration} 加速度。
+        此转向会影响粒子的当前方向，进而影响其他方面，例如此动作的 {@link acceleration 加速度}。
 games:
   DS3:
     fields1:
