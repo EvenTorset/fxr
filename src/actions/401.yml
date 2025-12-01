@@ -4,33 +4,49 @@ slot: EmitterShape
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Makes the emitter disk-shaped.
+desc:
+  en-US: |
+    Makes the emitter disk-shaped.
+  zh-CN: |
+    使发射器呈圆盘状。
 properties:
   radius:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      Radius of the disk.
+    desc:
+      en-US: |
+        Radius of the disk.
+      zh-CN: |
+        圆盘半径。
   distribution:
     type: ScalarValue
     default: 0
     argument: ActiveTime
-    desc: |
-      Controls how the random emission points are distributed within the disk.
-      - At 0, particles are equally likely to emit from anywhere inside the disk.
-      - At 1, particles have a 100% chance of being emitted from the center point.
-      - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
-      - Values between these smoothly blend between them.
+    desc:
+      en-US: |
+        Controls how the random emission points are distributed within the disk.
+        - At 0, particles are equally likely to emit from anywhere inside the disk.
+        - At 1, particles have a 100% chance of being emitted from the center point.
+        - At -1, particles have a 100% chance of being emitted from the perimeter circle of the disk.
+        - Values between these smoothly blend between them.
+      zh-CN: |
+        控制随机发射点在圆盘内的分布方式。
+        - 值为 0 时，粒子从圆盘内任何位置发射的几率相等。
+        - 值为 1 时，粒子有 100% 的几率从中心点发射。
+        - 值为 -1 时，粒子有 100% 的几率从圆盘周长圆发射。
+        - 这些值之间的值会平滑过渡。
   direction:
     type: InitialDirection
     field: int
     enum: InitialDirection
     default: InitialDirection.Emitter
-    desc: |
-      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+    desc:
+      en-US: |
+        Controls the initial direction for particles. See {@link InitialDirection} for more information.
+      zh-CN: |
+        控制粒子的初始方向。有关更多信息，请参阅 {@link InitialDirection}。
 games:
   DS3:
     fields1:
