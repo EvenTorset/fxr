@@ -4,10 +4,15 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
-desc: |
-  Defines a particle appearance with multiple textured layers. This is overall pretty similar to {@link BillboardEx}, but the ability to layer multiple textures in different ways allows you to apply masks, overlay random noise to increase variance, and so on.
+desc:
+  en-US: |
+    Defines a particle appearance with multiple textured layers. This is overall pretty similar to {@link BillboardEx}, but the ability to layer multiple textures in different ways allows you to apply masks, overlay random noise to increase variance, and so on.
 
-  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceMultiTextureBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "MultiTextureBillboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
+    The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceMultiTextureBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "MultiTextureBillboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
+  zh-CN: |
+    定义一个具有多层纹理的粒子外观。这总体上与 {@link BillboardEx} 非常相似，但能够以不同方式叠加多层纹理，使其可以应用遮罩、叠加随机噪声以增加变化性，等等。
+
+    该名称来自《艾尔登法环》的 RTTI，其中它被命名为 "GXFfxAppearanceMultiTextureBillboardEx"。"Ex" 后缀指的是它是一个名为 "MultiTextureBillboard" 的基类的扩展版本，但这似乎只是某些外观类命名上的一种不一致。大多数其他外观类都扩展了某个基类，但基类要么带有 "Base" 后缀，要么扩展类和基类共享相同的名称。
 properties:
   blendMode:
     type: BlendMode | ScalarProperty
