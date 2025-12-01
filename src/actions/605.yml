@@ -4,12 +4,19 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
-desc: |
-  Defines a particle with a 3D model.
+desc:
+  en-US: |
+    Defines a particle with a 3D model.
 
-  Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link RichModel} action instead.
+    Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link RichModel} action instead.
+  
+    The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceModel".
+  zh-CN: |
+    定义一个带有3D模型的粒子。
 
-  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceModel".
+    由于某些原因，某些模型无法与此行为正常配合使用。例如，《艾尔登法环》中的卡利亚大剑模型（88300），在使用此行为时会变得严重拉伸和变形。如果你发现一个想用的类似模型，请尝试使用 {@link RichModel} 行为代替。
+  
+    该名称来自《艾尔登法环》的RTTI，其中它被命名为“GXFfxAppearanceModel”。
 properties:
   model:
     type: ScalarValue
