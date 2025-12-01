@@ -4,40 +4,58 @@ slot: EmitterShape
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Makes the emitter cylindrical.
+desc:
+  en-US: |
+    Makes the emitter cylindrical.
+  zh-CN: |
+    使发射器呈圆柱形。
 properties:
   radius:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      The radius of the cylinder.
+    desc:
+      en-US: |
+        The radius of the cylinder.
+      zh-CN: |
+        圆柱体的半径。
   height:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     scale: true
-    desc: |
-      The height of the cylinder.
+    desc:
+      en-US: |
+        The height of the cylinder.
+      zh-CN: |
+        圆柱体的高度。
   direction:
     type: InitialDirection
     field: int
     enum: InitialDirection
     default: InitialDirection.Emitter
-    desc: |
-      Controls the initial direction for particles. See {@link InitialDirection} for more information.
+    desc:
+      en-US: |
+        Controls the initial direction for particles. See {@link InitialDirection} for more information.
+      zh-CN: |
+        控制粒子的初始方向。有关更多信息，请参阅 {@link InitialDirection}。
   emitInside:
     field: bool
     default: true
-    desc: |
-      If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
+    desc:
+      en-US: |
+        If true, particles will be emitted from anywhere within the cylinder. Otherwise the particles will be emitted only from the surface of the cylinder, excluding the ends.
+      zh-CN: |
+        如果为真，粒子将从圆柱体内的任何位置发射。否则，粒子将仅从圆柱体表面发射，不包括两端。
   yAxis:
     field: bool
     default: true
-    desc: |
-      If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
+    desc:
+      en-US: |
+        If true, the cylinder will be aligned with the Y-axis instead of the Z-axis.
+      zh-CN: |
+        如果为真，圆柱体将与 Y 轴对齐，而不是 Z 轴。
 games:
   SDT:
     fields1:
