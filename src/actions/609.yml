@@ -4,8 +4,11 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Defines a point light source.
+desc:
+  en-US: |
+    Defines a point light source.
+  zh-CN: |
+    定义一个点光源。
 properties:
   diffuseColor:
     type: Vector4Value
