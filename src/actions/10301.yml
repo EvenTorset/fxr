@@ -4,18 +4,26 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+desc:
+  en-US: |
+    Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
 
-  The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+    The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+  zh-CN: |
+    在体积内产生径向力。如果力为正，则将物体拉向自身；如果力为负，则将物体推开。
+
+    此行为的名称基于《艾尔登法环》的 RTTI，在其中被称为 "ForceFieldGravityArea"。
 properties:
   force:
     type: ScalarValue
     default: 1
     argument: ActiveTime
     time: true
-    desc: |
-      The strength of the force applied in the volume.
+    desc:
+      en-US: |
+        The strength of the force applied in the volume.
+      zh-CN: |
+        施加在体积内的力的强度。
     see:
       - forceRandomMultiplierMin
       - forceRandomMultiplierMax
@@ -25,23 +33,38 @@ properties:
     field: int
     enum: ForceVolumeShape
     default: ForceVolumeShape.Sphere
-    desc: |
-      The shape of the volume.
+    desc:
+      en-US: |
+        The shape of the volume.
 
-      Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
-      | Shape | Fields | Origin | Center of mass |
-      |-|-|-|-|
-      | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
-      | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
-      | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
-      | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
-      | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
+        Each shape has different fields controlling the size of the volume, and they also change where it scales from and what point things are being pulled towards:
+        | Shape | Fields | Origin | Center of mass |
+        |-|-|-|-|
+        | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* | Node position |
+        | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere | Center of the sphere |
+        | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box | Center of the box |
+        | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Slightly +Z of the center of the cylinder? | Slightly +Z of the origin? |
+        | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism | Center of the prism |
+      zh-CN: |
+        体积的形状。
+
+        每种形状都有不同的字段控制体积的大小，它们还会改变缩放的基准点以及物体被拉向的点：
+        | 形状 | 字段 | 原点 | 质心 |
+        |-|-|-|-|
+        | {@link ForceVolumeShape.Boundless Boundless 无限} | *不适用* | *不适用* | 节点位置 |
+        | {@link ForceVolumeShape.Sphere Sphere 球体} | {@link sphereRadius} | 球体中心 | 球体中心 |
+        | {@link ForceVolumeShape.Box Box 长方体} | {@link boxSize} | 长方体中心 | 长方体中心 |
+        | {@link ForceVolumeShape.Cylinder Cylinder 圆柱体} | {@link cylinderHeight}, {@link cylinderRadius} | 圆柱体中心略微 +Z 处？ | 原点略微 +Z 处？ |
+        | {@link ForceVolumeShape.SquarePrism SquarePrism 四棱柱} | {@link squarePrismHeight}, {@link squarePrismApothem} | 棱柱底面中心 | 棱柱中心 |
   sphereRadius:
     field: float
     default: 10
     scale: true
-    desc: |
-      The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+    desc:
+      en-US: |
+        The radius of the {@link ForceVolumeShape.Sphere sphere} where the force is active.
+      zh-CN: |
+        力场生效的{@link ForceVolumeShape.Sphere 球体}半径。
     see:
       - shape
   boxSize:
@@ -49,39 +72,54 @@ properties:
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      The size of the {@link ForceVolumeShape.Box box} where the force is active.
+    desc:
+      en-US: |
+        The size of the {@link ForceVolumeShape.Box box} where the force is active.
+      zh-CN: |
+        力场生效的{@link ForceVolumeShape.Box 长方体}大小。
     see:
       - shape
   cylinderHeight:
     field: float
     scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+    desc:
+      en-US: |
+        The height of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+      zh-CN: |
+        力场生效的{@link ForceVolumeShape.Cylinder 圆柱体}高度。
     see:
       - shape
       - cylinderRadius
   cylinderRadius:
     field: float
     scale: true
-    desc: |
-      The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+    desc:
+      en-US: |
+        The radius of the {@link ForceVolumeShape.Cylinder cylinder} where the force is active.
+      zh-CN: |
+        力场生效的{@link ForceVolumeShape.Cylinder 圆柱体}半径。
     see:
       - shape
       - cylinderHeight
   squarePrismHeight:
     field: float
     scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+    desc:
+      en-US: |
+        The height of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+      zh-CN: |
+        力场生效的{@link ForceVolumeShape.SquarePrism 四棱柱}高度。
     see:
       - shape
       - squarePrismApothem
   squarePrismApothem:
     field: float
     scale: true
-    desc: |
-      The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+    desc:
+      en-US: |
+        The apothem of the {@link ForceVolumeShape.SquarePrism square prism} where the force is active.
+      zh-CN: |
+        力场生效的{@link ForceVolumeShape.SquarePrism 四棱柱}边心距。
     see:
       - shape
       - squarePrismHeight
@@ -126,10 +164,15 @@ properties:
   forceRandomMultiplierMin:
     field: float
     default: 1
-    desc: |
-      The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
+    desc:
+      en-US: |
+        The minimum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMax}.
 
-      This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
+        This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
+      zh-CN: |
+        {@link force} 的最小“随机”乘数。这看起来与 {@link ActionType.WindForce WindForce 动作} 中的相同字段集非常相似，但这一个似乎实际上并非随机的。它看起来更像是总是取此值和 {@link forceRandomMultiplierMax} 的平均值。
+
+        这与基础力和{@link forceMultiplier 其他乘数}相乘。
     see:
       - force
       - forceRandomMultiplierMax
@@ -137,10 +180,15 @@ properties:
   forceRandomMultiplierMax:
     field: float
     default: 1
-    desc: |
-      The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
+    desc:
+      en-US: |
+        The maximum "random" multiplier for {@link force}. This looks very similar to the same set of fields in the {@link ActionType.WindForce WindForce action}, but this one doesn't seem to actually be random. It seems more like it will always just be the average of this and {@link forceRandomMultiplierMin}.
 
-      This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
+        This is multiplicative with both the base force and the {@link forceMultiplier other multiplier}.
+      zh-CN: |
+        {@link force} 的最大“随机”乘数。这看起来与 {@link ActionType.WindForce WindForce 动作} 中的相同字段集非常相似，但这一个似乎实际上并非随机的。它看起来更像是总是取此值和 {@link forceRandomMultiplierMin} 的平均值。
+
+        这与基础力和{@link forceMultiplier 其他乘数}相乘。
     see:
       - force
       - forceRandomMultiplierMin
@@ -161,10 +209,15 @@ properties:
   forceMultiplier:
     field: float
     default: 1
-    desc: |
-      A multiplier for {@link force}.
+    desc:
+      en-US: |
+        A multiplier for {@link force}.
 
-      This is multiplicative with both the base force and the "random" multiplier.
+        This is multiplicative with both the base force and the "random" multiplier.
+      zh-CN: |
+        {@link force} 的乘数。
+
+        这与基础力和“随机”乘数相乘。
     see:
       - force
       - forceRandomMultiplierMin
@@ -179,8 +232,11 @@ properties:
     field: int
     lib: float
     time: inv
-    desc: |
-      The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+    desc:
+      en-US: |
+        The time it takes for the force to fade out after the action has deactivated in seconds. Due to the way this value is stored, the time will be rounded to the nearest 1/30s.
+      zh-CN: |
+        动作失效后力场淡出所需的时间（秒）。由于此值的存储方式，时间将四舍五入到最接近的 1/30 秒。
 games:
   DS3:
     fields1:
