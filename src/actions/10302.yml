@@ -5,9 +5,9 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Controls the volume used to detect whether or not the node is inside a force volume.
+  Defines a volume used to detect whether or not the node is inside a force volume.
 
-  The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+  The name is from Elden Ring's RTTI, where it is named "GXCollisionFieldAreaAppearance".
 properties:
   shape:
     type: ForceVolumeShape

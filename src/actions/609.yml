@@ -5,7 +5,7 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Point light source.
+  Defines a point light source.
 properties:
   diffuseColor:
     type: Vector4Value

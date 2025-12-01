@@ -5,7 +5,9 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
+  Defines a simple, flat, textured particle. Similar to {@link PointSprite}, but with far more options. This is the most common type of particle in the supported games.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "Billboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
 properties:
   texture:
     type: ScalarValue
@@ -198,11 +200,21 @@ properties:
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+    see:
+      - frameIndexOffset
+      - columns
+      - totalFrames
+      - interpolateFrames
   frameIndexOffset:
     type: ScalarValue
     argument: ParticleAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+    see:
+      - frameIndex
+      - columns
+      - totalFrames
+      - interpolateFrames
   unk_ds3_p1_21:
     type: ScalarValue
   unk_ds3_p1_22:
@@ -293,6 +305,8 @@ properties:
       To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
     see:
       - totalFrames
+      - frameIndex
+      - frameIndexOffset
   totalFrames:
     field: int
     default: 1
@@ -300,6 +314,8 @@ properties:
       To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
     see:
       - columns
+      - frameIndex
+      - frameIndexOffset
   interpolateFrames:
     field: bool
     default: true

@@ -5,9 +5,11 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  A particle that applies a radial blur to anything seen through it.
+  Defines a particle that applies a radial blur to anything seen through it.
 
   Note: This particle is not visible if the "Effects" setting is set to "Low".
+
+  The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceRadialBlur".
 properties:
   blendMode:
     type: BlendMode | ScalarProperty

@@ -5,11 +5,9 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+  Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
 
-  What makes this different from {@link ActionType.GPUStandardParticle GPUStandardParticle} is that this actions seems to be designed specifically for effects that create sparks. While the other action's particles is more like billboard particles from, for example, {@link ActionType.BillboardEx BillboardEx}, this action's particles are more like {@link ActionType.QuadLine QuadLine} or {@link ActionType.Tracer Tracer} particles. They bend and rotate to align with the direction they are traveling, and they stretch based on how fast they're moving.
-
-  The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
+  The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
 
   This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
 properties:

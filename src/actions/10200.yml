@@ -5,12 +5,12 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
-  - {@link ActionType.WindForce WindForce}
-  - {@link ActionType.GravityForce GravityForce}
-  - {@link ActionType.TurbulenceForce TurbulenceForce}
+  Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
+  - {@link WindForce}
+  - {@link GravityForce}
+  - {@link TurbulenceForce}
 
-  The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+  The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
 properties:
   shape:
     type: ForceVolumeShape

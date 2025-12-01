@@ -5,7 +5,9 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Creates lens flares with up to 4 textured layers with different colors and sizes.
+  Defines a lens flare effect with up to four textured layers with different colors and sizes.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
 properties:
   layer1Width:
     type: ScalarValue

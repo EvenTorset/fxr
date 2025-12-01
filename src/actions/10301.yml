@@ -5,9 +5,9 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+  Defines a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
 
-  The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+  The name is from Elden Ring's RTTI, where it is named "GXForceFieldGravityAreaAppearance".
 properties:
   force:
     type: ScalarValue

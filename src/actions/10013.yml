@@ -5,7 +5,9 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+  Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
 properties:
   texture:
     field: int

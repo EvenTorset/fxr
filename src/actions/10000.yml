@@ -5,11 +5,11 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
+  Defines a GPU particle system. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
 
   Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
 
-  The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
+  The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardParticleAppearance".
 properties:
   particleFollowFactor:
     type: ScalarValue

@@ -5,14 +5,14 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
+  Defines a GPU particle system. Very similar to {@link GPUSparkParticle}, just like how {@link GPUStandardCorrectParticle} is similar to {@link GPUStandardParticle}, except these two spark actions have some known differences.
 
-  Not all of the differences have been documented yet, but here are some:
+  Not all of the differences have been documented yet, but this is some of them:
   - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
   - The particles from this action are smaller.
   - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
 
-  The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
+  The name is from Elden Ring's RTTI, where it is named "GXVfxSparkCorrectParticleAppearance".
 properties:
   particleFollowFactor:
     type: ScalarValue

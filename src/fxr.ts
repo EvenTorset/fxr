@@ -435,7 +435,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link PointSprite}
    * 
-   * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+   * Defines a very basic point sprite particle. Similar to {@link BillboardEx}, but far simpler.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearancePointSprite".
    */
   PointSprite = 600,
   /**
@@ -443,7 +445,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Line}
    * 
-   * Simple line particle. It automatically rotates to match the direction it's moving.
+   * Defines a simple line particle. It automatically rotates to match the direction it's moving.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceLine".
    */
   Line = 601,
   /**
@@ -451,7 +455,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link QuadLine}
    * 
-   * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+   * Defines a simple rectangular particle, very similar to {@link Line} particles, but include properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceQuadLine".
    */
   QuadLine = 602,
   /**
@@ -459,7 +465,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link BillboardEx}
    * 
-   * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
+   * Defines a simple, flat, textured particle. Similar to {@link PointSprite}, but with far more options. This is the most common type of particle in the supported games.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "Billboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
    */
   BillboardEx = 603,
   /**
@@ -467,7 +475,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link MultiTextureBillboardEx}
    * 
-   * Particle with multiple textures that can scroll.
+   * Defines a particle appearance with multiple textured layers. This is overall pretty similar to {@link BillboardEx}, but the ability to layer multiple textures in different ways allows you to apply masks, overlay random noise to increase variance, and so on.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceMultiTextureBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "MultiTextureBillboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
    */
   MultiTextureBillboardEx = 604,
   /**
@@ -475,9 +485,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Model}
    * 
-   * Particle with a 3D model.
+   * Defines a particle with a 3D model.
    * 
-   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
+   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link RichModel} action instead.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceModel".
    */
   Model = 605,
   /**
@@ -485,9 +497,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link LegacyTracer}
    * 
-   * Creates a trail behind moving effects.
+   * Defines a tracer particle, which leaves a textured trail where it moves.
    * 
    * This is an older version of {@link Tracer} with fewer features.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceTracer".
    */
   LegacyTracer = 606,
   /**
@@ -495,9 +509,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Distortion}
    * 
-   * A particle that distorts anything seen through it.
+   * Defines a particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceDistortion".
    */
   Distortion = 607,
   /**
@@ -505,9 +521,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link RadialBlur}
    * 
-   * A particle that applies a radial blur to anything seen through it.
+   * Defines a particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceRadialBlur".
    */
   RadialBlur = 608,
   /**
@@ -515,7 +533,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link PointLight}
    * 
-   * Point light source.
+   * Defines a point light source.
    */
   PointLight = 609,
   /**
@@ -617,11 +635,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUStandardParticle}
    * 
-   * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
+   * Defines a GPU particle system. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
    * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
+   * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardParticleAppearance".
    */
   GPUStandardParticle = 10000,
   /**
@@ -629,11 +647,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUStandardCorrectParticle}
    * 
-   * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
+   * Defines a GPU particle system. Very similar to {@link GPUStandardParticle}, with no known differences.
    * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
+   * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
    * 
-   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
+   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
    */
   GPUStandardCorrectParticle = 10001,
   /**
@@ -649,11 +667,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUSparkParticle}
    * 
-   * Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+   * Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
    * 
-   * What makes this different from {@link ActionType.GPUStandardParticle GPUStandardParticle} is that this actions seems to be designed specifically for effects that create sparks. While the other action's particles is more like billboard particles from, for example, {@link ActionType.BillboardEx BillboardEx}, this action's particles are more like {@link ActionType.QuadLine QuadLine} or {@link ActionType.Tracer Tracer} particles. They bend and rotate to align with the direction they are traveling, and they stretch based on how fast they're moving.
-   * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
+   * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
    * 
    * This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
    */
@@ -663,14 +679,14 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUSparkCorrectParticle}
    * 
-   * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
+   * Defines a GPU particle system. Very similar to {@link GPUSparkParticle}, just like how {@link GPUStandardCorrectParticle} is similar to {@link GPUStandardParticle}, except these two spark actions have some known differences.
    * 
-   * Not all of the differences have been documented yet, but here are some:
+   * Not all of the differences have been documented yet, but this is some of them:
    * - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
    * - The particles from this action are smaller.
    * - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
    * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
+   * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkCorrectParticleAppearance".
    */
   GPUSparkCorrectParticle = 10009,
   /**
@@ -678,9 +694,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Tracer}
    * 
-   * Creates a trail behind moving effects.
+   * Defines a tracer particle, which leaves a textured trail where it moves.
    * 
    * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceTracer".
    */
   Tracer = 10012,
   /**
@@ -688,7 +706,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link WaterInteraction}
    * 
-   * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+   * Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
    */
   WaterInteraction = 10013,
   /**
@@ -696,7 +716,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link LensFlare}
    * 
-   * Creates lens flares with up to 4 textured layers with different colors and sizes.
+   * Defines a lens flare effect with up to four textured layers with different colors and sizes.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
    */
   LensFlare = 10014,
   /**
@@ -704,11 +726,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link RichModel}
    * 
-   * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options.
+   * Defines a particle with a 3D model. Similar to {@link Model}, but with some different options.
    * 
    * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
    * 
-   * The name is from Elden Ring's RTTI.
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceRichModel".
    */
   RichModel = 10015,
   /**
@@ -724,12 +746,12 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link CancelForce}
    * 
-   * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
-   * - {@link ActionType.WindForce WindForce}
-   * - {@link ActionType.GravityForce GravityForce}
-   * - {@link ActionType.TurbulenceForce TurbulenceForce}
+   * Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
+   * - {@link WindForce}
+   * - {@link GravityForce}
+   * - {@link TurbulenceForce}
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
    */
   CancelForce = 10200,
   /**
@@ -737,9 +759,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link WindForce}
    * 
-   * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
+   * Defines a directional force in a volume, which is most often used for creating wind effects. The direction of the force is based on the direction of the node.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldWindAreaAppearance".
    */
   WindForce = 10300,
   /**
@@ -747,9 +769,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GravityForce}
    * 
-   * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+   * Defines a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldGravityAreaAppearance".
    */
   GravityForce = 10301,
   /**
@@ -757,9 +779,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link ForceCollision}
    * 
-   * Controls the volume used to detect whether or not the node is inside a force volume.
+   * Defines a volume used to detect whether or not the node is inside a force volume.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXCollisionFieldAreaAppearance".
    */
   ForceCollision = 10302,
   /**
@@ -767,9 +789,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link TurbulenceForce}
    * 
-   * Creates a chaotic force in a volume.
+   * Defines a chaotic force in a volume.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldTurbulenceAreaAppearance".
    */
   TurbulenceForce = 10303,
   /**
@@ -793,7 +815,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link SpotLight}
    * 
-   * Light source with an elliptic cone shape, a spot light.
+   * Defines a light source with an elliptic cone shape, a spot light.
    */
   SpotLight = 11000,
 }
@@ -15816,7 +15838,9 @@ class RectangularSpread extends DataAction {
  * ### {@link ActionType.PointSprite Action 600 - PointSprite}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+ * Defines a very basic point sprite particle. Similar to {@link BillboardEx}, but far simpler.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearancePointSprite".
  */
 class PointSprite extends DataAction {
   declare readonly type: ActionType.PointSprite
@@ -16272,7 +16296,9 @@ class PointSprite extends DataAction {
  * ### {@link ActionType.Line Action 601 - Line}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Simple line particle. It automatically rotates to match the direction it's moving.
+ * Defines a simple line particle. It automatically rotates to match the direction it's moving.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceLine".
  */
 class Line extends DataAction {
   declare readonly type: ActionType.Line
@@ -16759,7 +16785,9 @@ class Line extends DataAction {
  * ### {@link ActionType.QuadLine Action 602 - QuadLine}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+ * Defines a simple rectangular particle, very similar to {@link Line} particles, but include properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceQuadLine".
  */
 class QuadLine extends DataAction {
   declare readonly type: ActionType.QuadLine
@@ -17263,7 +17291,9 @@ class QuadLine extends DataAction {
  * ### {@link ActionType.BillboardEx Action 603 - BillboardEx}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
+ * Defines a simple, flat, textured particle. Similar to {@link PointSprite}, but with far more options. This is the most common type of particle in the supported games.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "Billboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
  */
 class BillboardEx extends DataAction {
   declare readonly type: ActionType.BillboardEx
@@ -17506,6 +17536,12 @@ class BillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndexOffset}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndex: ScalarValue
   /**
@@ -17514,6 +17550,12 @@ class BillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndexOffset: ScalarValue
   /**
@@ -17637,6 +17679,8 @@ class BillboardEx extends DataAction {
    * 
    * See also:
    * - {@link totalFrames}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   columns: number
   /**
@@ -17646,6 +17690,8 @@ class BillboardEx extends DataAction {
    * 
    * See also:
    * - {@link columns}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   totalFrames: number
   /**
@@ -18073,7 +18119,9 @@ class BillboardEx extends DataAction {
  * ### {@link ActionType.MultiTextureBillboardEx Action 604 - MultiTextureBillboardEx}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with multiple textures that can scroll.
+ * Defines a particle appearance with multiple textured layers. This is overall pretty similar to {@link BillboardEx}, but the ability to layer multiple textures in different ways allows you to apply masks, overlay random noise to increase variance, and so on.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceMultiTextureBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "MultiTextureBillboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
  */
 class MultiTextureBillboardEx extends DataAction {
   declare readonly type: ActionType.MultiTextureBillboardEx
@@ -18324,6 +18372,12 @@ class MultiTextureBillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndexOffset}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndex: ScalarValue
   /**
@@ -18332,6 +18386,12 @@ class MultiTextureBillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndexOffset: ScalarValue
   /**
@@ -18575,6 +18635,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * See also:
    * - {@link totalFrames}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   columns: number
   /**
@@ -18584,6 +18646,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * See also:
    * - {@link columns}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   totalFrames: number
   /**
@@ -19006,9 +19070,11 @@ class MultiTextureBillboardEx extends DataAction {
  * ### {@link ActionType.Model Action 605 - Model}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a 3D model.
+ * Defines a particle with a 3D model.
  * 
- * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
+ * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link RichModel} action instead.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceModel".
  */
 class Model extends DataAction {
   declare readonly type: ActionType.Model
@@ -19836,9 +19902,11 @@ class Model extends DataAction {
  * ### {@link ActionType.LegacyTracer Action 606 - LegacyTracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a trail behind moving effects.
+ * Defines a tracer particle, which leaves a textured trail where it moves.
  * 
  * This is an older version of {@link Tracer} with fewer features.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceTracer".
  */
 class LegacyTracer extends DataAction {
   declare readonly type: ActionType.LegacyTracer
@@ -20493,9 +20561,11 @@ class LegacyTracer extends DataAction {
  * ### {@link ActionType.Distortion Action 607 - Distortion}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * A particle that distorts anything seen through it.
+ * Defines a particle that distorts anything seen through it.
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceDistortion".
  */
 class Distortion extends DataAction {
   declare readonly type: ActionType.Distortion
@@ -21118,9 +21188,11 @@ class Distortion extends DataAction {
  * ### {@link ActionType.RadialBlur Action 608 - RadialBlur}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * A particle that applies a radial blur to anything seen through it.
+ * Defines a particle that applies a radial blur to anything seen through it.
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceRadialBlur".
  */
 class RadialBlur extends DataAction {
   declare readonly type: ActionType.RadialBlur
@@ -21546,7 +21618,7 @@ class RadialBlur extends DataAction {
  * ### {@link ActionType.PointLight Action 609 - PointLight}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Point light source.
+ * Defines a point light source.
  */
 class PointLight extends DataAction {
   declare readonly type: ActionType.PointLight
@@ -22257,11 +22329,11 @@ class ParticleForceCollision extends DataAction {
  * ### {@link ActionType.GPUStandardParticle Action 10000 - GPUStandardParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
+ * Defines a GPU particle system. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
  * 
  * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
  * 
- * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
+ * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardParticleAppearance".
  */
 class GPUStandardParticle extends DataAction {
   declare readonly type: ActionType.GPUStandardParticle
@@ -23697,11 +23769,11 @@ class GPUStandardParticle extends DataAction {
  * ### {@link ActionType.GPUStandardCorrectParticle Action 10001 - GPUStandardCorrectParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
+ * Defines a GPU particle system. Very similar to {@link GPUStandardParticle}, with no known differences.
  * 
- * The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
+ * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
  * 
- * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
+ * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
  */
 class GPUStandardCorrectParticle extends DataAction {
   declare readonly type: ActionType.GPUStandardCorrectParticle
@@ -25383,11 +25455,9 @@ class LightShaft extends DataAction {
  * ### {@link ActionType.GPUSparkParticle Action 10008 - GPUSparkParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+ * Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
  * 
- * What makes this different from {@link ActionType.GPUStandardParticle GPUStandardParticle} is that this actions seems to be designed specifically for effects that create sparks. While the other action's particles is more like billboard particles from, for example, {@link ActionType.BillboardEx BillboardEx}, this action's particles are more like {@link ActionType.QuadLine QuadLine} or {@link ActionType.Tracer Tracer} particles. They bend and rotate to align with the direction they are traveling, and they stretch based on how fast they're moving.
- * 
- * The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
+ * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
  * 
  * This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
  */
@@ -26382,14 +26452,14 @@ class GPUSparkParticle extends DataAction {
  * ### {@link ActionType.GPUSparkCorrectParticle Action 10009 - GPUSparkCorrectParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
+ * Defines a GPU particle system. Very similar to {@link GPUSparkParticle}, just like how {@link GPUStandardCorrectParticle} is similar to {@link GPUStandardParticle}, except these two spark actions have some known differences.
  * 
- * Not all of the differences have been documented yet, but here are some:
+ * Not all of the differences have been documented yet, but this is some of them:
  * - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
  * - The particles from this action are smaller.
  * - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
  * 
- * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
+ * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkCorrectParticleAppearance".
  */
 class GPUSparkCorrectParticle extends DataAction {
   declare readonly type: ActionType.GPUSparkCorrectParticle
@@ -27382,9 +27452,11 @@ class GPUSparkCorrectParticle extends DataAction {
  * ### {@link ActionType.Tracer Action 10012 - Tracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a trail behind moving effects.
+ * Defines a tracer particle, which leaves a textured trail where it moves.
  * 
  * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceTracer".
  */
 class Tracer extends DataAction {
   declare readonly type: ActionType.Tracer
@@ -28081,7 +28153,9 @@ class Tracer extends DataAction {
  * ### {@link ActionType.WaterInteraction Action 10013 - WaterInteraction}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+ * Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
  */
 class WaterInteraction extends DataAction {
   declare readonly type: ActionType.WaterInteraction
@@ -28125,7 +28199,9 @@ class WaterInteraction extends DataAction {
  * ### {@link ActionType.LensFlare Action 10014 - LensFlare}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates lens flares with up to 4 textured layers with different colors and sizes.
+ * Defines a lens flare effect with up to four textured layers with different colors and sizes.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
  */
 class LensFlare extends DataAction {
   declare readonly type: ActionType.LensFlare
@@ -29047,11 +29123,11 @@ class LensFlare extends DataAction {
  * ### {@link ActionType.RichModel Action 10015 - RichModel}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options.
+ * Defines a particle with a 3D model. Similar to {@link Model}, but with some different options.
  * 
  * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
  * 
- * The name is from Elden Ring's RTTI.
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceRichModel".
  */
 class RichModel extends DataAction {
   declare readonly type: ActionType.RichModel
@@ -30525,12 +30601,12 @@ class Unk10100 extends DataAction {
  * ### {@link ActionType.CancelForce Action 10200 - CancelForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
- * - {@link ActionType.WindForce WindForce}
- * - {@link ActionType.GravityForce GravityForce}
- * - {@link ActionType.TurbulenceForce TurbulenceForce}
+ * Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
+ * - {@link WindForce}
+ * - {@link GravityForce}
+ * - {@link TurbulenceForce}
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
  */
 class CancelForce extends DataAction {
   declare readonly type: ActionType.CancelForce
@@ -30617,9 +30693,9 @@ class CancelForce extends DataAction {
  * ### {@link ActionType.WindForce Action 10300 - WindForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
+ * Defines a directional force in a volume, which is most often used for creating wind effects. The direction of the force is based on the direction of the node.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldWindAreaAppearance".
  */
 class WindForce extends DataAction {
   declare readonly type: ActionType.WindForce
@@ -31062,9 +31138,9 @@ class WindForce extends DataAction {
  * ### {@link ActionType.GravityForce Action 10301 - GravityForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+ * Defines a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldGravityAreaAppearance".
  */
 class GravityForce extends DataAction {
   declare readonly type: ActionType.GravityForce
@@ -31365,9 +31441,9 @@ class GravityForce extends DataAction {
  * ### {@link ActionType.ForceCollision Action 10302 - ForceCollision}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Controls the volume used to detect whether or not the node is inside a force volume.
+ * Defines a volume used to detect whether or not the node is inside a force volume.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXCollisionFieldAreaAppearance".
  */
 class ForceCollision extends DataAction {
   declare readonly type: ActionType.ForceCollision
@@ -31435,9 +31511,9 @@ class ForceCollision extends DataAction {
  * ### {@link ActionType.TurbulenceForce Action 10303 - TurbulenceForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a chaotic force in a volume.
+ * Defines a chaotic force in a volume.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldTurbulenceAreaAppearance".
  */
 class TurbulenceForce extends DataAction {
   declare readonly type: ActionType.TurbulenceForce
@@ -32342,7 +32418,7 @@ class Unk10500 extends DataAction {
  * ### {@link ActionType.SpotLight Action 11000 - SpotLight}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Light source with an elliptic cone shape, a spot light.
+ * Defines a light source with an elliptic cone shape, a spot light.
  */
 class SpotLight extends DataAction {
   declare readonly type: ActionType.SpotLight

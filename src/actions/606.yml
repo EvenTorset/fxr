@@ -5,9 +5,11 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  Creates a trail behind moving effects.
+  Defines a tracer particle, which leaves a textured trail where it moves.
 
   This is an older version of {@link Tracer} with fewer features.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceTracer".
 properties:
   texture:
     type: ScalarValue

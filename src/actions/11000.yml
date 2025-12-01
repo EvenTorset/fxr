@@ -5,7 +5,7 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Light source with an elliptic cone shape, a spot light.
+  Defines a light source with an elliptic cone shape, a spot light.
 properties:
   diffuseColor:
     type: Vector4Value

@@ -5,9 +5,9 @@ meta:
   isAppearance: true
   isParticle: false
 desc: |
-  Creates a chaotic force in a volume.
+  Defines a chaotic force in a volume.
 
-  The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+  The name is from Elden Ring's RTTI, where it is named "GXForceFieldTurbulenceAreaAppearance".
 properties:
   noiseOffsetX:
     type: ScalarValue

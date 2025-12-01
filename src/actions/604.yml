@@ -5,7 +5,9 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  Particle with multiple textures that can scroll.
+  Defines a particle appearance with multiple textured layers. This is overall pretty similar to {@link BillboardEx}, but the ability to layer multiple textures in different ways allows you to apply masks, overlay random noise to increase variance, and so on.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceMultiTextureBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "MultiTextureBillboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
 properties:
   blendMode:
     type: BlendMode | ScalarProperty
@@ -209,11 +211,21 @@ properties:
       The index of the frame to show from the texture atlas. Can be animated using a {@link PropertyFunction.Linear linear property} or similar.
 
       Seemingly identical to {@link frameIndexOffset}? The sum of these two properties is the actual frame index that gets used.
+    see:
+      - frameIndexOffset
+      - columns
+      - totalFrames
+      - interpolateFrames
   frameIndexOffset:
     type: ScalarValue
     argument: ParticleAge
     desc: |
       Seemingly identical to {@link frameIndex}? The sum of these two properties is the actual frame index that gets used.
+    see:
+      - frameIndex
+      - columns
+      - totalFrames
+      - interpolateFrames
   layer1SpeedU:
     type: ScalarValue
     argument: ParticleAge
@@ -391,6 +403,8 @@ properties:
       To split the texture into multiple animation frames, this value must be set to the number of columns in the texture. It should equal `textureWidth / frameWidth`.
     see:
       - totalFrames
+      - frameIndex
+      - frameIndexOffset
   totalFrames:
     field: int
     default: 1
@@ -398,6 +412,8 @@ properties:
       To split the texture into multiple animation frames, this value must be set to the total number of frames in the texture.
     see:
       - columns
+      - frameIndex
+      - frameIndexOffset
   interpolateFrames:
     field: bool
     default: true

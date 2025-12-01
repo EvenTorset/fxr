@@ -5,9 +5,11 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  Particle with a 3D model.
+  Defines a particle with a 3D model.
 
-  Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
+  Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link RichModel} action instead.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceModel".
 properties:
   model:
     type: ScalarValue

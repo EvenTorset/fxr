@@ -5,7 +5,9 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+  Defines a simple rectangular particle, very similar to {@link Line} particles, but include properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceQuadLine".
 properties:
   blendMode:
     type: BlendMode | ScalarProperty

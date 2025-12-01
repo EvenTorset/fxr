@@ -5,9 +5,11 @@ meta:
   isAppearance: true
   isParticle: true
 desc: |
-  Creates a trail behind moving effects.
+  Defines a tracer particle, which leaves a textured trail where it moves.
 
   This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
+
+  The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceTracer".
 properties:
   texture:
     type: ScalarValue
