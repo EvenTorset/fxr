@@ -4,60 +4,89 @@ slot: NodeMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+desc:
+  en-US: |
+    Controls the movement of the node. This extends {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns} with the ability to make the node partially follow or exaggerate the parent node's movement.
+  zh-CN: |
+    控制节点的移动。扩展了 {@link ActionType.NodeSpeedRandomTurns NodeSpeedRandomTurns}，增加了使节点部分跟随或夸大父节点移动的能力。
 properties:
   speedZ:
     type: ScalarValue
     argument: Constant0
     scale: true
     time: true
-    desc: |
-      Controls the speed of the node along its Z-axis.
+    desc:
+      en-US: |
+        Controls the speed of the node along its Z-axis.
+      zh-CN: |
+        控制节点沿其 Z 轴的速度。
   speedMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link speedZ}.
+    desc:
+      en-US: |
+        Multiplier for {@link speedZ}.
+      zh-CN: |
+        {@link speedZ} 的乘数。
   accelerationY:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the node along its Y-axis.
+    desc:
+      en-US: |
+        Controls the acceleration of the node along its Y-axis.
 
-      Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
+        Note that this for some reason uses the *global* Y-axis instead of the local one, which is used by the same property in {@link ActionType.NodeSpeed NodeSpeed}.
+      zh-CN: |
+        控制节点沿其 Y 轴的加速度。
+
+        注意：由于某种原因，此处使用的是*全局* Y 轴，而不是像 {@link ActionType.NodeSpeed NodeSpeed} 中同一属性那样使用局部 Y 轴。
   maxTurnAngle:
     type: ScalarValue
     argument: ActiveTime
-    desc: |
-      The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+    desc:
+      en-US: |
+        The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+      zh-CN: |
+        节点将根据 {@link turnInterval} 定义的间隔，基于此值随机转向一定角度。
   followFactor:
     type: ScalarValue
     argument: ActiveTime
-    desc: |
-      Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+    desc:
+      en-US: |
+        Controls how well the node should follow the parent node if it is not attached. At 0, the node will not follow at all. At 1, the node will follow perfectly, as if attached to the parent node. Negative values will make the node move in the opposite direction compared to the parent node. Values greater than 1 will make the node exaggerate the parent node's movement.
+      zh-CN: |
+        控制节点在未附着时跟随父节点的程度。0 为完全不跟随。1 为完全跟随（如同附着到父节点）。负值使节点向父节点相反的方向移动。大于 1 的值使节点夸大父节点的移动。
     see:
       - followRotation
   alignWithMotion:
     field: int
-    desc: |
-      When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+    desc:
+      en-US: |
+        When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+      zh-CN: |
+        当设置为 1 时，使节点与移动方向对齐。设置为更高的值似乎与设置为 0 的效果相同，这意味着它可能不是布尔值，但这些值的具体作用未知。
   unk_ds3_f1_1:
     field: int
   turnInterval:
     field: int
     lib: float
     time: inv
-    desc: |
-      The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+    desc:
+      en-US: |
+        The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+      zh-CN: |
+        节点将以此间隔基于 {@link maxTurnAngle} 随机转向。单位为秒，但由于存储此值的字段的工作方式，该值将四舍五入到最接近的 0.02 秒。
   followRotation:
     field: bool
     default: true
-    desc: |
-      Disabling this will make {@link followFactor} only affect translation and not rotation.
+    desc:
+      en-US: |
+        Disabling this will make {@link followFactor} only affect translation and not rotation.
+      zh-CN: |
+        禁用此项将使 {@link followFactor} 仅影响平移而不影响旋转。
 games:
   DS3:
     fields1:
