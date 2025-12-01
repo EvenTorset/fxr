@@ -11,6 +11,7 @@
 
 ### Documentation
 - Added support for localized descriptions of actions and properties in `actions.json`.
+- Added Chinese localization for actions and properties in `actions.json` by Shiki.
 - The description for all of the appearance actions have been updated to be more consistent and accurate.
 
 ## [v30.0.0](https://github.com/EvenTorset/fxr/compare/v29.0.0...v30.0.0) - 2025-11-01
