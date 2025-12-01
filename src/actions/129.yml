@@ -4,23 +4,32 @@ slot: ParticleAttributes
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the duration of particles emitted by the node, and how the particles are attached to the node.
+desc:
+  en-US: |
+    Controls the duration of particles emitted by the node, and how the particles are attached to the node.
+  zh-CN: |
+    控制节点发射的粒子的持续时间，以及粒子如何附着到节点。
 properties:
   duration:
     type: ScalarValue
     default: -1
     argument: Constant0
     time: invIfPositive
-    desc: |
-      The particle duration in seconds. Can be set to -1 to make particles last forever.
+    desc:
+      en-US: |
+        The particle duration in seconds. Can be set to -1 to make particles last forever.
+      zh-CN: |
+        粒子持续时间（秒）。设置为 -1 可以使粒子永久存在。
   attachment:
     type: AttachMode
     field: int
     enum: AttachMode
     default: AttachMode.Parent
-    desc: |
-      Controls how the particles are attached to the node.
+    desc:
+      en-US: |
+        Controls how the particles are attached to the node.
+      zh-CN: |
+        控制粒子如何附着到节点。
 games:
   DS3:
     fields1:
