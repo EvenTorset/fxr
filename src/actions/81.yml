@@ -4,14 +4,20 @@ slot: EmissionAudio
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
+desc:
+  en-US: |
+    Plays a sound effect every time the node emits particles. It only plays the sound once per emission, not once per particle.
+  zh-CN: |
+    每次节点发射粒子时播放音效。每次发射只播放一次，而不是每个粒子播放一次。
 properties:
   sound:
     field: int
     resource: sound
-    desc: |
-      The ID of the sound event to play.
+    desc:
+      en-US: |
+        The ID of the sound event to play.
+      zh-CN: |
+        要播放的声音事件 ID。
   unk_ds3_f1_1:
     field: float
     default: 1
