@@ -8,7 +8,12 @@ inGames:
   - ER
   - AC6
   - NR
-desc: |
-  Makes the effect instantly disappear when it terminates.
+desc:
+  en-US: |
+    Makes the effect instantly disappear when it terminates.
 
-  Note: An effect terminates when it reaches {@link State} -1.
+    Note: An effect terminates when it reaches {@link State} -1.
+  zh-CN: |
+    使特效在终止时立即消失。
+
+    注意：当特效达到 {@link State 状态} -1 时即为终止。

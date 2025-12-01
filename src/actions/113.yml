@@ -4,86 +4,122 @@ slot: NodeMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
+desc:
+  en-US: |
+    Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to control the node's angular speed.
+  zh-CN: |
+    控制节点的移动。扩展了 {@link ActionType.NodeAcceleration NodeAcceleration}，增加了控制节点角速度的能力。
 properties:
   speedZ:
     type: ScalarValue
     argument: Constant0
     scale: true
     time: true
-    desc: |
-      Controls the speed of the node along its Z-axis.
+    desc:
+      en-US: |
+        Controls the speed of the node along its Z-axis.
+      zh-CN: |
+        控制节点沿其 Z 轴的速度。
   accelerationZ:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+    desc:
+      en-US: |
+        Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+      zh-CN: |
+        控制节点沿其 Z 轴的加速度。此值不能为负。
   accelerationMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link accelerationZ}.
+    desc:
+      en-US: |
+        Multiplier for {@link accelerationZ}.
+      zh-CN: |
+        {@link accelerationZ} 的乘数。
   accelerationY:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the node along its Y-axis.
+    desc:
+      en-US: |
+        Controls the acceleration of the node along its Y-axis.
+      zh-CN: |
+        控制节点沿其 Y 轴的加速度。
   angularSpeedX:
     type: ScalarValue
     argument: ActiveTime
     time: true
-    desc: |
-      The node's angular speed around its local X-axis in degrees per second.
+    desc:
+      en-US: |
+        The node's angular speed around its local X-axis in degrees per second.
+      zh-CN: |
+        节点绕其局部 X 轴的角速度（度/秒）。
     see:
       - angularSpeedMultiplierX
   angularSpeedMultiplierX:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link angularSpeedX}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedX}.
+      zh-CN: |
+        {@link angularSpeedX} 的乘数。
   angularSpeedY:
     type: ScalarValue
     argument: ActiveTime
     time: true
-    desc: |
-      The node's angular speed around its local Y-axis in degrees per second.
+    desc:
+      en-US: |
+        The node's angular speed around its local Y-axis in degrees per second.
+      zh-CN: |
+        节点绕其局部 Y 轴的角速度（度/秒）。
     see:
       - angularSpeedMultiplierY
   angularSpeedMultiplierY:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link angularSpeedY}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedY}.
+      zh-CN: |
+        {@link angularSpeedY} 的乘数。
   angularSpeedZ:
     type: ScalarValue
     argument: ActiveTime
     time: true
-    desc: |
-      The node's angular speed around its local Z-axis in degrees per second.
+    desc:
+      en-US: |
+        The node's angular speed around its local Z-axis in degrees per second.
+      zh-CN: |
+        节点绕其局部 Z 轴的角速度（度/秒）。
     see:
       - angularSpeedMultiplierZ
   angularSpeedMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link angularSpeedZ}.
+    desc:
+      en-US: |
+        Multiplier for {@link angularSpeedZ}.
+      zh-CN: |
+        {@link angularSpeedZ} 的乘数。
   unk_ds3_f1_0:
     field: int
   unk_ds3_f1_1:
     field: int
   alignWithMotion:
     field: int
-    desc: |
-      When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+    desc:
+      en-US: |
+        When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+      zh-CN: |
+        当设置为 1 时，使节点与移动方向对齐，这也会禁用此动作的角速度。设置为更高的值似乎与设置为 0 的效果相同，这意味着它可能不是布尔值，但这些值的具体作用未知。
   unk_ds3_f1_3:
     field: int
 games:

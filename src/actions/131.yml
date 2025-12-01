@@ -4,60 +4,91 @@ slot: ParticleModifier
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Modifies particles in various ways.
+desc:
+  en-US: |
+    Modifies particles in various ways.
 
-  Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
+    Note: This is **not** a {@link Modifier property modifier}, it is an action that modifies particles emitted from the same node.
+  zh-CN: |
+    以各种方式修改粒子。
+
+    注意：这**不是**一个 {@link Modifier 属性修饰符}，而是一个修改同一节点发射出的粒子的动作。
 properties:
   speed:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: true
-    desc: |
-      Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+    desc:
+      en-US: |
+        Controls the speed of the particles emitted from this node, but only if the config has an action in the {@link ActionSlots.ParticleMovementAction ParticleMovement slot} that enables acceleration of particles. The direction is the particle's {@link InitialDirection initial direction}.
+      zh-CN: |
+        控制从该节点发射的粒子的速度，但仅当配置在 {@link ActionSlots.ParticleMovementAction ParticleMovement 插槽} 中有一个启用粒子加速度的动作时才有效。方向是粒子的 {@link InitialDirection 初始方向}。
   scaleX:
     type: ScalarValue
     default: 1
     argument: EmissionTime
     scale: particleModifier
-    desc: |
-      Multiplier for the scale along the X-axis for the particles emitted from this node.
+    desc:
+      en-US: |
+        Multiplier for the scale along the X-axis for the particles emitted from this node.
 
-      If {@link uniformScale} is enabled, this also affects the Y and Z axes.
+        If {@link uniformScale} is enabled, this also affects the Y and Z axes.
+      zh-CN: |
+        从该节点发射的粒子沿 X 轴缩放的乘数。
+
+        如果启用了 {@link uniformScale}，这也会影响 Y 和 Z 轴。
   scaleY:
     type: ScalarValue
     default: 1
     argument: EmissionTime
     scale: particleModifier
-    desc: |
-      Multiplier for the scale along the Y-axis for the particles emitted from this node.
+    desc:
+      en-US: |
+        Multiplier for the scale along the Y-axis for the particles emitted from this node.
 
-      If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
+        If {@link uniformScale} is enabled, {@link scaleX} also affects the Y-axis, and this property is ignored.
+      zh-CN: |
+        从该节点发射的粒子沿 Y 轴缩放的乘数。
+
+        如果启用了 {@link uniformScale}，{@link scaleX} 也会影响 Y 轴，此属性将被忽略。
   scaleZ:
     type: ScalarValue
     default: 1
     argument: EmissionTime
     scale: particleModifier
-    desc: |
-      Multiplier for the scale along the Z-axis for the particles emitted from this node.
+    desc:
+      en-US: |
+        Multiplier for the scale along the Z-axis for the particles emitted from this node.
 
-      If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
+        If {@link uniformScale} is enabled, {@link scaleX} also affects the Z-axis, and this property is ignored.
+      zh-CN: |
+        从该节点发射的粒子沿 Z 轴缩放的乘数。
+
+        如果启用了 {@link uniformScale}，{@link scaleX} 也会影响 Z 轴，此属性将被忽略。
   color:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
     argument: ActiveTime
     color: true
-    desc: |
-      Color multiplier for the particles emitted from this node.
+    desc:
+      en-US: |
+        Color multiplier for the particles emitted from this node.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
+      zh-CN: |
+        从该节点发射的粒子的颜色乘数。
+
+        此处的数值不设限，可以超过 1。
   uniformScale:
     field: bool
     default: false
-    desc: |
-      Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
+    desc:
+      en-US: |
+        Scales the particles emitted from this node uniformly based on {@link scaleX}. The other scale properties in this action have no effect when this is enabled.
+      zh-CN: |
+        基于 {@link scaleX} 均匀缩放从该节点发射的粒子。启用此项时，此动作中的其他缩放属性无效。
     see:
       - scaleX
       - scaleY

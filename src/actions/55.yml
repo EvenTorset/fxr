@@ -4,31 +4,45 @@ slot: ParticleMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
+desc:
+  en-US: |
+    Controls the movement of particles. This is the most basic action for controlling the acceleration of particles.
+  zh-CN: |
+    控制粒子的移动。这是控制粒子加速度最基本的行为。
 properties:
   gravity:
     type: ScalarValue
     argument: ParticleAge
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
+    desc:
+      en-US: |
+        Controls the acceleration of the particle along the global Y-axis. Positive values will make the particles go down, and negative values will go up.
 
-      Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+        Unless it's left at 0, this changes the current direction of the particles, which can affect various other things, for example the rotation of {@link ActionType.Line Line} and {@link ActionType.QuadLine QuadLine} particles, and the direction of this action's {@link acceleration}. It does not affect the particles' {@link InitialDirection initial direction}.
+      zh-CN: |
+        控制粒子沿全局 Y 轴的加速度。正值使粒子下降，负值使粒子上升。
+
+        除非保持为 0，否则这会改变粒子的当前方向，这可能会影响其他方面，例如 {@link ActionType.Line Line} 和 {@link ActionType.QuadLine QuadLine} 粒子的旋转，以及此动作 {@link acceleration 加速度} 的方向。它不影响粒子的 {@link InitialDirection 初始方向}。
   acceleration:
     type: ScalarValue
     argument: ParticleAge
     scale: true
     time: sq
-    desc: |
-      The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+    desc:
+      en-US: |
+        The particles' acceleration in their current direction, which is usually their {@link InitialDirection initial direction}, but can be changed over time by other things, for example this action's {@link gravity}.
+      zh-CN: |
+        粒子在当前方向上的加速度。通常是它们的 {@link InitialDirection 初始方向}，但也可能随时间被其他因素改变，例如此动作的 {@link gravity 重力}。
   accelerationMultiplier:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    desc: |
-      Multiplier for {@link acceleration}.
+    desc:
+      en-US: |
+        Multiplier for {@link acceleration}.
+      zh-CN: |
+        {@link acceleration} 的乘数。
   unk_ds3_f1_0:
     field: int
   unk_ds3_f1_1:

@@ -10,5 +10,8 @@ inGames:
   - ER
   - AC6
   - NR
-desc: |
-  Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
+desc:
+  en-US: |
+    Makes all emitted instances have the default initial direction from the emitter. See {@link InitialDirection} for more information.
+  zh-CN: |
+    使所有发射的实例具有来自发射器的默认初始方向。有关更多信息，请参阅 {@link InitialDirection}。

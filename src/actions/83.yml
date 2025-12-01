@@ -4,53 +4,77 @@ slot: NodeMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
+desc:
+  en-US: |
+    Controls the movement of the node. This extends {@link ActionType.NodeAcceleration NodeAcceleration} with the ability to make the node turn a random amount at a given interval.
+  zh-CN: |
+    控制节点的移动。扩展了 {@link ActionType.NodeAcceleration NodeAcceleration}，增加了使节点以给定间隔随机转向的能力。
 properties:
   speedZ:
     type: ScalarValue
     argument: Constant0
     scale: true
     time: true
-    desc: |
-      Controls the speed of the node along its Z-axis.
+    desc:
+      en-US: |
+        Controls the speed of the node along its Z-axis.
+      zh-CN: |
+        控制节点沿其 Z 轴的速度。
   accelerationZ:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+    desc:
+      en-US: |
+        Controls the acceleration of the node along its Z-axis. This value cannot be negative.
+      zh-CN: |
+        控制节点沿其 Z 轴的加速度。此值不能为负。
   accelerationMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link accelerationZ}.
+    desc:
+      en-US: |
+        Multiplier for {@link accelerationZ}.
+      zh-CN: |
+        {@link accelerationZ} 的乘数。
   accelerationY:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the node along its Y-axis.
+    desc:
+      en-US: |
+        Controls the acceleration of the node along its Y-axis.
+      zh-CN: |
+        控制节点沿其 Y 轴的加速度。
   maxTurnAngle:
     type: ScalarValue
     argument: ActiveTime
-    desc: |
-      The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+    desc:
+      en-US: |
+        The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
+      zh-CN: |
+        节点将根据 {@link turnInterval} 定义的间隔，基于此值随机转向一定角度。
   alignWithMotion:
     field: int
-    desc: |
-      When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+    desc:
+      en-US: |
+        When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+      zh-CN: |
+        当设置为 1 时，使节点与移动方向对齐。设置为更高的值似乎与设置为 0 的效果相同，这意味着它可能不是布尔值，但这些值的具体作用未知。
   unk_ds3_f1_1:
     field: float
   turnInterval:
     field: int
     lib: float
     time: inv
-    desc: |
-      The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+    desc:
+      en-US: |
+        The node will turn a random amount based on {@link maxTurnAngle} at this interval. The units are seconds, but due to how the field that stores this value works, the value will be rounded to the nearest 0.02 seconds.
+      zh-CN: |
+        节点将以此间隔基于 {@link maxTurnAngle} 随机转向。单位为秒，但由于存储此值的字段的工作方式，该值将四舍五入到最接近的 0.02 秒。
 games:
   DS3:
     fields1:
