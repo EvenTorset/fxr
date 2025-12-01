@@ -8,9 +8,9 @@ desc:
     en-US: |
        Defines a GPU particle system. Very similar to {@link GPUStandardParticle}, with no known differences.
 
-  The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
+       The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
 
-  Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
+       Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
     zh-CN: |
        定义了一个 GPU 粒子系统。与 {@link GPUStandardParticle} 非常相似，没有已知差异。
 
