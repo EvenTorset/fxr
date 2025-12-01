@@ -6,19 +6,19 @@ meta:
   isParticle: false
 desc:
     en-US: |
-       Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
-       - {@link WindForce}
-       - {@link GravityForce}
-       - {@link TurbulenceForce}
+      Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
+      - {@link WindForce}
+      - {@link GravityForce}
+      - {@link TurbulenceForce}
     
-       The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
+      The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
     zh-CN: |
-       定义一个用于取消所有其他 SFX 力的体积。这包括来自天气的风力以及以下行为产生的力：
-       - {@link WindForce}
-       - {@link GravityForce}
-       - {@link TurbulenceForce}
+      定义一个用于取消所有其他 SFX 力的体积。这包括来自天气的风力以及以下行为产生的力：
+      - {@link WindForce}
+      - {@link GravityForce}
+      - {@link TurbulenceForce}
     
-       该名称源自艾尔登法环的 RTTI，其中它被命名为 "GXForceFieldCancelAreaAppearance"。
+      该名称源自艾尔登法环的 RTTI，其中它被命名为 "GXForceFieldCancelAreaAppearance"。
 properties:
   shape:
     type: ForceVolumeShape

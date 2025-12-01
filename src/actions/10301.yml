@@ -6,13 +6,13 @@ meta:
   isParticle: false
 desc:
     en-US: |
-       Defines a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+      Defines a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
 
-       The name is from Elden Ring's RTTI, where it is named "GXForceFieldGravityAreaAppearance".
+      The name is from Elden Ring's RTTI, where it is named "GXForceFieldGravityAreaAppearance".
     zh-CN: |
-       定义一个体积内的径向力。如果力为正，它会将物体拉向自身；如果力为负，则会将其推开。
+      定义一个体积内的径向力。如果力为正，它会将物体拉向自身；如果力为负，则会将其推开。
 
-       该名称来自《艾尔登法环》的 RTTI，其中被命名为 "GXForceFieldGravityAreaAppearance"。
+      该名称来自《艾尔登法环》的 RTTI，其中被命名为 "GXForceFieldGravityAreaAppearance"。
 properties:
   force:
     type: ScalarValue

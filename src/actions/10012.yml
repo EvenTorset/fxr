@@ -6,17 +6,17 @@ meta:
   isParticle: true
 desc:
     en-US: |
-       Defines a tracer particle, which leaves a textured trail where it moves.
+      Defines a tracer particle, which leaves a textured trail where it moves.
 
-       This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
+      This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
     
-       The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceTracer".
+      The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceTracer".
     zh-CN: |
-       定义一个追踪粒子，粒子移动时会留下带有纹理的轨迹。
+      定义一个追踪粒子，粒子移动时会留下带有纹理的轨迹。
 
-       这是 {@link LegacyTracer} 的新版本，具有更多功能，例如可以使轨迹的不透明度基于粒子的移动速度。
+      这是 {@link LegacyTracer} 的新版本，具有更多功能，例如可以使轨迹的不透明度基于粒子的移动速度。
         
-       该名称来自艾尔登法环的 RTTI，在那里它被命名为 “GXFfxAppearanceTracer”。
+      该名称来自艾尔登法环的 RTTI，在那里它被命名为 “GXFfxAppearanceTracer”。
 properties:
   texture:
     type: ScalarValue

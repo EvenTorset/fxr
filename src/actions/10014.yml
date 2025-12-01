@@ -6,13 +6,13 @@ meta:
   isParticle: false
 desc:
     en-US: |
-       Defines a lens flare effect with up to four textured layers with different colors and sizes.
+      Defines a lens flare effect with up to four textured layers with different colors and sizes.
 
-       The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
+      The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
     zh-CN: |
-       定义一个镜头光晕效果，最多可包含四个具有不同颜色和大小的纹理层。
+      定义一个镜头光晕效果，最多可包含四个具有不同颜色和大小的纹理层。
 
-       该名称来自《艾尔登法环》的RTTI，其中名为“GXFfxLensFlareAppearance”。
+      该名称来自《艾尔登法环》的RTTI，其中名为“GXFfxLensFlareAppearance”。
 properties:
   layer1Width:
     type: ScalarValue

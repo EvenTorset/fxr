@@ -6,17 +6,17 @@ meta:
   isParticle: false
 desc:
     en-US: |
-       Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+      Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
 
-       The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
+      The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
 
-       This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
+      This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
     zh-CN: |
-       定义了一个 GPU 粒子系统。与 {@link GPUStandardParticle} 类似，但它不像其他行为那样使用公告牌粒子，而是使用“火花”粒子，类似于 {@link QuadLine} 行为的线粒子，尽管火花可能会弯曲，更像 {@link Tracer} 粒子的轨迹。此动作发射的粒子是 GPU 粒子，这意味着可以同时渲染大量粒子，而对性能影响不大。这些粒子也不受大多数影响普通粒子的事物的影响，例如 {@link ActionSlots.ParticleMovementAction ParticleMovement actions}。
+      定义了一个 GPU 粒子系统。与 {@link GPUStandardParticle} 类似，但它不像其他行为那样使用公告牌粒子，而是使用“火花”粒子，类似于 {@link QuadLine} 行为的线粒子，尽管火花可能会弯曲，更像 {@link Tracer} 粒子的轨迹。此动作发射的粒子是 GPU 粒子，这意味着可以同时渲染大量粒子，而对性能影响不大。这些粒子也不受大多数影响普通粒子的事物的影响，例如 {@link ActionSlots.ParticleMovementAction ParticleMovement actions}。
 
-       其名称源自《艾尔登法环》的 RTTI，在那里它被命名为“GXVfxSparkParticleAppearance”。
+      其名称源自《艾尔登法环》的 RTTI，在那里它被命名为“GXVfxSparkParticleAppearance”。
 
-       此行为首次用于《装甲核心6》，但也肯定适用于《只狼》和《艾尔登法环》。它可能在《黑暗之魂3》中也能使用，但其结构至少在那里有所不同，并且该结构的具体情况未知。《装甲核心6》的结构与《只狼》和《艾尔登法环》兼容，但由于某些功能是在后续版本中添加的，因此可能无法正常工作。
+      此行为首次用于《装甲核心6》，但也肯定适用于《只狼》和《艾尔登法环》。它可能在《黑暗之魂3》中也能使用，但其结构至少在那里有所不同，并且该结构的具体情况未知。《装甲核心6》的结构与《只狼》和《艾尔登法环》兼容，但由于某些功能是在后续版本中添加的，因此可能无法正常工作。
 properties:
   particleFollowFactor:
     type: ScalarValue

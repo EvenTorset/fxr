@@ -6,13 +6,13 @@ meta:
   isParticle: false
 desc:
     en-US: |
-       Defines a chaotic force in a volume.
+      Defines a chaotic force in a volume.
 
-       The name is from Elden Ring's RTTI, where it is named "GXForceFieldTurbulenceAreaAppearance".
+      The name is from Elden Ring's RTTI, where it is named "GXForceFieldTurbulenceAreaAppearance".
     zh-CN: |
-       在体积中定义混乱的力（湍流）。
+      在体积中定义混乱的力（湍流）。
 
-       名称源自《艾尔登法环》的RTTI，其中被命名为“GXForceFieldTurbulenceAreaAppearance”。
+      名称源自《艾尔登法环》的RTTI，其中被命名为“GXForceFieldTurbulenceAreaAppearance”。
 properties:
   noiseOffsetX:
     type: ScalarValue

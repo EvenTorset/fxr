@@ -6,17 +6,17 @@ meta:
   isParticle: false
 desc:
     en-US: |
-       Defines a GPU particle system. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
+      Defines a GPU particle system. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
 
-       Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
-    
-       The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardParticleAppearance".
+      Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
+
+      The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardParticleAppearance".
     zh-CN: |
-       定义一个GPU粒子系统。这会发射GPU粒子，意味着可以渲染数千个粒子，而对性能影响不大。
+      定义一个GPU粒子系统。这会发射GPU粒子，意味着可以渲染数千个粒子，而对性能影响不大。
 
-       请注意，虽然它会发射粒子，但它本身并不是一个粒子，并且由此动作发射的粒子不受影响常规粒子的所有因素影响。
+      请注意，虽然它会发射粒子，但它本身并不是一个粒子，并且由此动作发射的粒子不受影响常规粒子的所有因素影响。
 
-       此行为的名称来自《艾尔登法环》的RTTI，在那里它被称为“GXVfxStandardParticleAppearance”。
+      此行为的名称来自《艾尔登法环》的RTTI，在那里它被称为“GXVfxStandardParticleAppearance”。
 properties:
   particleFollowFactor:
     type: ScalarValue

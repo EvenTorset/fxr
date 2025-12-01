@@ -6,13 +6,13 @@ meta:
   isParticle: false
 desc:
     en-US: |
-       Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+      Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
 
-       The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
+      The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
     zh-CN: |
-       定义了与水的模拟交互，允许效果在附近的水中产生涟漪。该交互基本上会使用一个由纹理控制的形状将水向下推至给定深度，并保持一段时间，然后释放它。
+      定义了与水的模拟交互，允许效果在附近的水中产生涟漪。该交互基本上会使用一个由纹理控制的形状将水向下推至给定深度，并保持一段时间，然后释放它。
 
-       该名称来自《艾尔登法环》的 RTTI，其中名为 “GXFfxWaterInteractionSimulationAppearance”。
+      该名称来自《艾尔登法环》的 RTTI，其中名为 “GXFfxWaterInteractionSimulationAppearance”。
 properties:
   texture:
     field: int

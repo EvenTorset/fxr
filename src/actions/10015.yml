@@ -6,17 +6,17 @@ meta:
   isParticle: true
 desc:
     en-US: |
-       Defines a particle with a 3D model. Similar to {@link Model}, but with some different options.
+      Defines a particle with a 3D model. Similar to {@link Model}, but with some different options.
 
-       Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
+      Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
     
-       The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceRichModel".
+      The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceRichModel".
     zh-CN: |
-       定义一个带有3D模型的粒子。与{@link Model}类似，但具有一些不同的选项。
+      定义一个带有3D模型的粒子。与{@link Model}类似，但具有一些不同的选项。
 
-       有些模型仅适用于此行为，而不适用于Model行为（原因未知）。一个很好的例子是《艾尔登法环》中的卡利亚大剑模型（88300），当与其他行为一起使用时，它会变得极其拉伸和扭曲，但在此行为下则能正常工作。
+      有些模型仅适用于此行为，而不适用于Model行为（原因未知）。一个很好的例子是《艾尔登法环》中的卡利亚大剑模型（88300），当与其他行为一起使用时，它会变得极其拉伸和扭曲，但在此行为下则能正常工作。
     
-       该名称来源于《艾尔登法环》的RTTI，其中名为“GXFfxAppearanceRichModel”。
+      该名称来源于《艾尔登法环》的RTTI，其中名为“GXFfxAppearanceRichModel”。
 properties:
   model:
     type: ScalarValue
