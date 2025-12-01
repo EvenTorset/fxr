@@ -4,10 +4,15 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Defines a simple light shafts effect.
+desc:
+    en-US: |
+       Defines a simple light shafts effect.
 
-  This is only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or later games.
+       This is only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or later games.
+    zh-CN: |
+       定义一个简单的光束效果。
+
+       这仅在《黑暗之魂3》中使用。如果转换为《只狼》会显示，但似乎在该游戏中无法正常工作。在《艾尔登法环》或后续游戏中似乎完全无法使用。
 properties:
   width:
     type: ScalarValue
