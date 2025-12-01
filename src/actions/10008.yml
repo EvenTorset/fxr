@@ -12,7 +12,7 @@ desc:
 
        This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
     zh-CN: |
-       定义了一个 GPU 粒子系统。与 {@link GPUStandardParticle} 类似，但它不像其他行为那样使用广告牌粒子，而是使用“火花”粒子，类似于 {@link QuadLine} 行为的线粒子，尽管火花可能会弯曲，更像 {@link Tracer} 粒子的轨迹。此动作发射的粒子是 GPU 粒子，这意味着可以同时渲染大量粒子，而对性能影响不大。这些粒子也不受大多数影响普通粒子的事物的影响，例如 {@link ActionSlots.ParticleMovementAction ParticleMovement actions}。
+       定义了一个 GPU 粒子系统。与 {@link GPUStandardParticle} 类似，但它不像其他行为那样使用公告牌粒子，而是使用“火花”粒子，类似于 {@link QuadLine} 行为的线粒子，尽管火花可能会弯曲，更像 {@link Tracer} 粒子的轨迹。此动作发射的粒子是 GPU 粒子，这意味着可以同时渲染大量粒子，而对性能影响不大。这些粒子也不受大多数影响普通粒子的事物的影响，例如 {@link ActionSlots.ParticleMovementAction ParticleMovement actions}。
 
        其名称源自《艾尔登法环》的 RTTI，在那里它被命名为“GXVfxSparkParticleAppearance”。
 
