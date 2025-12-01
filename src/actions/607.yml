@@ -4,10 +4,15 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: true
-desc: |
-  A particle that distorts anything seen through it.
+desc:
+  en-US: |
+    A particle that distorts anything seen through it.
 
-  Note: This particle is not visible if the "Effects" setting is set to "Low".
+    Note: This particle is not visible if the "Effects" setting is set to "Low".
+  zh-CN: |
+    一种会扭曲透过它所看到任何东西的粒子。
+
+    注意：如果“特效”设置设为“低”，此粒子将不可见。
 properties:
   blendMode:
     type: BlendMode | ScalarProperty
@@ -15,35 +20,52 @@ properties:
     enum: BlendMode
     default: BlendMode.Normal
     argument: Constant0
-    desc: |
-      Blend mode.
+    desc:
+      en-US: |
+        Blend mode.
+      zh-CN: |
+        混合模式。
   offsetX:
     type: ScalarValue
     argument: ParticleAge
     # Not scaling, because it is based on the particle size
-    desc: |
-      X position offset.
+    desc:
+      en-US: |
+        X position offset.
+      zh-CN: |
+        X 轴位置偏移。
   offsetY:
     type: ScalarValue
     argument: ParticleAge
     # Not scaling, because it is based on the particle size
-    desc: |
-      Y position offset.
+    desc:
+      en-US: |
+        Y position offset.
+      zh-CN: |
+        Y 轴位置偏移。
   offsetZ:
     type: ScalarValue
     argument: ParticleAge
     # Not scaling, because it is based on the particle size
-    desc: |
-      Z position offset.
+    desc:
+      en-US: |
+        Z position offset.
+      zh-CN: |
+        Z 轴位置偏移。
   sizeX:
     type: ScalarValue
     default: 1
     argument: ParticleAge
     scale: instanceSize
-    desc: |
-      The width of the particle.
+    desc:
+      en-US: |
+        The width of the particle.
 
-      If {@link uniformScale} is enabled, this also controls the height and depth.
+        If {@link uniformScale} is enabled, this also controls the height and depth.
+      zh-CN: |
+        粒子的宽度。
+
+        如果启用了 {@link uniformScale}，这也会控制高度和深度。
     see:
       - scaleVariationX
       - sizeY
@@ -53,10 +75,15 @@ properties:
     default: 1
     argument: ParticleAge
     scale: instanceSize
-    desc: |
-      The height of the particle.
+    desc:
+      en-US: |
+        The height of the particle.
 
-      If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+        If {@link uniformScale} is enabled, {@link sizeX} also controls the height, and this property is ignored.
+      zh-CN: |
+        粒子的高度。
+
+        如果启用了 {@link uniformScale}，{@link sizeX} 也会控制高度，此属性将被忽略。
     see:
       - scaleVariationY
       - sizeX
@@ -66,12 +93,19 @@ properties:
     default: 1
     argument: ParticleAge
     scale: instanceSize
-    desc: |
-      The depth of the particle.
+    desc:
+      en-US: |
+        The depth of the particle.
 
-      If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
+        If {@link uniformScale} is enabled, {@link sizeX} also controls the depth, and this property is ignored.
 
-      If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
+        If the distortion {@link shape} is set to {@link DistortionShape.Rectangle Rectangle}, this property won't have any effect since the rectangle is 2-dimensional.
+      zh-CN: |
+        粒子的深度。
+
+        如果启用了 {@link uniformScale}，{@link sizeX} 也会控制深度，此属性将被忽略。
+
+        如果扭曲 {@link shape 形状} 设置为 {@link DistortionShape.Rectangle 矩形}，此属性将不会产生任何效果，因为矩形是二维的。
     see:
       - scaleVariationZ
       - sizeX
@@ -82,10 +116,15 @@ properties:
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: true
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+        Values in this will be clamped to the 0-1 range. There are no unrestricted color properties in this action, but {@link rgbMultiplier} and {@link alphaMultiplier} can be used to scale the colors.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值将被限制在 0-1 范围内。此动作中没有不受限制的颜色属性，但可以使用 {@link rgbMultiplier} 和 {@link alphaMultiplier} 来缩放颜色。
   unk_ds3_p1_7:
     type: Vector4Value
     components: 4
@@ -94,8 +133,11 @@ properties:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    desc: |
-      Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+    desc:
+      en-US: |
+        Controls the intensity of the distortion effect. At 0, there is no distortion at all.
+      zh-CN: |
+        控制扭曲效果的强度。为 0 时，完全没有扭曲。
   unk_ds3_p1_9:
     type: ScalarValue
   stirSpeed:
@@ -103,48 +145,72 @@ properties:
     default: 60
     argument: ParticleAge
     time: true
-    desc: |
-      Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+    desc:
+      en-US: |
+        Controls the speed of the stirring effect in degrees per second. Requires {@link mode} to be set to {@link DistortionMode.Stir}.
+      zh-CN: |
+        控制搅动效果的速度（度/秒）。需要将 {@link mode} 设置为 {@link DistortionMode.Stir}。
   radius:
     type: ScalarValue
     default: 1
     argument: ParticleAge
-    desc: |
-      The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
+    desc:
+      en-US: |
+        The distortion effect is only applied to an ellipse inside the particle. This property controls how large this ellipse is. At 1, it inscribes the particle's rectangle. At values greater than 1, it is the same size as 1, but there might be strange artifacts around the edges of the distortion.
+      zh-CN: |
+        扭曲效果仅应用于粒子内部的一个椭圆。此属性控制该椭圆的大小。为 1 时，它内切于粒子的矩形。值大于 1 时，其大小与 1 相同，但扭曲边缘可能会出现奇怪的伪影。
   normalMapOffsetU:
     type: ScalarValue
     argument: Constant0
-    desc: |
-      Horizontal UV offset for the {@link normalMap normal map}.
+    desc:
+      en-US: |
+        Horizontal UV offset for the {@link normalMap normal map}.
+      zh-CN: |
+        {@link normalMap 法线贴图}的水平 UV 偏移。
   normalMapOffsetV:
     type: ScalarValue
     argument: Constant0
-    desc: |
-      Vertical UV offset for the {@link normalMap normal map}.
+    desc:
+      en-US: |
+        Vertical UV offset for the {@link normalMap normal map}.
+      zh-CN: |
+        {@link normalMap 法线贴图}的垂直 UV 偏移。
   normalMapSpeedU:
     type: ScalarValue
     argument: ParticleAge
     time: true
-    desc: |
-      Horizontal UV offset speed for the {@link normalMap normal map}.
+    desc:
+      en-US: |
+        Horizontal UV offset speed for the {@link normalMap normal map}.
+      zh-CN: |
+        {@link normalMap 法线贴图}的水平 UV 偏移速度。
   normalMapSpeedV:
     type: ScalarValue
     argument: ParticleAge
     time: true
-    desc: |
-      Vertical UV offset speed for the {@link normalMap normal map}.
+    desc:
+      en-US: |
+        Vertical UV offset speed for the {@link normalMap normal map}.
+      zh-CN: |
+        {@link normalMap 法线贴图}的垂直 UV 偏移速度。
   rgbMultiplier:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+    desc:
+      en-US: |
+        Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+      zh-CN: |
+        不影响 Alpha 的颜色标量乘数。实际上是亮度乘数。
   alphaMultiplier:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Alpha multiplier.
+    desc:
+      en-US: |
+        Alpha multiplier.
+      zh-CN: |
+        Alpha 乘数。
   unk_ds3_p2_2:
     type: ScalarValue
   unk_ds3_p2_3:
@@ -162,101 +228,152 @@ properties:
   alphaThreshold:
     type: ScalarValue
     argument: ActiveTime
-    desc: |
-      Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
+    desc:
+      en-US: |
+        Parts of the particle with less opacity than this threshold will be invisible. The range is 0-255.
 
-      This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+        This threshold creates a hard cut-off between visible and not visible, which is unlike the alpha *fade* threshold properties in some similar actions.
+      zh-CN: |
+        不透明度低于此阈值的粒子部分将不可见。范围是 0-255。
+
+        此阈值在可见和不可见之间创建一个硬性截止，这与某些类似动作中的 alpha *淡入淡出* 阈值属性不同。
   normalMapScaleU:
     type: ScalarValue
     default: 1
-    desc: |
-      Horizontal UV scale for the {@link normalMap normal map}.
+    desc:
+      en-US: |
+        Horizontal UV scale for the {@link normalMap normal map}.
+      zh-CN: |
+        {@link normalMap 法线贴图}的水平 UV 缩放。
   normalMapScaleV:
     type: ScalarValue
     default: 1
-    desc: |
-      Vertical UV scale for the {@link normalMap normal map}.
+    desc:
+      en-US: |
+        Vertical UV scale for the {@link normalMap normal map}.
+      zh-CN: |
+        {@link normalMap 法线贴图}的垂直 UV 缩放。
   mode:
     type: DistortionMode
     field: int
     enum: DistortionMode
     default: DistortionMode.NormalMap
-    desc: |
-      Controls what type of distortion to apply. See {@link DistortionMode} for more details.
+    desc:
+      en-US: |
+        Controls what type of distortion to apply. See {@link DistortionMode} for more details.
+      zh-CN: |
+        控制应用的扭曲类型。有关更多详细信息，请参阅 {@link DistortionMode}。
   shape:
     type: DistortionShape
     field: int
     enum: DistortionShape
     default: DistortionShape.Rectangle
-    desc: |
-      Controls the shape of the particle. See {@link DistortionShape} for more information.
+    desc:
+      en-US: |
+        Controls the shape of the particle. See {@link DistortionShape} for more information.
+      zh-CN: |
+        控制粒子的形状。有关更多信息，请参阅 {@link DistortionShape}。
   orientation:
     type: OrientationMode
     field: int
     enum: OrientationMode
     default: OrientationMode.CameraPlane
-    desc: |
-      Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+    desc:
+      en-US: |
+        Controls the orientation mode for the particles. See {@link OrientationMode} for more information.
+      zh-CN: |
+        控制粒子的朝向模式。有关更多信息，请参阅 {@link OrientationMode}。
   texture:
     field: int
     default: 0
     resource: texture
     textureType: a
-    desc: |
-      Texture ID.
+    desc:
+      en-US: |
+        Texture ID.
 
-      This texture seems to completely hide the distortion effect. It's probably best to just leave it at 0 unless you are trying to figure out how to use it properly.
+        This texture seems to completely hide the distortion effect. It's probably best to just leave it at 0 unless you are trying to figure out how to use it properly.
+      zh-CN: |
+        纹理 ID。
+
+        此纹理似乎会完全隐藏扭曲效果。除非你想弄清楚如何正确使用它，否则最好将其保留为 0。
   normalMap:
     field: int
     default: 0
     resource: texture
     textureType: 'n'
-    desc: |
-      Normal map texture ID.
+    desc:
+      en-US: |
+        Normal map texture ID.
 
-      Only used if the distortion {@link mode} is set to something that uses it.
+        Only used if the distortion {@link mode} is set to something that uses it.
+      zh-CN: |
+        法线贴图纹理 ID。
+
+        仅当扭曲 {@link mode 模式} 设置为使用它的内容时才使用。
   mask:
     field: int
     default: 0
     resource: texture
     textureType: a
-    desc: |
-      Mask texture ID. This texture is used to control the color and opacity of the particle.
+    desc:
+      en-US: |
+        Mask texture ID. This texture is used to control the color and opacity of the particle.
+      zh-CN: |
+        遮罩纹理 ID。此纹理用于控制粒子的颜色和不透明度。
   scaleVariationX:
     field: float
     default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
+    desc:
+      en-US: |
+        Each particle will pick a random number between this value and 1, and the width of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly thinner, down to half width. Setting it to 2 will make them randomly wider, up to double width.
 
-      If {@link uniformScale} is enabled, this also affects the height.
+        If {@link uniformScale} is enabled, this also affects the height.
+      zh-CN: |
+        每个粒子将在此值和 1 之间选取一个随机数，粒子的宽度将乘以该数。例如，将其设置为 0.5 将使粒子随机变细，最细为一半宽度。将其设置为 2 将使它们随机变宽，最宽为两倍宽度。
+
+        如果启用了 {@link uniformScale}，这也会影响高度。
     see:
       - scaleVariationY
       - scaleVariationZ
   scaleVariationY:
     field: float
     default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
+    desc:
+      en-US: |
+        Each particle will pick a random number between this value and 1, and the height of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shorter, down to half height. Setting it to 2 will make them randomly taller, up to double height.
 
-      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+        If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the height, and this field is ignored.
+      zh-CN: |
+        每个粒子将在此值和 1 之间选取一个随机数，粒子的高度将乘以该数。例如，将其设置为 0.5 将使粒子随机变矮，最矮为一半高度。将其设置为 2 将使它们随机变高，最高为两倍高度。
+
+        如果启用了 {@link uniformScale}，{@link scaleVariationX} 也会影响高度，此字段将被忽略。
     see:
       - scaleVariationX
       - scaleVariationZ
   scaleVariationZ:
     field: float
     default: 1
-    desc: |
-      Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
+    desc:
+      en-US: |
+        Each particle will pick a random number between this value and 1, and the depth of the particle will be multiplied by this number. For example, setting this to 0.5 will make the particles randomly shallower, down to half depth. Setting it to 2 will make them randomly deeper, up to double depth. 
 
-      If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+        If {@link uniformScale} is enabled, {@link scaleVariationX} also affects the depth, and this field is ignored.
+      zh-CN: |
+        每个粒子将在此值和 1 之间选取一个随机数，粒子的深度将乘以该数。例如，将其设置为 0.5 将使粒子随机变浅，最浅为一半深度。将其设置为 2 将使它们随机变深，最深为两倍深度。
+
+        如果启用了 {@link uniformScale}，{@link scaleVariationX} 也会影响深度，此字段将被忽略。
     see:
       - scaleVariationX
       - scaleVariationY
   uniformScale:
     field: bool
     default: false
-    desc: |
-      If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+    desc:
+      en-US: |
+        If enabled, the particle X scale-related properties and fields will control the scale in all axes, and the Y and Z counterparts will be ignored.
+      zh-CN: |
+        如果启用，粒子 X 轴缩放相关的属性和字段将控制所有轴的缩放，Y 和 Z 轴对应的属性将被忽略。
     see:
       - sizeX
       - sizeY
@@ -292,12 +409,19 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+    desc:
+      en-US: |
+        Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
+        Note:
+        - This has no effect if the "Effects Quality" setting is set to "Low".
+        - This does not affect the natural bloom effect from high color values.
+      zh-CN: |
+        控制额外泛光效果的颜色。粒子的颜色将与此颜色相乘，以获得泛光效果的最终颜色。
+
+        注意：
+        - 如果“特效质量”设置设为“低”，则此项无效。
+        - 这不影响高颜色值产生的自然泛光效果。
   unk_ds3_f2_9:
     field: int
   unk_ds3_f2_10:
@@ -312,10 +436,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link minDistance 最小视图距离} 附近衰减为 0 的点。在 {@link minDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link minDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minDistance
       - maxFadeDistance
@@ -326,12 +455,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link minFadeDistance} to be set to a positive value or 0.
+        This requires {@link minFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link minFadeDistance} 设置为正值或 0。
+
+        这与 {@link minDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - maxFadeDistance
@@ -342,10 +478,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link maxDistance 最大视图距离} 附近衰减为 0 的点。在 {@link maxDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link maxDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minFadeDistance
       - minDistance
@@ -356,12 +497,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link maxFadeDistance} to be set to a positive value or 0.
+        This requires {@link maxFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link maxFadeDistance} 设置为正值或 0。
+
+        这与 {@link maxDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - minDistance
@@ -372,8 +520,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -384,8 +535,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -437,10 +591,15 @@ properties:
   unk_sdt_f2_38:
     field: float
     scale: distance
-    desc: |
-      Unknown float.
+    desc:
+      en-US: |
+        Unknown float.
 
-      This seems to be something distance or depth-related. It's using the same length units as everything else (meters), and seems to be some sort of threshold or maybe offset for something. When the camera is within this distance from the node, the distortion will also affect other particles seen through it.
+        This seems to be something distance or depth-related. It's using the same length units as everything else (meters), and seems to be some sort of threshold or maybe offset for something. When the camera is within this distance from the node, the distortion will also affect other particles seen through it.
+      zh-CN: |
+        未知浮点数。
+
+        这似乎与距离或深度有关。它使用与其他所有内容相同的长度单位（米），并且似乎是某种阈值或偏移量。当摄像机与节点的距离在此范围内时，扭曲也会影响透过它看到的其他粒子。
 games:
   DS3:
     fields1:
