@@ -25,7 +25,7 @@ properties:
       en-US: |
         Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
       zh-CN: |
-        未知整数。关于此字段唯一已知的是将其设置为 0 会阻止动作 10300 产生任何效果。
+        未知整数。关于此字段唯一已知的是将其设置为 0 会阻止行为 10300 产生任何效果。
   unk_ds3_f1_4:
     field: int
   unk_ds3_f1_5:
