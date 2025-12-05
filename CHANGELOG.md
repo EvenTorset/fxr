@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/EvenTorset/fxr/compare/v30.0.0...HEAD)
+## [v31.0.0](https://github.com/EvenTorset/fxr/compare/v30.0.0...v31.0.0) - 2025-12-05
 
 ### Breaking Changes
 - The return type of the `getActiveConfig` methods on `LevelsOfDetailNode`, `BasicNode`, and `NodeEmitterNode` now match their respective config lists. For example, the method in `BasicNode` now returns `BasicConfig | null` instead of `IConfig | null`. This is not a functional change, only the type was changed to be more accurate.
@@ -12,7 +12,7 @@
 ### Documentation
 - Added support for localized descriptions of actions and properties in `actions.json`.
 - Added Chinese localization for actions and properties in `actions.json` by Shiki.
-- The description for all of the appearance actions have been updated to be more consistent and accurate.
+- The descriptions for all of the appearance actions have been updated to be more consistent and accurate.
 
 ## [v30.0.0](https://github.com/EvenTorset/fxr/compare/v29.0.0...v30.0.0) - 2025-11-01
 
