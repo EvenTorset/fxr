@@ -9,6 +9,8 @@ const srcDir = path.join(projectDir, 'src')
 const actionsDir = path.join(srcDir, 'actions')
 const enumsDir = path.join(srcDir, 'enums')
 
+const l10n = yaml.parse(await fs.readFile(path.join(srcDir, 'l10n.yml'), 'utf-8'))
+
 const gameMap = {
   DS3: 'DarkSouls3',
   SDT: 'Sekiro',
@@ -23,14 +25,7 @@ const fieldTypeNameMap = {
   float: 'float',
   vec2: 'vector2',
   vec3: 'vector3',
-  vec4: 'vector4'
-}
-
-const componentTypeNames = {
-  1: 'scalar',
-  2: 'vector2',
-  3: 'vector3',
-  4: 'vector4',
+  vec4: 'vector4',
 }
 
 function naturalSorter(as, bs) {
@@ -86,6 +81,18 @@ function processMarkdown(md, context) {
     .replace(/\{@link ([^\}\s]+)\s+(.+?)\}/g, (_, name, label) => linkReplacer(name, label, context))
 }
 
+function processDesc(md, context) {
+  if (typeof md === 'object') {
+    return Object.fromEntries(Object.entries(md).map(([k, v]) => [
+      k,
+      processMarkdown(v, context)
+    ]))
+  }
+  return {
+    'en-US': processMarkdown(md, context)
+  }
+}
+
 export default async function() {
   const enumsJSON = {}
 
@@ -94,12 +101,12 @@ export default async function() {
     const json = {}
     enumsJSON[data.name] = json
 
-    json.desc = processMarkdown(data.desc, data)
+    json.desc = processDesc(data.desc, data)
     json.members = Object.fromEntries(Object.entries(data.members).map(([name, member]) => [
       name,
       {
         value: member.value,
-        desc: processMarkdown(member.desc, data),
+        desc: processDesc(member.desc, data),
       }
     ]))
   }
@@ -117,7 +124,7 @@ export default async function() {
     json.name = data.name
     json.slot = data.slot
     json.meta = data.meta
-    json.desc = processMarkdown(data.desc, data)
+    json.desc = processDesc(data.desc, data)
     json.supportedGames = 'inGames' in data ?
       data.inGames.map(game => gameMap[game]) :
       Object.keys(data.games).filter(game => {
@@ -135,13 +142,19 @@ export default async function() {
         const jsonProp = {}
         json.properties[name] = jsonProp
         if ('desc' in prop) {
-          jsonProp.desc = processMarkdown(prop.desc, data)
+          jsonProp.desc = processDesc(prop.desc, data)
         } else if ('field' in prop) {
-          jsonProp.desc = `Unknown ${fieldTypeNameMap[prop.field]}.`
+          jsonProp.desc = Object.fromEntries(Object.entries(l10n['unknown.field']).map(([k, v]) => [
+            k,
+            v.replaceAll('{fieldType}', l10n['fieldType'][k][prop.field])
+          ]))
         } else if ('s10' in prop) {
-          jsonProp.desc = `Unknown section10.`
+          jsonProp.desc = l10n['unknown.section10']
         } else {
-          jsonProp.desc = `Unknown ${componentTypeNames[prop.components ?? 1]} property.`
+          jsonProp.desc = Object.fromEntries(Object.entries(l10n['unknown.property']).map(([k, v]) => [
+            k,
+            v.replaceAll('{tensorType}', l10n['tensorType'][k][(prop.components ?? 1) - 1])
+          ]))
         }
         jsonProp.default = prop.default ?? (prop.field === 'bool' ? false : 0)
         if (!prop.s10) {

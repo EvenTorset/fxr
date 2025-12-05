@@ -8,7 +8,12 @@ inGames:
   - ER
   - AC6
   - NR
-desc: |
-  Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a finite duration that have already been emitted will stay around for as long as their duration allows them to.
+desc:
+  en-US: |
+    Allows the effect to play out once it terminates. Particle emitters will stop emitting new particles, but particles with a finite duration that have already been emitted will stay around for as long as their duration allows them to.
 
-  Note: An effect terminates when it reaches {@link State} -1.
+    Note: An effect terminates when it reaches {@link State} -1.
+  zh-CN: |
+    允许特效在终止后继续播放完。粒子发射器将停止发射新粒子，但已经发射且持续时间有限的粒子将在其持续时间允许的范围内继续存在。
+
+    注意：当特效达到 {@link State 状态} -1 时即为终止。

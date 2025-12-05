@@ -4,35 +4,50 @@ slot: NodeMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
+desc:
+  en-US: |
+    Controls the movement of the node. This is the most basic action for controlling the speed of nodes.
+  zh-CN: |
+    控制节点的移动。这是控制节点速度的最基本动作。
 properties:
   speedZ:
     type: ScalarValue
     argument: Constant0
     scale: true
     time: true
-    desc: |
-      Controls the speed of the node along its Z-axis.
+    desc:
+      en-US: |
+        Controls the speed of the node along its Z-axis.
+      zh-CN: |
+        控制节点沿其 Z 轴的速度。
   speedMultiplierZ:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      Multiplier for {@link speedZ}.
+    desc:
+      en-US: |
+        Multiplier for {@link speedZ}.
+      zh-CN: |
+        {@link speedZ} 的乘数。
   accelerationY:
     type: ScalarValue
     argument: ActiveTime
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the node along its Y-axis.
+    desc:
+      en-US: |
+        Controls the acceleration of the node along its Y-axis.
+      zh-CN: |
+        控制节点沿其 Y 轴的加速度。
   unk_ds3_f1_0:
     field: int
   alignWithMotion:
     field: int
-    desc: |
-      When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+    desc:
+      en-US: |
+        When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
+      zh-CN: |
+        当设置为 1 时，使节点与移动方向对齐。设置为更高的值似乎与设置为 0 的效果相同，这意味着它可能不是布尔值，但这些值的具体作用未知。
   unk_ds3_f1_2:
     field: int
 games:

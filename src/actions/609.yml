@@ -4,8 +4,11 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Point light source.
+desc:
+  en-US: |
+    Defines a point light source.
+  zh-CN: |
+    定义一个点光源。
 properties:
   diffuseColor:
     type: Vector4Value
@@ -13,12 +16,19 @@ properties:
     default: [1, 1, 1, 1]
     argument: ActiveTime
     color: primary
-    desc: |
-      Controls the diffuse color of the light.
+    desc:
+      en-US: |
+        Controls the diffuse color of the light.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
 
-      If {@link separateSpecular} is disabled, this also controls the specular color of the light.
+        If {@link separateSpecular} is disabled, this also controls the specular color of the light.
+      zh-CN: |
+        控制灯光的漫反射颜色。
+
+        此处的数值不设限，可以超过 1。
+
+        如果禁用了 {@link separateSpecular}，此属性也会控制灯光的镜面反射颜色。
     see:
       - specularColor
   specularColor:
@@ -27,19 +37,29 @@ properties:
     default: [1, 1, 1, 1]
     argument: ActiveTime
     color: primary
-    desc: |
-      Controls the specular color of the light.
+    desc:
+      en-US: |
+        Controls the specular color of the light.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
 
-      If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
+        If {@link separateSpecular} is disabled, this property is ignored and {@link diffuseColor} controls both the diffuse as well as the specular color.
+      zh-CN: |
+        控制灯光的镜面反射颜色。
+
+        此处的数值不设限，可以超过 1。
+
+        如果禁用了 {@link separateSpecular}，此属性将被忽略，由 {@link diffuseColor} 同时控制漫反射和镜面反射颜色。
   radius:
     type: ScalarValue
     default: 10
     argument: ActiveTime
     scale: instanceSize
-    desc: |
-      The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
+    desc:
+      en-US: |
+        The maximum distance that the light may travel from the source, and the radius of the sphere in which other effects caused by the light source (for example {@link volumeDensity} and its related fields) may act.
+      zh-CN: |
+        光线从光源传播的最大距离，同时也是受光源影响的其他效果（例如 {@link volumeDensity} 及其相关字段）生效的球体半径。
   unk_ds3_p1_3:
     type: ScalarValue
   unk_ds3_p1_4:
@@ -60,12 +80,19 @@ properties:
   unk_ds3_p2_0:
     type: ScalarValue
     default: 1
-    desc: |
-      Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
-      - At 0 or negative values, this completely disables the light.
-      - At 1, the light behaves normally, like you would expect it to.
-      - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
-      - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
+    desc:
+      en-US: |
+        Affects the falloff of the light in some way, and how the normal of surfaces affect the intensity of the light.
+        - At 0 or negative values, this completely disables the light.
+        - At 1, the light behaves normally, like you would expect it to.
+        - At values between 0 and 1, it seemingly makes the falloff of the light over distance stronger, so the light will sooner fade to nothing.
+        - At values greater than 1, it will make the falloff weaker until near the {@link radius maximum distance}, and then it will very quickly fade to nothing. It also makes the normal of the surfaces hit by the light matter less. At very high values, anything within the radius basically becomes full bright.
+      zh-CN: |
+        影响光线的衰减方式，以及表面法线如何影响光照强度。
+        - 值为 0 或负数时，完全禁用灯光。
+        - 值为 1 时，灯光表现正常，符合预期。
+        - 值在 0 到 1 之间时，似乎会增强光线随距离的衰减，使光线更快消失。
+        - 值大于 1 时，会减弱衰减，直到接近 {@link radius 最大距离}，然后迅速消失。它还会减少被光照表面的法线的影响。在极高数值下，半径内的任何物体基本上都会变成全亮。
   unk_ds3_p2_1:
     type: ScalarValue
     default: 1
@@ -76,18 +103,28 @@ properties:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
+    desc:
+      en-US: |
+        A scalar multiplier for the {@link diffuseColor diffuse color}. Good for easily adjusting the brightness of the light without changing the color.
 
-      If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+        If {@link separateSpecular} is disabled, this also affects the specular color of the light.
+      zh-CN: |
+        {@link diffuseColor 漫反射颜色}的标量乘数。便于在不改变颜色的情况下调整灯光亮度。
+
+        如果禁用了 {@link separateSpecular}，这也会影响灯光的镜面反射颜色。
   specularMultiplier:
     type: ScalarValue
     default: 1
     argument: ActiveTime
-    desc: |
-      A scalar multiplier for the {@link specularColor specular color}.
+    desc:
+      en-US: |
+        A scalar multiplier for the {@link specularColor specular color}.
 
-      If {@link separateSpecular} is disabled, this property is ignored.
+        If {@link separateSpecular} is disabled, this property is ignored.
+      zh-CN: |
+        {@link specularColor 镜面反射颜色}的标量乘数。
+
+        如果禁用了 {@link separateSpecular}，此属性将被忽略。
   unk_ds3_f1_0:
     field: int
   unk_ds3_f1_1:
@@ -97,8 +134,11 @@ properties:
   jitterAndFlicker:
     field: bool
     default: false
-    desc: |
-      Toggles the jitter and flicker animations for the light.
+    desc:
+      en-US: |
+        Toggles the jitter and flicker animations for the light.
+      zh-CN: |
+        开启或关闭灯光的抖动和闪烁动画。
     see:
       - jitterAcceleration
       - jitterX
@@ -112,8 +152,11 @@ properties:
     default: 1
     scale: true
     time: sq
-    desc: |
-      Controls the acceleration of the jittering.
+    desc:
+      en-US: |
+        Controls the acceleration of the jittering.
+      zh-CN: |
+        控制抖动的加速度。
     see:
       - jitterAndFlicker
       - jitterX
@@ -124,8 +167,11 @@ properties:
   jitterX:
     field: float
     scale: true
-    desc: |
-      Controls how much the light should move around randomly on the X-axis.
+    desc:
+      en-US: |
+        Controls how much the light should move around randomly on the X-axis.
+      zh-CN: |
+        控制灯光在 X 轴上随机移动的幅度。
     see:
       - jitterAndFlicker
       - jitterAcceleration
@@ -134,8 +180,11 @@ properties:
   jitterY:
     field: float
     scale: true
-    desc: |
-      Controls how much the light should move around randomly on the Y-axis.
+    desc:
+      en-US: |
+        Controls how much the light should move around randomly on the Y-axis.
+      zh-CN: |
+        控制灯光在 Y 轴上随机移动的幅度。
     see:
       - jitterAndFlicker
       - jitterAcceleration
@@ -144,8 +193,11 @@ properties:
   jitterZ:
     field: float
     scale: true
-    desc: |
-      Controls how much the light should move around randomly on the Z-axis.
+    desc:
+      en-US: |
+        Controls how much the light should move around randomly on the Z-axis.
+      zh-CN: |
+        控制灯光在 Z 轴上随机移动的幅度。
     see:
       - jitterAndFlicker
       - jitterAcceleration
@@ -154,8 +206,11 @@ properties:
   flickerIntervalMin:
     field: float
     time: inv
-    desc: |
-      Controls the minimum interval for flickering.
+    desc:
+      en-US: |
+        Controls the minimum interval for flickering.
+      zh-CN: |
+        控制闪烁的最小间隔。
     see:
       - jitterAndFlicker
       - flickerIntervalMax
@@ -164,8 +219,11 @@ properties:
     field: float
     default: 1
     time: inv
-    desc: |
-      Controls the maximum interval for flickering.
+    desc:
+      en-US: |
+        Controls the maximum interval for flickering.
+      zh-CN: |
+        控制闪烁的最大间隔。
     see:
       - jitterAndFlicker
       - flickerIntervalMin
@@ -173,8 +231,11 @@ properties:
   flickerBrightness:
     field: float
     default: 0.5
-    desc: |
-      Brightness multiplier for the light when it flickers.
+    desc:
+      en-US: |
+        Brightness multiplier for the light when it flickers.
+      zh-CN: |
+        灯光闪烁时的亮度乘数。
     see:
       - jitterAndFlicker
       - flickerIntervalMin
@@ -182,15 +243,23 @@ properties:
   shadows:
     field: bool
     default: false
-    desc: |
-      Controls if the light should have shadows or not.
+    desc:
+      en-US: |
+        Controls if the light should have shadows or not.
 
-      Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+        Note: Map objects also have a setting for casting shadows, and both must be enabled for an object to cast shadows from the light source.
+      zh-CN: |
+        控制灯光是否产生阴影。
+
+        注意：地图物体也有一个投射阴影的设置，必须同时启用两者，物体才能投射该光源的阴影。
   separateSpecular:
     field: bool
     default: false
-    desc: |
-      When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+    desc:
+      en-US: |
+        When enabled, this allows other properties and fields of the action to control the specular color independently of the diffuse color. When disabled, the diffuse counterpart of the properties or fields will affect both the diffuse and specular color.
+      zh-CN: |
+        启用时，允许 Action 的其他属性和字段独立于漫反射颜色来控制镜面反射颜色。禁用时，对应的漫反射属性或字段将同时影响漫反射和镜面反射颜色。
     see:
       - diffuseColor
       - specularColor
@@ -201,15 +270,23 @@ properties:
     lib: float
     default: 0
     time: inv
-    desc: |
-      The number of seconds the light takes to fade to nothing after being destroyed.
+    desc:
+      en-US: |
+        The number of seconds the light takes to fade to nothing after being destroyed.
 
-      Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+        Due to how the field this represents works, the time will be rounded to the nearest multiple of 1/30s.
+      zh-CN: |
+        灯光在被销毁后衰减消失所需的秒数。
+
+        由于该字段的工作原理，时间将四舍五入为最接近 1/30 秒的倍数。
   shadowDarkness:
     field: float
     default: 1
-    desc: |
-      Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+    desc:
+      en-US: |
+        Controls how dark shadows from this light source are. At 0, the shadows will be entirely invisible.
+      zh-CN: |
+        控制此光源产生的阴影的暗度。值为 0 时，阴影将完全不可见。
   unk_ds3_f2_15:
     field: int
   unk_ds3_f2_16:
@@ -234,15 +311,23 @@ properties:
   maxViewDistance:
     field: float
     scale: distance
-    desc: |
-      Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
+    desc:
+      en-US: |
+        Controls the maximum distance for the light source to be active. If the camera is farther away from the light source than this distance, it will stop emitting light.
 
-      Setting this to `0` will disable the distance limit.
+        Setting this to `0` will disable the distance limit.
+      zh-CN: |
+        控制光源处于活动状态的最大距离。如果摄像机与光源的距离超过此值，光源将停止发光。
+
+        设置为 `0` 将禁用距离限制。
   volumeDensity:
     field: float
     default: 0
-    desc: |
-      Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+    desc:
+      en-US: |
+        Controls the density of some sort of fake fog in the volume hit by the light. The fog does not affect the actual light produced by the source and is not affected by shadows.
+      zh-CN: |
+        控制光照范围内某种模拟雾的密度。这种雾不影响光源产生的实际光线，也不受阴影影响。
     see:
       - phaseFunction
       - asymmetryParam
@@ -251,23 +336,37 @@ properties:
   phaseFunction:
     field: bool
     default: true
-    desc: |
-      Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+    desc:
+      en-US: |
+        Controls whether or not {@link asymmetryParam} affects the fake fog from {@link volumeDensity}.
+      zh-CN: |
+        控制 {@link asymmetryParam} 是否影响来自 {@link volumeDensity} 的伪雾。
   asymmetryParam:
     field: float
     default: 0.75
-    desc: |
-      Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
+    desc:
+      en-US: |
+        Controls how the fake fog from {@link volumeDensity} scatters the light. This value is ignored if {@link phaseFunction} is disabled, and the fog will scatter the light equally in all directions.
 
-      - At 0, the light is scattered equally in every direction.
-      - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
-      - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
-      - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+        - At 0, the light is scattered equally in every direction.
+        - As the value approaches 1, the light is scattered more and more forward, in the same direction as the light was already traveling. This means that the fake fog will be less visible from the side or behind, and more visible from in front of the light.
+        - At 1, the fog will not scatter the light at all, so it will be entirely invisible.
+        - Values above 1 produce unnatural-looking effects where the light darkens the fog instead.
+      zh-CN: |
+        控制来自 {@link volumeDensity} 的模拟雾如何散射光线。如果禁用了 {@link phaseFunction}，此值将被忽略，雾将向所有方向均匀散射光线。
+
+        - 值为 0 时，光线向各个方向均匀散射。
+        - 随着值接近 1，光线会越来越向前散射（沿光线传播方向）。这意味着伪雾从侧面或后面看不太明显，从正面看更明显。
+        - 值为 1 时，雾完全不散射光线，因此完全不可见。
+        - 值大于 1 会产生看起来不自然的效果，光线反而会使雾变暗。
   adaptationExponent:
     field: float
     default: 0
-    desc: |
-      When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when the area it's in is sufficiently dark.
+    desc:
+      en-US: |
+        When not in a dark enough area, the brightness of the light will be multiplied by 0.1^α, where α is this exponent value. The light will have normal brightness when the area it's in is sufficiently dark.
+      zh-CN: |
+        当不在足够黑暗的区域时，灯光亮度将乘以 0.1^α，其中 α 是此指数值。当所在区域足够黑暗时，灯光将保持正常亮度。
   unk_er_f2_29:
     field: int
     default: 1
@@ -284,8 +383,11 @@ properties:
   unk_ds3_f2_12:
     field: float
     default: 1
-    desc: |
-      Unknown. Only used in Dark Souls 3.
+    desc:
+      en-US: |
+        Unknown. Only used in Dark Souls 3.
+      zh-CN: |
+        未知。仅在《黑暗之魂 3》中使用。
 games:
   DS3:
     fields1:

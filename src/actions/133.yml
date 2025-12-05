@@ -4,46 +4,67 @@ slot: LevelsOfDetailThresholds
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+desc:
+  en-US: |
+    Used in the {@link ConfigType.LevelsOfDetail levels of detail config} to manage the duration and thresholds for the {@link NodeType.LevelsOfDetail levels of detail node}.
+  zh-CN: |
+    用于 {@link ConfigType.LevelsOfDetail 多细节层次配置} 中，管理 {@link NodeType.LevelsOfDetail 多细节层次节点} 的持续时间和阈值。
 properties:
   duration:
     type: ScalarValue
     default: -1
     argument: Constant0
     time: invIfPositive
-    desc: |
-      The node duration in seconds. Can be set to -1 to make the node last forever.
+    desc:
+      en-US: |
+        The node duration in seconds. Can be set to -1 to make the node last forever.
+      zh-CN: |
+        节点持续时间（秒）。设置为 -1 可以使节点永久存在。
   threshold0:
     field: int
     default: 10000
     scale: distance
-    desc: |
-      Distance threshold for child node 0.
+    desc:
+      en-US: |
+        Distance threshold for child node 0.
+      zh-CN: |
+        子节点 0 的距离阈值。
   threshold1:
     field: int
     default: 10000
     scale: distance
-    desc: |
-      Distance threshold for child node 1.
+    desc:
+      en-US: |
+        Distance threshold for child node 1.
+      zh-CN: |
+        子节点 1 的距离阈值。
   threshold2:
     field: int
     default: 10000
     scale: distance
-    desc: |
-      Distance threshold for child node 2.
+    desc:
+      en-US: |
+        Distance threshold for child node 2.
+      zh-CN: |
+        子节点 2 的距离阈值。
   threshold3:
     field: int
     default: 10000
     scale: distance
-    desc: |
-      Distance threshold for child node 3.
+    desc:
+      en-US: |
+        Distance threshold for child node 3.
+      zh-CN: |
+        子节点 3 的距离阈值。
   threshold4:
     field: int
     default: 10000
     scale: distance
-    desc: |
-      Distance threshold for child node 4.
+    desc:
+      en-US: |
+        Distance threshold for child node 4.
+      zh-CN: |
+        子节点 4 的距离阈值。
   unk_ac6_f1_5:
     field: int
 games:

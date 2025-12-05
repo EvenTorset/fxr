@@ -4,31 +4,48 @@ slot: DirectionSpread
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+desc:
+  en-US: |
+    Gives each emitted instance a random initial direction offset within a circular cone. See {@link InitialDirection} for more information.
+  zh-CN: |
+    使每个发射的实例在圆锥体内具有随机的初始方向偏移。有关更多信息，请参阅 {@link InitialDirection}。
 properties:
   angle:
     type: ScalarValue
     default: 30
     argument: ActiveTime
-    desc: |
-      The maximum change in direction in degrees, the angle of the cone.
+    desc:
+      en-US: |
+        The maximum change in direction in degrees, the angle of the cone.
+      zh-CN: |
+        方向的最大变化角度（度），即锥体的角度。
   distribution:
     type: ScalarValue
     default: 0
     argument: ActiveTime
-    desc: |
-      Controls the distribution of the random directions that can be chosen.
-      - At 0, all directions within the cone have an equal chance of being chosen.
-      - At 1, the default direction is guaranteed to be chosen.
-      - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angle}.
-      - Values between these values smoothly blend between them.
-      - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+    desc:
+      en-US: |
+        Controls the distribution of the random directions that can be chosen.
+        - At 0, all directions within the cone have an equal chance of being chosen.
+        - At 1, the default direction is guaranteed to be chosen.
+        - At -1, the maximum change in direction is guaranteed, meaning the chosen direction will always be a fixed number of degrees away from the default direction based on {@link angle}.
+        - Values between these values smoothly blend between them.
+        - Values outside of the -1 to 1 range also work, but may do some unexpected things.
+      zh-CN: |
+        控制可选随机方向的分布。
+        - 值为 0 时，锥体内所有方向被选中的几率相等。
+        - 值为 1 时，保证选中默认方向。
+        - 值为 -1 时，保证选中最大变化方向，这意味着根据 {@link angle}，所选方向将始终偏离默认方向固定度数。
+        - 这些值之间的值会平滑过渡。
+        - 超出 -1 到 1 范围的值也可以工作，但可能会产生意想不到的效果。
   unk_er_f1_0:
     field: bool
     default: false
-    desc: |
-      No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
+    desc:
+      en-US: |
+        No so much unknown, just unnamed. If enabled, this limits the possible directions to only positive values on one axis, effectively cutting the cone of possible directions in half.
+      zh-CN: |
+        与其说是未知，不如说是未命名。如果启用，这会将可能的方向限制为仅在一个轴上的正值，实际上是将可能的方向锥体切成一半。
 games:
   DS3:
     properties1:

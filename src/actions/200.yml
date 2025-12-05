@@ -10,5 +10,8 @@ inGames:
   - ER
   - AC6
   - NR
-desc: |
-  Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.
+desc:
+  en-US: |
+    Used in {@link ConfigType.NodeEmitter NodeEmitter configs} to emit all child nodes every emission.
+  zh-CN: |
+    用于 {@link ConfigType.NodeEmitter NodeEmitter 配置}，每次发射时发射所有子节点。

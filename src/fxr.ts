@@ -435,7 +435,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link PointSprite}
    * 
-   * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+   * Defines a very basic point sprite particle. Similar to {@link BillboardEx}, but far simpler.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearancePointSprite".
    */
   PointSprite = 600,
   /**
@@ -443,7 +445,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Line}
    * 
-   * Simple line particle. It automatically rotates to match the direction it's moving.
+   * Defines a simple line particle. It automatically rotates to match the direction it's moving.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceLine".
    */
   Line = 601,
   /**
@@ -451,7 +455,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link QuadLine}
    * 
-   * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+   * Defines a simple rectangular particle, very similar to {@link Line} particles, but include properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceQuadLine".
    */
   QuadLine = 602,
   /**
@@ -459,7 +465,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link BillboardEx}
    * 
-   * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
+   * Defines a simple, flat, textured particle. Similar to {@link PointSprite}, but with far more options. This is the most common type of particle in the supported games.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "Billboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
    */
   BillboardEx = 603,
   /**
@@ -467,7 +475,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link MultiTextureBillboardEx}
    * 
-   * Particle with multiple textures that can scroll.
+   * Defines a particle appearance with multiple textured layers. This is overall pretty similar to {@link BillboardEx}, but the ability to layer multiple textures in different ways allows you to apply masks, overlay random noise to increase variance, and so on.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceMultiTextureBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "MultiTextureBillboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
    */
   MultiTextureBillboardEx = 604,
   /**
@@ -475,9 +485,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Model}
    * 
-   * Particle with a 3D model.
+   * Defines a particle with a 3D model.
    * 
-   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
+   * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link RichModel} action instead.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceModel".
    */
   Model = 605,
   /**
@@ -485,9 +497,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link LegacyTracer}
    * 
-   * Creates a trail behind moving effects.
+   * Defines a tracer particle, which leaves a textured trail where it moves.
    * 
    * This is an older version of {@link Tracer} with fewer features.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceTracer".
    */
   LegacyTracer = 606,
   /**
@@ -495,9 +509,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Distortion}
    * 
-   * A particle that distorts anything seen through it.
+   * Defines a particle that distorts anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceDistortion".
    */
   Distortion = 607,
   /**
@@ -505,9 +521,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link RadialBlur}
    * 
-   * A particle that applies a radial blur to anything seen through it.
+   * Defines a particle that applies a radial blur to anything seen through it.
    * 
    * Note: This particle is not visible if the "Effects" setting is set to "Low".
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceRadialBlur".
    */
   RadialBlur = 608,
   /**
@@ -515,7 +533,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link PointLight}
    * 
-   * Point light source.
+   * Defines a point light source.
    */
   PointLight = 609,
   /**
@@ -617,11 +635,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUStandardParticle}
    * 
-   * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
+   * Defines a GPU particle system. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
    * 
    * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
    * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
+   * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardParticleAppearance".
    */
   GPUStandardParticle = 10000,
   /**
@@ -629,11 +647,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUStandardCorrectParticle}
    * 
-   * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
+   * Defines a GPU particle system. Very similar to {@link GPUStandardParticle}, with no known differences.
    * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
+   * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
    * 
-   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
+   * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
    */
   GPUStandardCorrectParticle = 10001,
   /**
@@ -641,7 +659,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link LightShaft}
    * 
-   * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+   * Defines a simple light shafts effect.
+   * 
+   * This is only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or later games.
    */
   LightShaft = 10003,
   /**
@@ -649,11 +669,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUSparkParticle}
    * 
-   * Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+   * Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
    * 
-   * What makes this different from {@link ActionType.GPUStandardParticle GPUStandardParticle} is that this actions seems to be designed specifically for effects that create sparks. While the other action's particles is more like billboard particles from, for example, {@link ActionType.BillboardEx BillboardEx}, this action's particles are more like {@link ActionType.QuadLine QuadLine} or {@link ActionType.Tracer Tracer} particles. They bend and rotate to align with the direction they are traveling, and they stretch based on how fast they're moving.
-   * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
+   * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
    * 
    * This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
    */
@@ -663,14 +681,14 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GPUSparkCorrectParticle}
    * 
-   * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
+   * Defines a GPU particle system. Very similar to {@link GPUSparkParticle}, just like how {@link GPUStandardCorrectParticle} is similar to {@link GPUStandardParticle}, except these two spark actions have some known differences.
    * 
-   * Not all of the differences have been documented yet, but here are some:
+   * Not all of the differences have been documented yet, but this is some of them:
    * - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
    * - The particles from this action are smaller.
    * - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
    * 
-   * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
+   * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkCorrectParticleAppearance".
    */
   GPUSparkCorrectParticle = 10009,
   /**
@@ -678,9 +696,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link Tracer}
    * 
-   * Creates a trail behind moving effects.
+   * Defines a tracer particle, which leaves a textured trail where it moves.
    * 
    * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceTracer".
    */
   Tracer = 10012,
   /**
@@ -688,7 +708,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link WaterInteraction}
    * 
-   * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+   * Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
    */
   WaterInteraction = 10013,
   /**
@@ -696,7 +718,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link LensFlare}
    * 
-   * Creates lens flares with up to 4 textured layers with different colors and sizes.
+   * Defines a lens flare effect with up to four textured layers with different colors and sizes.
+   * 
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
    */
   LensFlare = 10014,
   /**
@@ -704,11 +728,11 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link RichModel}
    * 
-   * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options.
+   * Defines a particle with a 3D model. Similar to {@link Model}, but with some different options.
    * 
    * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
    * 
-   * The name is from Elden Ring's RTTI.
+   * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceRichModel".
    */
   RichModel = 10015,
   /**
@@ -724,12 +748,12 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link CancelForce}
    * 
-   * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
-   * - {@link ActionType.WindForce WindForce}
-   * - {@link ActionType.GravityForce GravityForce}
-   * - {@link ActionType.TurbulenceForce TurbulenceForce}
+   * Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
+   * - {@link WindForce}
+   * - {@link GravityForce}
+   * - {@link TurbulenceForce}
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
    */
   CancelForce = 10200,
   /**
@@ -737,9 +761,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link WindForce}
    * 
-   * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
+   * Defines a directional force in a volume, which is most often used for creating wind effects. The direction of the force is based on the direction of the node.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldWindAreaAppearance".
    */
   WindForce = 10300,
   /**
@@ -747,9 +771,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link GravityForce}
    * 
-   * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+   * Defines a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldGravityAreaAppearance".
    */
   GravityForce = 10301,
   /**
@@ -757,9 +781,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link ForceCollision}
    * 
-   * Controls the volume used to detect whether or not the node is inside a force volume.
+   * Defines a volume used to detect whether or not the node is inside a force volume.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXCollisionFieldAreaAppearance".
    */
   ForceCollision = 10302,
   /**
@@ -767,9 +791,9 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link TurbulenceForce}
    * 
-   * Creates a chaotic force in a volume.
+   * Defines a chaotic force in a volume.
    * 
-   * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+   * The name is from Elden Ring's RTTI, where it is named "GXForceFieldTurbulenceAreaAppearance".
    */
   TurbulenceForce = 10303,
   /**
@@ -793,7 +817,7 @@ export enum ActionType {
    * - **Slot**: {@link ActionSlots.AppearanceAction Appearance}
    * - **Class**: {@link SpotLight}
    * 
-   * Light source with an elliptic cone shape, a spot light.
+   * Defines a light source with an elliptic cone shape, a spot light.
    */
   SpotLight = 11000,
 }
@@ -6307,16 +6331,19 @@ function readProperty<T extends IProperty<any, any> | IModifiableProperty<any, a
   const fieldCount = br.readInt32()
   br.assertInt32(0)
   const fieldOffset = br.readOffset()
-  const modifiers: IModifier<any>[] = []
+  let modifiers: IModifier<any>[]
   if (!modifierProp) {
     const modOffset = br.readOffset()
     const modCount = br.readInt32()
+    modifiers = Array(modCount)
     br.assertInt32(0)
     br.stepIn(modOffset)
     for (let i = 0; i < modCount; ++i) {
-      modifiers.push(readModifier(br))
+      modifiers[i] = readModifier(br)
     }
     br.stepOut()
+  } else {
+    modifiers = []
   }
   const fields = readFieldsAt(br, fieldOffset, fieldCount, [func, type]).map(f => f.value)
   switch (func) {
@@ -6420,20 +6447,20 @@ function readAction(
   br.position += 8 // Unknown offset
 
   br.stepIn(propertyOffset)
-  const properties1: TensorProperty[] = []
-  const properties2: TensorProperty[] = []
+  const properties1: TensorProperty[] = Array(propertyCount1)
+  const properties2: TensorProperty[] = Array(propertyCount2)
   for (let i = 0; i < propertyCount1; ++i) {
-    properties1.push(readProperty(br, false))
+    properties1[i] = readProperty(br, false)
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    properties2.push(readProperty(br, false))
+    properties2[i] = readProperty(br, false)
   }
   br.stepOut()
 
   br.stepIn(section10Offset)
-  const section10s: number[][] = []
+  const section10s: number[][] = Array(section10Count)
   for (let i = 0; i < section10Count; ++i) {
-    section10s.push(readSection10(br))
+    section10s[i] = readSection10(br)
   }
   br.stepOut()
 
@@ -6533,23 +6560,23 @@ function readDataAction(
   } = {
     fields1: [],
     fields2: [],
-    properties1: [],
-    properties2: [],
-    section10s: [],
+    properties1: Array(propertyCount1),
+    properties2: Array(propertyCount2),
+    section10s: Array(section10Count),
   }
 
   br.stepIn(propertyOffset)
   for (let i = 0; i < propertyCount1; ++i) {
-    c.properties1.push(readProperty(br, false))
+    c.properties1[i] = readProperty(br, false)
   }
   for (let i = 0; i < propertyCount2; ++i) {
-    c.properties2.push(readProperty(br, false))
+    c.properties2[i] = readProperty(br, false)
   }
   br.stepOut()
 
   br.stepIn(section10Offset)
   for (let i = 0; i < section10Count; ++i) {
-    c.section10s.push(readSection10(br))
+    c.section10s[i] = readSection10(br)
   }
   br.stepOut()
 
@@ -6821,21 +6848,21 @@ function readNode(br: BinaryReader): Node {
   const actionOffset = br.readOffset()
   const nodeOffset = br.readOffset()
   br.stepIn(nodeOffset)
-  const nodes = []
+  const nodes = Array(nodeCount)
   for (let i = 0; i < nodeCount; ++i) {
-    nodes.push(readNode(br))
+    nodes[i] = readNode(br)
   }
   br.stepOut()
   br.stepIn(configOffset)
-  const configs = []
+  const configs = Array(configCount)
   for (let i = 0; i < configCount; ++i) {
-    configs.push(readConfig(br))
+    configs[i] = readConfig(br)
   }
   br.stepOut()
   br.stepIn(actionOffset)
-  const actions = []
+  const actions = Array(actionCount)
   for (let i = 0; i < actionCount; ++i) {
-    actions.push(readAnyAction(br))
+    actions[i] = readAnyAction(br)
   }
   br.stepOut()
   if (br.game !== Game.Generic) switch (type) {
@@ -6976,9 +7003,9 @@ function readConfig(br: BinaryReader): IConfig {
   br.assertInt32(0)
   const actionOffset = br.readOffset()
   br.stepIn(actionOffset)
-  const actions = []
+  const actions = Array(actionCount)
   for (let i = 0; i < actionCount; ++i) {
-    actions.push(readAnyAction(br))
+    actions[i] = readAnyAction(br)
   }
   br.stepOut()
   if (br.game === Game.Generic) {
@@ -7040,9 +7067,9 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
   const fieldOffset = br.readOffset()
   const propertyOffset = br.readOffset()
   br.stepIn(propertyOffset)
-  const properties = []
+  const properties = Array(propertyCount)
   for (let i = 0; i < propertyCount; ++i) {
-    properties.push(readProperty(br, true))
+    properties[i] = readProperty(br, true)
   }
   br.stepOut()
   if (br.game === Game.Generic) {
@@ -7158,10 +7185,10 @@ function readSection10(br: BinaryReader) {
   const offset = br.readOffset()
   const count = br.readInt32()
   br.assertInt32(0)
-  const values: number[] = []
+  const values: number[] = Array(count)
   br.stepIn(offset)
-  for (let i = count; i > 0; i--) {
-    values.push(br.readInt32())
+  for (let i = 0; i < count; ++i) {
+    values[i] = br.readInt32()
   }
   br.stepOut()
   return values
@@ -7194,9 +7221,9 @@ function readState(br: BinaryReader) {
   const count = br.readInt32()
   const offset = br.readOffset()
   br.stepIn(offset)
-  const conditions: StateCondition[] = []
+  const conditions: StateCondition[] = Array(count)
   for (let i = 0; i < count; ++i) {
-    conditions.push(readStateCondition(br))
+    conditions[i] = readStateCondition(br)
   }
   br.stepOut()
   return new State(conditions)
@@ -7390,9 +7417,9 @@ function readField(br: BinaryReader, context: any, index: number) {
 }
 
 function readFields(br: BinaryReader, count: number, context: any) {
-  const fields: NumericalField[] = []
+  const fields: NumericalField[] = Array(count)
   for (let i = 0; i < count; ++i) {
-    fields.push(readField(br, context, i))
+    fields[i] = readField(br, context, i)
   }
   return fields
 }
@@ -7405,40 +7432,40 @@ function readFieldsAt(br: BinaryReader, offset: number, count: number, context: 
 }
 
 function readFieldsWithTypes(br: BinaryReader, count: number, types: FieldType[], context: any): Field<FieldType>[] {
-  const fields: Field<FieldType>[] = []
+  const fields: Field<FieldType>[] = Array(count)
   for (let i = 0, j = 0; i < count; j++) {
     switch (types[j]) {
       case FieldType.Boolean:
         i++
-        fields.push(new BoolField(!!br.assertInt32(0, 1)))
+        fields[j] = new BoolField(!!br.assertInt32(0, 1))
         break
       case FieldType.Integer:
         i++
-        fields.push(new IntField(br.readInt32()))
+        fields[j] = new IntField(br.readInt32())
         break
       case FieldType.Float:
         i++
-        fields.push(new FloatField(br.readFloat32()))
+        fields[j] = new FloatField(br.readFloat32())
         break
       case FieldType.Vector2:
         i += 2
-        fields.push(new Vector2Field([ br.readFloat32(), br.readFloat32() ]))
+        fields[j] = new Vector2Field([ br.readFloat32(), br.readFloat32() ])
         break
       case FieldType.Vector3:
         i += 3
-        fields.push(new Vector3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ]))
+        fields[j] = new Vector3Field([ br.readFloat32(), br.readFloat32(), br.readFloat32() ])
         break
       case FieldType.Vector4:
         i += 4
-        fields.push(new Vector4Field([
+        fields[j] = new Vector4Field([
           br.readFloat32(),
           br.readFloat32(),
           br.readFloat32(),
           br.readFloat32()
-        ]))
+        ])
         break
       default:
-        fields.push(readField(br, context, 0))
+        fields[j] = readField(br, context, 0)
     }
   }
   return fields
@@ -9489,7 +9516,8 @@ class BinaryReader extends DataView<ArrayBufferLike> {
   littleEndian: boolean = true
   round: boolean = false
   game: Game = Game.Heuristic
-  steps: number[] = []
+  steps = new Uint32Array(256)
+  stepDepth = 0
   memOffset: bigint = 0n
 
   getInt16(offset: number) {
@@ -9643,218 +9671,219 @@ class BinaryReader extends DataView<ArrayBufferLike> {
     throw new Error(`Read: ${value} | Expected: ${ui32s.join(', ')} | Position: ${ocp}`)
   }
 
-  assertASCII(ascii: string) {
-    const ocp = this.position
-    const value: string = String.fromCharCode.apply(null, ascii.split('').map(() => this.readUint8()))
-    if (value !== ascii) {
-      throw new Error(`Read: ${value} | Expected: ${ascii} | Position: ${ocp}`)
-    }
-    return value
-  }
-
   stepIn(offset: number) {
-    this.steps.push(this.position)
+    const d = this.stepDepth
+    this.steps[d] = this.position
+    this.stepDepth = d + 1
     this.position = offset
   }
 
   stepOut() {
-    if (this.steps.length === 0) {
+    const d = this.stepDepth - 1
+    if (d < 0) {
       throw new Error('Reader is already stepped all the way out.')
     }
-    this.position = this.steps.pop() ?? 0
+    this.position = this.steps[d]
+    this.stepDepth = d
   }
 
-}
-
-interface ReservationList {
-  [name: string]: { offset: number, size: 1 | 2 | 4, func?: string }
 }
 
 class BinaryWriter {
 
-  static #te = new TextEncoder
-
   littleEndian: boolean
-  array: number[] = []
-  reservations: ReservationList = {}
+  reservations: Record<string, {
+    offset: number
+    size: number
+    func?: 'setInt16' | 'setUint16' | 'setInt32' | 'setUint32' | 'setFloat32'
+  }> = {}
 
-  #transBuf = new ArrayBuffer(4)
-  #transDV = new DataView(this.#transBuf)
-  #transArr16 = new Int8Array(this.#transBuf, 0, 2)
-  #transArr32 = new Int8Array(this.#transBuf, 0, 4)
+  #buf: Uint8Array
+  #capacity: number
+  #len: number
+  #dv: DataView
 
   convertedDataActions = new Map<DataAction, any>
 
-  constructor(littleEndian: boolean = true) {
+  constructor(littleEndian = true, initialCapacity = 2048) {
     this.littleEndian = littleEndian
+    this.#capacity = initialCapacity
+    this.#buf = new Uint8Array(this.#capacity)
+    this.#dv = new DataView(this.#buf.buffer)
+    this.#len = 0
   }
 
   get position() {
-    return this.array.length
+    return this.#len
+  }
+
+  #ensure(n: number) {
+    const needed = this.#len + n
+    if (needed <= this.#capacity) return
+
+    let newCap = this.#capacity * 2
+    while (newCap < needed) newCap *= 2
+
+    const newBuf = new Uint8Array(newCap)
+    newBuf.set(this.#buf)
+    this.#buf = newBuf
+    this.#dv = new DataView(this.#buf.buffer)
+    this.#capacity = newCap
   }
 
   writeBool(b: boolean) {
-    this.array.push(+b)
+    this.writeUint8(+b)
   }
 
   writeInt8(i8: number) {
-    this.array.push(i8)
+    this.writeUint8(i8)
   }
 
   writeUint8(ui8: number) {
-    this.array.push(ui8)
+    this.#ensure(1)
+    this.#buf[this.#len++] = ui8 & 0xFF
   }
 
   writeInt16(i16: number) {
-    this.#transDV.setInt16(0, i16, this.littleEndian)
-    this.array.push(...this.#transArr16)
+    this.#ensure(2)
+    this.#dv.setInt16(this.#len, i16, this.littleEndian)
+    this.#len += 2
   }
 
   writeUint16(ui16: number) {
-    this.#transDV.setUint16(0, ui16, this.littleEndian)
-    this.array.push(...this.#transArr16)
+    this.#ensure(2)
+    this.#dv.setUint16(this.#len, ui16, this.littleEndian)
+    this.#len += 2
   }
 
   writeInt32(i32: number) {
-    this.#transDV.setInt32(0, i32, this.littleEndian)
-    this.array.push(...this.#transArr32)
+    this.#ensure(4)
+    this.#dv.setInt32(this.#len, i32, this.littleEndian)
+    this.#len += 4
   }
 
   writeUint32(ui32: number) {
-    this.#transDV.setUint32(0, ui32, this.littleEndian)
-    this.array.push(...this.#transArr32)
+    this.#ensure(4)
+    this.#dv.setUint32(this.#len, ui32, this.littleEndian)
+    this.#len += 4
   }
 
   writeFloat32(f32: number) {
     // Make sure that the value is not -0
     f32 = f32 === 0 ? 0 : f32
-    this.#transDV.setFloat32(0, f32, this.littleEndian)
-    this.array.push(...this.#transArr32)
+    this.#ensure(4)
+    this.#dv.setFloat32(this.#len, f32, this.littleEndian)
+    this.#len += 4
   }
 
-  writeInt8s(i8s: number[]) {
-    for (const i8 of i8s) this.writeInt8(i8)
+  writeInt8s(arr: number[]) {
+    this.#ensure(arr.length)
+    for (let i = 0; i < arr.length; i++) {
+      this.#buf[this.#len++] = arr[i] & 0xFF
+    }
   }
 
-  writeUint8s(ui8s: number[]) {
-    for (const ui8 of ui8s) this.writeUint8(ui8)
+  writeUint8s(arr: number[]) {
+    this.writeInt8s(arr)
   }
 
-  writeInt16s(i16s: number[]) {
-    for (const i16 of i16s) this.writeInt16(i16)
+  writeInt16s(arr: number[]) {
+    this.#ensure(arr.length * 2)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setInt16(this.#len, arr[i], this.littleEndian)
+      this.#len += 2
+    }
   }
 
-  writeUint16s(ui16s: number[]) {
-    for (const ui16 of ui16s) this.writeUint16(ui16)
+  writeUint16s(arr: number[]) {
+    this.#ensure(arr.length * 2)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setUint16(this.#len, arr[i], this.littleEndian)
+      this.#len += 2
+    }
   }
 
-  writeInt32s(i32s: number[]) {
-    for (const i32 of i32s) this.writeInt32(i32)
+  writeInt32s(arr: number[]) {
+    this.#ensure(arr.length * 4)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setInt32(this.#len, arr[i], this.littleEndian)
+      this.#len += 4
+    }
   }
 
-  writeUint32s(ui32s: number[]) {
-    for (const ui32 of ui32s) this.writeUint32(ui32)
+  writeUint32s(arr: number[]) {
+    this.#ensure(arr.length * 4)
+    for (let i = 0; i < arr.length; i++) {
+      this.#dv.setUint32(this.#len, arr[i], this.littleEndian)
+      this.#len += 4
+    }
   }
 
-  writeFloat32s(f32s: number[]) {
-    for (const f32 of f32s) this.writeFloat32(f32)
-  }
-
-  writeString(s: string) {
-    this.array.push(...BinaryWriter.#te.encode(s))
+  writeFloat32s(arr: number[]) {
+    this.#ensure(arr.length * 4)
+    for (let i = 0; i < arr.length; i++) {
+      const v = arr[i] === 0 ? 0 : arr[i]
+      this.#dv.setFloat32(this.#len, v, this.littleEndian)
+      this.#len += 4
+    }
   }
 
   reserveInt8(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 1
-    }
+    this.reservations[name] = { offset: this.#len, size: 1 }
     this.writeInt8(0)
   }
 
   reserveUint8(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 1
-    }
+    this.reservations[name] = { offset: this.#len, size: 1 }
     this.writeUint8(0)
   }
 
   reserveInt16(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 2,
-      func: 'setInt16'
-    }
+    this.reservations[name] = { offset: this.#len, size: 2, func: 'setInt16' }
     this.writeInt16(0)
   }
 
   reserveUint16(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 2,
-      func: 'setUint16'
-    }
+    this.reservations[name] = { offset: this.#len, size: 2, func: 'setUint16' }
     this.writeUint16(0)
   }
 
   reserveInt32(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 4,
-      func: 'setInt32'
-    }
+    this.reservations[name] = { offset: this.#len, size: 4, func: 'setInt32' }
     this.writeInt32(0)
   }
 
   reserveUint32(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 4,
-      func: 'setUint32'
-    }
+    this.reservations[name] = { offset: this.#len, size: 4, func: 'setUint32' }
     this.writeUint32(0)
   }
 
   reserveFloat32(name: string) {
-    this.reservations[name] = {
-      offset: this.array.length,
-      size: 4,
-      func: 'setFloat32'
-    }
+    this.reservations[name] = { offset: this.#len, size: 4, func: 'setFloat32' }
     this.writeFloat32(0)
   }
 
   fill(name: string, value: number) {
-    if (!(name in this.reservations)) {
-      throw new Error('Key is not reserved: ' + name)
+    const r = this.reservations[name]
+    if (!r) {
+      throw new Error(`Key is not reserved: ${name}`)
     }
-    const reservation = this.reservations[name]
-    switch (reservation.size) {
-      case 1: {
-        this.array.splice(reservation.offset, 1, value)
-        break
-      }
-      case 2: {
-        this.#transDV[reservation.func as string](0, value, this.littleEndian)
-        this.array.splice(reservation.offset, 2, ...this.#transArr16)
-        break
-      }
-      case 4: {
-        this.#transDV[reservation.func as string](0, value, this.littleEndian)
-        this.array.splice(reservation.offset, 4, ...this.#transArr32)
-        break
-      }
+
+    if (r.size === 1) {
+      this.#buf[r.offset] = value & 0xFF
+    } else {
+      this.#dv[r.func!](r.offset, value, this.littleEndian)
     }
+
     delete this.reservations[name]
   }
 
   pad(align: number) {
-    while (this.array.length % align > 0) this.writeInt8(0)
+    while (this.#len % align !== 0) this.writeUint8(0)
   }
 
   getArrayBuffer() {
-    return new Uint8Array(this.array).buffer
+    return this.#buf.slice(0, this.#len).buffer
   }
 
 }
@@ -10156,7 +10185,7 @@ class FXR {
     br.round = round
     br.game = game
 
-    br.assertASCII('FXR\0')
+    br.assertUint32(0x00525846) // 'FXR\0'
 
     if (game === Game.Heuristic) {
       const unk4 = br.assertInt16(0, 1) // Minor version???
@@ -10239,9 +10268,9 @@ class FXR {
     const statesPtr = br.readInt64()
     br.memOffset = statesPtr - BigInt(statesOffset)
     br.stepIn(statesOffset)
-    const states: State[] = []
+    const states: State[] = Array(stateCount)
     for (let i = 0; i < stateCount; ++i) {
-      states.push(readState(br))
+      states[i] = readState(br)
     }
     br.stepOut()
 
@@ -10283,7 +10312,7 @@ class FXR {
     assertValidFXRID(this.id)
     const version = GameVersionMap[game]
     const bw = new BinaryWriter
-    bw.writeString('FXR\0')
+    bw.writeUint32(0x00525846) // 'FXR\0'
     bw.writeInt16(game === Game.Nightreign ? 1 : 0)
     bw.writeUint16(version)
     bw.writeInt32(1)
@@ -11737,6 +11766,10 @@ class LevelsOfDetailNode extends NodeWithConfigs {
     ).mapStates(...this.stateConfigMap)
   }
 
+  getActiveConfig(stateIndex: number): LevelsOfDetailConfig | null {
+    return super.getActiveConfig(stateIndex) as LevelsOfDetailConfig | null
+  }
+
 }
 
 /**
@@ -12030,6 +12063,10 @@ class BasicNode extends NodeWithConfigs {
     return start
   }
 
+  getActiveConfig(stateIndex: number): BasicConfig | null {
+    return super.getActiveConfig(stateIndex) as BasicConfig | null
+  }
+
 }
 
 /**
@@ -12097,6 +12134,10 @@ class NodeEmitterNode extends NodeWithConfigs {
       this.configs.map(e => e.clone()),
       depth > 0 ? this.nodes.map(e => e.clone(depth - 1)) : [],
     ).mapStates(...this.stateConfigMap)
+  }
+
+  getActiveConfig(stateIndex: number): NodeEmitterConfig | null {
+    return super.getActiveConfig(stateIndex) as NodeEmitterConfig | null
   }
 
 }
@@ -15799,7 +15840,9 @@ class RectangularSpread extends DataAction {
  * ### {@link ActionType.PointSprite Action 600 - PointSprite}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Very basic point sprite particle. Similar to {@link ActionType.BillboardEx BillboardEx}, but far simpler.
+ * Defines a very basic point sprite particle. Similar to {@link BillboardEx}, but far simpler.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearancePointSprite".
  */
 class PointSprite extends DataAction {
   declare readonly type: ActionType.PointSprite
@@ -16255,7 +16298,9 @@ class PointSprite extends DataAction {
  * ### {@link ActionType.Line Action 601 - Line}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Simple line particle. It automatically rotates to match the direction it's moving.
+ * Defines a simple line particle. It automatically rotates to match the direction it's moving.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceLine".
  */
 class Line extends DataAction {
   declare readonly type: ActionType.Line
@@ -16742,7 +16787,9 @@ class Line extends DataAction {
  * ### {@link ActionType.QuadLine Action 602 - QuadLine}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Simple rectangular particle, very similar to {@link ActionType.Line Line particles}, but has properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+ * Defines a simple rectangular particle, very similar to {@link Line} particles, but include properties that control the width as well as the length. It automatically rotates to match the direction it's moving.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceQuadLine".
  */
 class QuadLine extends DataAction {
   declare readonly type: ActionType.QuadLine
@@ -17246,7 +17293,9 @@ class QuadLine extends DataAction {
  * ### {@link ActionType.BillboardEx Action 603 - BillboardEx}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a texture that may be animated. This is the most common particle type and it has a lot of useful fields and properties.
+ * Defines a simple, flat, textured particle. Similar to {@link PointSprite}, but with far more options. This is the most common type of particle in the supported games.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "Billboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
  */
 class BillboardEx extends DataAction {
   declare readonly type: ActionType.BillboardEx
@@ -17489,6 +17538,12 @@ class BillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndexOffset}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndex: ScalarValue
   /**
@@ -17497,6 +17552,12 @@ class BillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndexOffset: ScalarValue
   /**
@@ -17620,6 +17681,8 @@ class BillboardEx extends DataAction {
    * 
    * See also:
    * - {@link totalFrames}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   columns: number
   /**
@@ -17629,6 +17692,8 @@ class BillboardEx extends DataAction {
    * 
    * See also:
    * - {@link columns}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   totalFrames: number
   /**
@@ -18056,7 +18121,9 @@ class BillboardEx extends DataAction {
  * ### {@link ActionType.MultiTextureBillboardEx Action 604 - MultiTextureBillboardEx}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with multiple textures that can scroll.
+ * Defines a particle appearance with multiple textured layers. This is overall pretty similar to {@link BillboardEx}, but the ability to layer multiple textures in different ways allows you to apply masks, overlay random noise to increase variance, and so on.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceMultiTextureBillboardEx". The "Ex" suffix refers to it being an extended version of a base class named "MultiTextureBillboard", but this seems to just be an inconsistency in naming some of the appearance classes. Most other appearance classes extend some base class, but the base class either has a "Base" suffix, or the extended and base share the same name.
  */
 class MultiTextureBillboardEx extends DataAction {
   declare readonly type: ActionType.MultiTextureBillboardEx
@@ -18307,6 +18374,12 @@ class MultiTextureBillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndexOffset}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndex: ScalarValue
   /**
@@ -18315,6 +18388,12 @@ class MultiTextureBillboardEx extends DataAction {
    * **Default**: `0`
    * 
    * **Argument**: {@link PropertyArgument.ParticleAge Particle age}
+   * 
+   * See also:
+   * - {@link frameIndex}
+   * - {@link columns}
+   * - {@link totalFrames}
+   * - {@link interpolateFrames}
    */
   frameIndexOffset: ScalarValue
   /**
@@ -18558,6 +18637,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * See also:
    * - {@link totalFrames}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   columns: number
   /**
@@ -18567,6 +18648,8 @@ class MultiTextureBillboardEx extends DataAction {
    * 
    * See also:
    * - {@link columns}
+   * - {@link frameIndex}
+   * - {@link frameIndexOffset}
    */
   totalFrames: number
   /**
@@ -18989,9 +19072,11 @@ class MultiTextureBillboardEx extends DataAction {
  * ### {@link ActionType.Model Action 605 - Model}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a 3D model.
+ * Defines a particle with a 3D model.
  * 
- * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link ActionType.RichModel RichModel action} instead.
+ * Some models don't work properly with this action for some reason. For example, the Carian greatsword model in Elden Ring (88300), gets horribly stretched and distorted when used with this action. If you find a model like this that you want to use, try using the {@link RichModel} action instead.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceModel".
  */
 class Model extends DataAction {
   declare readonly type: ActionType.Model
@@ -19819,9 +19904,11 @@ class Model extends DataAction {
  * ### {@link ActionType.LegacyTracer Action 606 - LegacyTracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a trail behind moving effects.
+ * Defines a tracer particle, which leaves a textured trail where it moves.
  * 
  * This is an older version of {@link Tracer} with fewer features.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceTracer".
  */
 class LegacyTracer extends DataAction {
   declare readonly type: ActionType.LegacyTracer
@@ -20476,9 +20563,11 @@ class LegacyTracer extends DataAction {
  * ### {@link ActionType.Distortion Action 607 - Distortion}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * A particle that distorts anything seen through it.
+ * Defines a particle that distorts anything seen through it.
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceDistortion".
  */
 class Distortion extends DataAction {
   declare readonly type: ActionType.Distortion
@@ -21101,9 +21190,11 @@ class Distortion extends DataAction {
  * ### {@link ActionType.RadialBlur Action 608 - RadialBlur}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * A particle that applies a radial blur to anything seen through it.
+ * Defines a particle that applies a radial blur to anything seen through it.
  * 
  * Note: This particle is not visible if the "Effects" setting is set to "Low".
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFXCGAppearanceRadialBlur".
  */
 class RadialBlur extends DataAction {
   declare readonly type: ActionType.RadialBlur
@@ -21529,7 +21620,7 @@ class RadialBlur extends DataAction {
  * ### {@link ActionType.PointLight Action 609 - PointLight}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Point light source.
+ * Defines a point light source.
  */
 class PointLight extends DataAction {
   declare readonly type: ActionType.PointLight
@@ -22240,11 +22331,11 @@ class ParticleForceCollision extends DataAction {
  * ### {@link ActionType.GPUStandardParticle Action 10000 - GPUStandardParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * An entire particle system in a single action. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
+ * Defines a GPU particle system. This emits GPU particles, which means thousands of particles can be rendered without much impact on performance.
  * 
  * Note that while this emits particles, it is itself not a particle, and the particles emitted by this action are not affected by everything that affects regular particles.
  * 
- * The name of this action is from Elden Ring's RTTI, where it's called "StandardParticle".
+ * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardParticleAppearance".
  */
 class GPUStandardParticle extends DataAction {
   declare readonly type: ActionType.GPUStandardParticle
@@ -23680,11 +23771,11 @@ class GPUStandardParticle extends DataAction {
  * ### {@link ActionType.GPUStandardCorrectParticle Action 10001 - GPUStandardCorrectParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Very similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, with no known differences.
+ * Defines a GPU particle system. Very similar to {@link GPUStandardParticle}, with no known differences.
  * 
- * The name of this action is from Elden Ring's RTTI, where it's called "StandardCorrectParticle". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
+ * The name of this action is from Elden Ring's RTTI, where it's called "GXVfxStandardCorrectParticleAppearance". An action with the same ID had the name "WanderingVision" in Dark Souls 3, and that action could still exist in DS3, but it is not found in the vanilla game, so testing it is difficult.
  * 
- * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link ActionType.GPUStandardParticle GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
+ * Note: This action does not exist in Dark Souls 3 or Sekiro, but it still has unknown fields and properties named after those games. This is because it makes the conversion between this action and {@link GPUStandardParticle} much simpler. When written for those two games, this action will be converted to the other action automatically.
  */
 class GPUStandardCorrectParticle extends DataAction {
   declare readonly type: ActionType.GPUStandardCorrectParticle
@@ -25112,7 +25203,9 @@ class GPUStandardCorrectParticle extends DataAction {
  * ### {@link ActionType.LightShaft Action 10003 - LightShaft}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * A pretty simple light shafts effect only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or Armored Core 6.
+ * Defines a simple light shafts effect.
+ * 
+ * This is only used in Dark Souls 3. It shows up if converted for Sekiro, but it doesn't seem to work correctly in that game. It does not seem to work at all in Elden Ring or later games.
  */
 class LightShaft extends DataAction {
   declare readonly type: ActionType.LightShaft
@@ -25366,11 +25459,9 @@ class LightShaft extends DataAction {
  * ### {@link ActionType.GPUSparkParticle Action 10008 - GPUSparkParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+ * Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
  * 
- * What makes this different from {@link ActionType.GPUStandardParticle GPUStandardParticle} is that this actions seems to be designed specifically for effects that create sparks. While the other action's particles is more like billboard particles from, for example, {@link ActionType.BillboardEx BillboardEx}, this action's particles are more like {@link ActionType.QuadLine QuadLine} or {@link ActionType.Tracer Tracer} particles. They bend and rotate to align with the direction they are traveling, and they stretch based on how fast they're moving.
- * 
- * The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
+ * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
  * 
  * This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
  */
@@ -26365,14 +26456,14 @@ class GPUSparkParticle extends DataAction {
  * ### {@link ActionType.GPUSparkCorrectParticle Action 10009 - GPUSparkCorrectParticle}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Very similar to {@link ActionType.GPUSparkParticle GPUSparkParticle}, just like how {@link ActionType.GPUStandardCorrectParticle GPUStandardCorrectParticle} is similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, except these two spark actions have some known differences.
+ * Defines a GPU particle system. Very similar to {@link GPUSparkParticle}, just like how {@link GPUStandardCorrectParticle} is similar to {@link GPUStandardParticle}, except these two spark actions have some known differences.
  * 
- * Not all of the differences have been documented yet, but here are some:
+ * Not all of the differences have been documented yet, but this is some of them:
  * - This action seems to have swapped some axes of rotation, causing some confusing things to happen when the node is spinning.
  * - The particles from this action are smaller.
  * - The particles from this action move slower. It's possible that this action uses a different unit of distance, since that would explain both the slower movement and the smaller particles.
  * 
- * The name of this action is from Elden Ring's RTTI, where it's called "SparkCorrectParticle".
+ * The name is from Elden Ring's RTTI, where it is named "GXVfxSparkCorrectParticleAppearance".
  */
 class GPUSparkCorrectParticle extends DataAction {
   declare readonly type: ActionType.GPUSparkCorrectParticle
@@ -27365,9 +27456,11 @@ class GPUSparkCorrectParticle extends DataAction {
  * ### {@link ActionType.Tracer Action 10012 - Tracer}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a trail behind moving effects.
+ * Defines a tracer particle, which leaves a textured trail where it moves.
  * 
  * This is a newer version of {@link LegacyTracer} with more features, like being able to make the opacity of the trail be based on the movement speed of the particle.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceTracer".
  */
 class Tracer extends DataAction {
   declare readonly type: ActionType.Tracer
@@ -28064,7 +28157,9 @@ class Tracer extends DataAction {
  * ### {@link ActionType.WaterInteraction Action 10013 - WaterInteraction}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+ * Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
  */
 class WaterInteraction extends DataAction {
   declare readonly type: ActionType.WaterInteraction
@@ -28108,7 +28203,9 @@ class WaterInteraction extends DataAction {
  * ### {@link ActionType.LensFlare Action 10014 - LensFlare}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates lens flares with up to 4 textured layers with different colors and sizes.
+ * Defines a lens flare effect with up to four textured layers with different colors and sizes.
+ * 
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
  */
 class LensFlare extends DataAction {
   declare readonly type: ActionType.LensFlare
@@ -28361,7 +28458,9 @@ class LensFlare extends DataAction {
   layer1OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer1}. {@link layer1Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer1Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
@@ -28471,7 +28570,9 @@ class LensFlare extends DataAction {
   layer2OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer2}. {@link layer2Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer2Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
@@ -28581,7 +28682,9 @@ class LensFlare extends DataAction {
   layer3OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer3}. {@link layer3Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer3Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
@@ -28691,7 +28794,9 @@ class LensFlare extends DataAction {
   layer4OffsetVariation: number
   /**
    * This controls the radius of a sphere around the source for {@link layer4}. {@link layer4Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer4Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+   * 
    * In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+   * 
    * Can be set to -1 to disable this limit and always display the flare(s).
    * 
    * **Default**: `-1`
@@ -29030,11 +29135,11 @@ class LensFlare extends DataAction {
  * ### {@link ActionType.RichModel Action 10015 - RichModel}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Particle with a 3D model. Similar to {@link ActionType.Model Model}, but with some different options.
+ * Defines a particle with a 3D model. Similar to {@link Model}, but with some different options.
  * 
  * Some models only work properly with this action and not with the Model action for some unknown reason. A good example of this is the Carian greatsword model in Elden Ring (88300), which gets horribly stretched and distorted when used with the other action, but it works fine with this one.
  * 
- * The name is from Elden Ring's RTTI.
+ * The name is from Elden Ring's RTTI, where it is named "GXFfxAppearanceRichModel".
  */
 class RichModel extends DataAction {
   declare readonly type: ActionType.RichModel
@@ -30508,12 +30613,12 @@ class Unk10100 extends DataAction {
  * ### {@link ActionType.CancelForce Action 10200 - CancelForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
- * - {@link ActionType.WindForce WindForce}
- * - {@link ActionType.GravityForce GravityForce}
- * - {@link ActionType.TurbulenceForce TurbulenceForce}
+ * Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
+ * - {@link WindForce}
+ * - {@link GravityForce}
+ * - {@link TurbulenceForce}
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
  */
 class CancelForce extends DataAction {
   declare readonly type: ActionType.CancelForce
@@ -30600,9 +30705,9 @@ class CancelForce extends DataAction {
  * ### {@link ActionType.WindForce Action 10300 - WindForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a directional force in a volume, which is most often useful for creating wind effects. The direction of the force is based on the direction of the node.
+ * Defines a directional force in a volume, which is most often used for creating wind effects. The direction of the force is based on the direction of the node.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldWindArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldWindAreaAppearance".
  */
 class WindForce extends DataAction {
   declare readonly type: ActionType.WindForce
@@ -31045,9 +31150,9 @@ class WindForce extends DataAction {
  * ### {@link ActionType.GravityForce Action 10301 - GravityForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
+ * Defines a radial force in a volume. This pulls things towards itself, or pushes away if the force is negative.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldGravityArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldGravityAreaAppearance".
  */
 class GravityForce extends DataAction {
   declare readonly type: ActionType.GravityForce
@@ -31348,9 +31453,9 @@ class GravityForce extends DataAction {
  * ### {@link ActionType.ForceCollision Action 10302 - ForceCollision}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Controls the volume used to detect whether or not the node is inside a force volume.
+ * Defines a volume used to detect whether or not the node is inside a force volume.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXCollisionFieldAreaAppearance".
  */
 class ForceCollision extends DataAction {
   declare readonly type: ActionType.ForceCollision
@@ -31418,9 +31523,9 @@ class ForceCollision extends DataAction {
  * ### {@link ActionType.TurbulenceForce Action 10303 - TurbulenceForce}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Creates a chaotic force in a volume.
+ * Defines a chaotic force in a volume.
  * 
- * The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldTurbulenceArea".
+ * The name is from Elden Ring's RTTI, where it is named "GXForceFieldTurbulenceAreaAppearance".
  */
 class TurbulenceForce extends DataAction {
   declare readonly type: ActionType.TurbulenceForce
@@ -32325,7 +32430,7 @@ class Unk10500 extends DataAction {
  * ### {@link ActionType.SpotLight Action 11000 - SpotLight}
  * **Slot**: {@link ActionSlots.AppearanceAction Appearance}
  * 
- * Light source with an elliptic cone shape, a spot light.
+ * Defines a light source with an elliptic cone shape, a spot light.
  */
 class SpotLight extends DataAction {
   declare readonly type: ActionType.SpotLight
@@ -33108,11 +33213,11 @@ abstract class Property<T extends Tensor, F extends PropertyFunction> implements
       const mods = this.modifiers.map(mod => {
         if (mod instanceof RandomRangeModifier) {
           const vt = mod.valueType
-          const comps = []
+          const comps = Array(vt + 1)
           if (vt === ValueType.Scalar) {
-            comps.push(mod.min*0.5 + mod.max*0.5)
+            comps[0] = mod.min*0.5 + mod.max*0.5
           } else for (let i = 0; i <= vt; i++) {
-            comps.push(mod.min[i]*0.5 + mod.max[i]*0.5)
+            comps[i] = mod.min[i]*0.5 + mod.max[i]*0.5
           }
           for (const [i, v] of comps.entries()) {
             summand[i] += v
@@ -35089,12 +35194,12 @@ namespace Recolor {
   export function weightedAveragePalette(palette: WeightedColorPalette): ColorPalette {
     const p: ColorPalette = {}
     for (const [k, v] of Object.entries(palette) as Entries<Recolor.WeightedColorPalette>) {
-      const entries = []
-      for (const entry of v) {
-        entries.push({
+      const entries = Array(v.length)
+      for (let i = 0; i < v.length; ++i) {
+        entries[i] = {
           weight: 1,
-          ...entry
-        })
+          ...entries[i]
+        }
       }
       if (entries.length === 1) {
         p[k] = entries

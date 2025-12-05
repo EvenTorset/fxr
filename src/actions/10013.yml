@@ -4,40 +4,62 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Simulates an interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+desc:
+    en-US: |
+      Defines a simulated interaction with water, allowing effects to create ripples in nearby water. The interaction basically pushes water in a shape controlled by a texture down to a given depth and holds it there for a duration before releasing it.
+
+      The name is from Elden Ring's RTTI, where it is named "GXFfxWaterInteractionSimulationAppearance".
+    zh-CN: |
+      定义了与水的模拟交互，允许效果在附近的水中产生涟漪。该交互基本上会使用一个由纹理控制的形状将水向下推至给定深度，并保持一段时间，然后释放它。
+
+      该名称来自《艾尔登法环》的 RTTI，其中名为 “GXFfxWaterInteractionSimulationAppearance”。
 properties:
   texture:
     field: int
     default: 50004
     resource: texture
     textureType: d
-    desc: |
-      The ID for a texture that controls the shape of the interaction.
+    desc:
+      en-US: |
+        The ID for a texture that controls the shape of the interaction.
+      zh-CN: |
+        控制交互形状的纹理 ID。
   depth:
     field: float
     default: 1
     scale: instanceSize
-    desc: |
-      Controls how deep to push the water, or how intense the ripples caused by the interaction are.
+    desc:
+      en-US: |
+        Controls how deep to push the water, or how intense the ripples caused by the interaction are.
+      zh-CN: |
+        控制将水向下推的深度，或交互引起的涟漪强度。
   size:
     field: float
     default: 1
     scale: instanceSize
-    desc: |
-      Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
+    desc:
+      en-US: |
+        Controls the size of the interaction area. Ripples caused by the interaction may go outside of the area.
+      zh-CN: |
+        控制交互区域的大小。交互引起的涟漪可能会超出该区域。
   descent:
     field: float
     default: 0.15
     time: inv
-    desc: |
-      The time it takes for the water to be pushed down to the {@link depth} in seconds.
+    desc:
+      en-US: |
+        The time it takes for the water to be pushed down to the {@link depth} in seconds.
+      zh-CN: |
+        将水推至{@link depth 深度}所需的时间（秒）。
   duration:
     field: float
     default: 0.15
     time: inv
-    desc: |
-      The duration of the interaction in seconds. Basically how long to hold the water pressed down.
+    desc:
+      en-US: |
+        The duration of the interaction in seconds. Basically how long to hold the water pressed down.
+      zh-CN: |
+        交互的持续时间（秒）。基本上是保持水被按压的时间长度。
 games:
   SDT:
     fields1:

@@ -4,19 +4,27 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Similar to {@link ActionType.GPUStandardParticle GPUStandardParticle}, this is essentially an entire particle system in a single action. It defines everything about an emitter as well as the particles it emits. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
+desc:
+    en-US: |
+      Defines a GPU particle system. Similar to {@link GPUStandardParticle}, but rather than billboard particles like the other action uses, this uses "spark" particles, similar to the line particles from the {@link QuadLine} action, though the sparks may bend, more like the trail from a {@link Tracer} particle. The particles emitted by this action are GPU particles, which means that a lot of them can be rendered at the same time without much impact on performance. The particles are also not affected by most things that affect regular particles, like {@link ActionSlots.ParticleMovementAction ParticleMovement actions}.
 
-  What makes this different from {@link ActionType.GPUStandardParticle GPUStandardParticle} is that this actions seems to be designed specifically for effects that create sparks. While the other action's particles is more like billboard particles from, for example, {@link ActionType.BillboardEx BillboardEx}, this action's particles are more like {@link ActionType.QuadLine QuadLine} or {@link ActionType.Tracer Tracer} particles. They bend and rotate to align with the direction they are traveling, and they stretch based on how fast they're moving.
+      The name is from Elden Ring's RTTI, where it is named "GXVfxSparkParticleAppearance".
 
-  The name of this action is from Elden Ring's RTTI, where it's called "SparkParticle".
+      This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
+    zh-CN: |
+      定义了一个 GPU 粒子系统。与 {@link GPUStandardParticle} 类似，但它不像其他行为那样使用公告牌粒子，而是使用“火花”粒子，类似于 {@link QuadLine} 行为的线粒子，尽管火花可能会弯曲，更像 {@link Tracer} 粒子的轨迹。此动作发射的粒子是 GPU 粒子，这意味着可以同时渲染大量粒子，而对性能影响不大。这些粒子也不受大多数影响普通粒子的事物的影响，例如 {@link ActionSlots.ParticleMovementAction ParticleMovement actions}。
 
-  This action was first used in Armored Core 6, but definitely also works in Sekiro and Elden Ring. It might work in Dark Souls 3, but its structure is at least somewhat different there, and what that structure looks like is unknown. AC6's structure is compatible with Sekiro and ER, but some features may not work due to having been added in later versions.
+      其名称源自《艾尔登法环》的 RTTI，在那里它被命名为“GXVfxSparkParticleAppearance”。
+
+      此行为首次用于《装甲核心6》，但也肯定适用于《只狼》和《艾尔登法环》。它可能在《黑暗之魂3》中也能使用，但其结构至少在那里有所不同，并且该结构的具体情况未知。《装甲核心6》的结构与《只狼》和《艾尔登法环》兼容，但由于某些功能是在后续版本中添加的，因此可能无法正常工作。
 properties:
   particleFollowFactor:
     type: ScalarValue
-    desc: |
-      Controls how well the particles follow the node if it moves.
+    desc:
+      en-US: |
+        Controls how well the particles follow the node if it moves.
+      zh-CN: |
+        控制粒子在节点移动时的跟随程度。
   unk_ac6_p1_1:
     type: ScalarValue
   unk_ac6_p1_2:
@@ -27,53 +35,80 @@ properties:
     type: ScalarValue
     scale: true
     time: sq
-    desc: |
-      Particle acceleration along the X-axis.
+    desc:
+      en-US: |
+        Particle acceleration along the X-axis.
+      zh-CN: |
+        粒子沿 X 轴的加速度。
   particleAccelerationY:
     type: ScalarValue
     scale: true
     time: sq
-    desc: |
-      Particle acceleration along the Y-axis.
+    desc:
+      en-US: |
+        Particle acceleration along the Y-axis.
+      zh-CN: |
+        粒子沿 Y 轴的加速度。
   particleAccelerationZ:
     type: ScalarValue
     scale: true
     time: sq
-    desc: |
-      Particle acceleration along the Z-axis.
+    desc:
+      en-US: |
+        Particle acceleration along the Z-axis.
+      zh-CN: |
+        粒子沿 Z 轴的加速度。
   color:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
     argument: ParticleAge
     color: primary
-    desc: |
-      Color multiplier.
+    desc:
+      en-US: |
+        Color multiplier.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
+      zh-CN: |
+        颜色乘数。
+
+        此处的数值不设限，可以超过 1。
   particleLength:
     type: ScalarValue
     default: 1
     # No scaling - That is handled by the multiplicative min/max fields instead
     time: inv
-    desc: |
-      The length of the particles.
+    desc:
+      en-US: |
+        The length of the particles.
+      zh-CN: |
+        粒子的长度。
   particleWidth:
     type: ScalarValue
     default: 0.1
     # No scaling - That is handled by the multiplicative min/max fields instead
-    desc: |
-      The width of the particles.
+    desc:
+      en-US: |
+        The width of the particles.
+      zh-CN: |
+        粒子的宽度。
   unkParticleAcceleration:
     type: ScalarValue
     scale: true
     time: sq
-    desc: |
-      Similar to {@link particleAccelerationZ}, but this does not go exactly north?
+    desc:
+      en-US: |
+        Similar to {@link particleAccelerationZ}, but this does not go exactly north?
 
-      This requires any of the following fields to have a non-zero value:
-      - {@link particleSpeedMin}
-      - {@link particleSpeedMax}
+        This requires any of the following fields to have a non-zero value:
+        - {@link particleSpeedMin}
+        - {@link particleSpeedMax}
+      zh-CN: |
+        类似于 {@link particleAccelerationZ}，但这并不完全指向北方？
+
+        这要求以下任何字段具有非零值：
+        - {@link particleSpeedMin}
+        - {@link particleSpeedMax}
   unk_ac6_p1_11:
     type: ScalarValue
   particleGravity:
@@ -81,12 +116,19 @@ properties:
     default: 1
     scale: true
     time: sq
-    desc: |
-      Downwards acceleration for particles.
+    desc:
+      en-US: |
+        Downwards acceleration for particles.
 
-      This requires any of the following fields to have a non-zero value:
-      - {@link particleSpeedMin}
-      - {@link particleSpeedMax}
+        This requires any of the following fields to have a non-zero value:
+        - {@link particleSpeedMin}
+        - {@link particleSpeedMax}
+      zh-CN: |
+        粒子的向下加速度（重力）。
+
+        这要求以下任何字段具有非零值：
+        - {@link particleSpeedMin}
+        - {@link particleSpeedMax}
   unk_ac6_p1_13:
     type: ScalarValue
   unk_ac6_p2_0:
@@ -116,15 +158,21 @@ properties:
     default: 1
     resource: texture
     textureType: a
-    desc: |
-      The ID of the texture of the particles.
+    desc:
+      en-US: |
+        The ID of the texture of the particles.
+      zh-CN: |
+        粒子的纹理 ID。
   emitterShape:
     type: EmitterShape
     field: int
     enum: EmitterShape
     default: EmitterShape.Box
-    desc: |
-      Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+    desc:
+      en-US: |
+        Controls the shape of the particle emitter. See {@link EmitterShape} for more details.
+      zh-CN: |
+        控制粒子发射器的形状。有关更多详细信息，请参阅 {@link EmitterShape}。
   unk_ac6_f1_2:
     field: int
   emitterSize:
@@ -132,14 +180,20 @@ properties:
     components: 3
     default: [1, 1, 1]
     scale: true
-    desc: |
-      The size of the emitter.
+    desc:
+      en-US: |
+        The size of the emitter.
+      zh-CN: |
+        发射器的大小。
   emitterRotation:
     field: vec3
     components: 3
     default: [0, 0, 0]
-    desc: |
-      The rotation of the emitter.
+    desc:
+      en-US: |
+        The rotation of the emitter.
+      zh-CN: |
+        发射器的旋转。
   unk_ac6_f1_9:
     field: float
     default: 1
@@ -151,15 +205,25 @@ properties:
     default: 1
   emitterDistribution:
     field: float
-    desc: |
-      Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
-      | Shape | Behavior |
-      |-|-|
-      | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
-      | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
-      | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
-      | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
-      | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+    desc:
+      en-US: |
+        Controls how the random emission points are distributed within the {@link emitterShape shape of the emitter}. How this works depend on the emitter shape:
+        | Shape | Behavior |
+        |-|-|
+        | {@link EmitterShape.Line Line} | A fraction of the line where particles can not be emitted from.<br>At 0, particles can be emitted from any point on the line.<br>At 1, they can only be emitted from the far end of the line. |
+        | {@link EmitterShape.Box Box} | A fraction of the box's size where the particles can not be emitted from. Basically an inner box that blocks emission. |
+        | {@link EmitterShape.Box2 Box2} | At 1, any point within the box is equally likely to be picked.<br>At 0, particles are more likely to be emitted near the center, but it's not a 100% chance. |
+        | {@link EmitterShape.Unk3 Unk3} | Exactly the same as {@link EmitterShape.Line Line}? |
+        | {@link EmitterShape.Cylinder Cylinder} | A fraction of the radius of the cylinder where the particles can not be emitted from. Basically an inner cylinder that blocks emission. |
+      zh-CN: |
+        控制随机发射点在{@link emitterShape 发射器形状}内的分布方式。其工作原理取决于发射器形状：
+        | 形状 | 行为 |
+        |-|-|
+        | {@link EmitterShape.Line 线形} | 线上不能发射粒子的比例。<br>为 0 时，粒子可从线上任意点发射。<br>为 1 时，只能从线的远端发射。 |
+        | {@link EmitterShape.Box 盒形} | 盒子尺寸中不能发射粒子的比例。基本上是一个阻挡发射的内部盒子。 |
+        | {@link EmitterShape.Box2 盒形2} | 为 1 时，盒子内任何点被选中的几率相等。<br>为 0 时，粒子更有可能在中心附近发射，但不是 100% 的几率。 |
+        | {@link EmitterShape.Unk3 Unk3} | 似乎与 {@link EmitterShape.Line 线形} 完全相同？ |
+        | {@link EmitterShape.Cylinder 圆柱形} | 圆柱体半径中不能发射粒子的比例。基本上是一个阻挡发射的内部圆柱体。 |
   unk_ac6_f1_13:
     field: float
   unk_ac6_f1_14:
@@ -174,22 +238,31 @@ properties:
   emissionParticleCount:
     field: int
     default: 10
-    desc: |
-      The number of particles to emit per emission.
+    desc:
+      en-US: |
+        The number of particles to emit per emission.
+      zh-CN: |
+        每次发射的粒子数量。
     see:
       - emissionParticleCountMin
       - emissionParticleCountMax
   emissionParticleCountMin:
     field: int
-    desc: |
-      The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+    desc:
+      en-US: |
+        The minimum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+      zh-CN: |
+        每次发射的最小粒子数量。每次发射都会选取一个新的随机值，该随机值将添加到{@link emissionParticleCount 基础发射粒子计数}中。
     see:
       - emissionParticleCount
       - emissionParticleCountMax
   emissionParticleCountMax:
     field: int
-    desc: |
-      The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+    desc:
+      en-US: |
+        The maximum number of particles to emit per emission. A new random value is picked for each emission, and the random value is added to the {@link emissionParticleCount base emission particle count}.
+      zh-CN: |
+        每次发射的最大粒子数量。每次发射都会选取一个新的随机值，该随机值将添加到{@link emissionParticleCount 基础发射粒子计数}中。
     see:
       - emissionParticleCount
       - emissionParticleCountMin
@@ -197,8 +270,11 @@ properties:
     field: int
     lib: float
     time: inv
-    desc: |
-      The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+    desc:
+      en-US: |
+        The time between emissions in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+      zh-CN: |
+        发射之间的间隔时间（秒）。由于此字段的工作方式，该值将四舍五入到最接近的 1/30 秒。
     see:
       - emissionIntervalMin
       - emissionIntervalMax
@@ -206,8 +282,11 @@ properties:
     field: int
     lib: float
     time: inv
-    desc: |
-      The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+    desc:
+      en-US: |
+        The minimum time between emissions in seconds. A random value between this and {@link emissionIntervalMax} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+      zh-CN: |
+        发射之间的最小间隔时间（秒）。将在此值和 {@link emissionIntervalMax} 之间取一个随机值添加到 {@link emissionInterval} 以获得最终发射间隔。由于此字段的工作方式，该值将四舍五入到最接近的 1/30 秒。
     see:
       - emissionInterval
       - emissionIntervalMax
@@ -215,20 +294,29 @@ properties:
     field: int
     lib: float
     time: inv
-    desc: |
-      The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+    desc:
+      en-US: |
+        The maximum time between emissions in seconds. A random value between this and {@link emissionIntervalMin} will be added to {@link emissionInterval} to get the final emission interval. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+      zh-CN: |
+        发射之间的最大间隔时间（秒）。将在此值和 {@link emissionIntervalMin} 之间取一个随机值添加到 {@link emissionInterval} 以获得最终发射间隔。由于此字段的工作方式，该值将四舍五入到最接近的 1/30 秒。
     see:
       - emissionInterval
       - emissionIntervalMin
   limitConcurrentEmissions:
     field: bool
     default: false
-    desc: |
-      If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
+    desc:
+      en-US: |
+        If enabled, the number of emissions will be limited by {@link concurrentEmissionsLimit}.
+      zh-CN: |
+        如果启用，发射次数将受到 {@link concurrentEmissionsLimit} 的限制。
   concurrentEmissionsLimit:
     field: int
-    desc: |
-      The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
+    desc:
+      en-US: |
+        The total number of emissions. This limit is only applied if {@link limitConcurrentEmissions} is enabled.
+      zh-CN: |
+        总发射次数。此限制仅在启用 {@link limitConcurrentEmissions} 时应用。
   unk_ac6_f1_26:
     field: int
   particleDuration:
@@ -236,8 +324,11 @@ properties:
     lib: float
     default: 1
     time: inv
-    desc: |
-      The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+    desc:
+      en-US: |
+        The duration of each particle in seconds. Due to the way this field works, the value will be rounded to the nearest 1/30s.
+      zh-CN: |
+        每个粒子的持续时间（秒）。由于此字段的工作方式，该值将四舍五入到最接近的 1/30 秒。
   unk_ac6_f1_28:
     field: int
   unk_ac6_f1_29:
@@ -247,8 +338,11 @@ properties:
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      Particle position offset.
+    desc:
+      en-US: |
+        Particle position offset.
+      zh-CN: |
+        粒子位置偏移。
     see:
       - particleOffsetMin
       - particleOffsetMax
@@ -257,15 +351,21 @@ properties:
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+    desc:
+      en-US: |
+        Minimum particle position offset. A random value between this and {@link particleOffsetMax} will be added to {@link particleOffset} to get the final position offset.
+      zh-CN: |
+        最小粒子位置偏移。将在此值和 {@link particleOffsetMax} 之间取一个随机值添加到 {@link particleOffset} 以获得最终位置偏移。
   particleOffsetMax:
     field: vec3
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+    desc:
+      en-US: |
+        Maximum particle position offset. A random value between this and {@link particleOffsetMin} will be added to {@link particleOffset} to get the final position offset.
+      zh-CN: |
+        最大粒子位置偏移。将在此值和 {@link particleOffsetMin} 之间取一个随机值添加到 {@link particleOffset} 以获得最终位置偏移。
   unk_ac6_f1_39:
     field: int
   particleSpeedMin:
@@ -274,8 +374,11 @@ properties:
     default: [-0.01, -0.01, -0.01]
     scale: true
     time: true
-    desc: |
-      Minimum particle speed.
+    desc:
+      en-US: |
+        Minimum particle speed.
+      zh-CN: |
+        最小粒子速度。
     see:
       - particleSpeedMax
   particleSpeedMax:
@@ -284,39 +387,57 @@ properties:
     default: [0.01, 0.01, 0.01]
     scale: true
     time: true
-    desc: |
-      Maximum particle speed.
+    desc:
+      en-US: |
+        Maximum particle speed.
+      zh-CN: |
+        最大粒子速度。
     see:
       - particleSpeedMin
   rgbMultiplier:
     field: float
     default: 1
-    desc: |
-      Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+    desc:
+      en-US: |
+        Scalar multiplier for the color that does not affect the alpha. Effectively a brightness multiplier.
+      zh-CN: |
+        不影响 Alpha 的颜色标量乘数。实际上是亮度乘数。
   alphaMultiplier:
     field: float
     default: 1
-    desc: |
-      Alpha multiplier.
+    desc:
+      en-US: |
+        Alpha multiplier.
+      zh-CN: |
+        Alpha 乘数。
   colorMin:
     field: vec4
     components: 4
     default: [0, 0, 0, 0]
-    desc: |
-      Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
+    desc:
+      en-US: |
+        Minimum random variation for the particle color. A random value between this and {@link colorMax} will be added to the base {@link color}, but it fades out over the life of the particle.
+      zh-CN: |
+        粒子颜色的最小随机变化。将在此值和 {@link colorMax} 之间取一个随机值添加到基础 {@link color} 中，但它会在粒子寿命期间逐渐消失。
   colorMax:
     field: vec4
     components: 4
     default: [0, 0, 0, 0]
-    desc: |
-      Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
+    desc:
+      en-US: |
+        Maximum random variation for the particle color. A random value between this and {@link colorMin} will be added to the base {@link color}, but it fades out over the life of the particle.
+      zh-CN: |
+        粒子颜色的最大随机变化。将在此值和 {@link colorMin} 之间取一个随机值添加到基础 {@link color} 中，但它会在粒子寿命期间逐渐消失。
   blendMode:
     type: BlendMode
     field: int
     enum: BlendMode
     default: BlendMode.Add
-    desc: |
-      Blend mode.
+    desc:
+      en-US: |
+        Blend mode.
+      zh-CN: |
+        混合模式。
   unk_ac6_f1_57:
     field: int
     default: -1
@@ -335,26 +456,38 @@ properties:
     field: float
     default: 1
     scale: instanceSize
-    desc: |
-      Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
+    desc:
+      en-US: |
+        Minimum particle length. A random value between this and {@link particleLengthMax} will be **multiplied** by {@link particleLength} to get the final particle length.
+      zh-CN: |
+        最小粒子长度。将在此值和 {@link particleLengthMax} 之间取一个随机值并**乘以** {@link particleLength} 以获得最终粒子长度。
   particleLengthMax:
     field: float
     default: 1
     scale: instanceSize
-    desc: |
-      Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
+    desc:
+      en-US: |
+        Maximum particle length. A random value between this and {@link particleLengthMin} will be **multiplied** by {@link particleLength} to get the final particle length.
+      zh-CN: |
+        最大粒子长度。将在此值和 {@link particleLengthMin} 之间取一个随机值并**乘以** {@link particleLength} 以获得最终粒子长度。
   particleWidthMin:
     field: float
     default: 1
     scale: instanceSize
-    desc: |
-      Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
+    desc:
+      en-US: |
+        Minimum particle width. A random value between this and {@link particleWidthMax} will be **multiplied** by {@link particleWidth} to get the final particle width.
+      zh-CN: |
+        最小粒子宽度。将在此值和 {@link particleWidthMax} 之间取一个随机值并**乘以** {@link particleWidth} 以获得最终粒子宽度。
   particleWidthMax:
     field: float
     default: 1
     scale: instanceSize
-    desc: |
-      Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
+    desc:
+      en-US: |
+        Maximum particle width. A random value between this and {@link particleWidthMin} will be **multiplied** by {@link particleWidth} to get the final particle width.
+      zh-CN: |
+        最大粒子宽度。将在此值和 {@link particleWidthMin} 之间取一个随机值并**乘以** {@link particleWidth} 以获得最终粒子宽度。
   unk_ac6_f1_67:
     field: float
     default: 1
@@ -364,8 +497,11 @@ properties:
   particleDurationMultiplier:
     field: float
     default: 1
-    desc: |
-      Multiplier for {@link particleDuration}.
+    desc:
+      en-US: |
+        Multiplier for {@link particleDuration}.
+      zh-CN: |
+        {@link particleDuration} 的乘数。
   unk_ac6_f1_70:
     field: float
     default: 1
@@ -408,14 +544,20 @@ properties:
     field: float
     scale: true
     time: true
-    desc: |
-      Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
+    desc:
+      en-US: |
+        Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_85} works in a similar way, but has the opposite average direction.
+      zh-CN: |
+        未知浮点数。似乎使粒子在某种程度上随机飞来飞去，但具有特定的平均方向。{@link unk_ac6_f1_85} 以类似的方式工作，但平均方向相反。
   unk_ac6_f1_85:
     field: float
     scale: true
     time: true
-    desc: |
-      Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
+    desc:
+      en-US: |
+        Unknown float. Seems to make the particles fly around somewhat randomly, but with a specific average direction. {@link unk_ac6_f1_84} works in a similar way, but has the opposite average direction.
+      zh-CN: |
+        未知浮点数。似乎使粒子在某种程度上随机飞来飞去，但具有特定的平均方向。{@link unk_ac6_f1_84} 以类似的方式工作，但平均方向相反。
   unk_ac6_f1_86:
     field: int
   unk_ac6_f1_87:
@@ -427,26 +569,40 @@ properties:
     field: int
   limitUpdateDistance:
     field: bool
-    desc: |
-      If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
+    desc:
+      en-US: |
+        If enabled, the particle system stops updating if the camera is beyond the distance specified by {@link updateDistance} from the node.
 
-      It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+        It will not stop updating immediately after the action becomes active. Instead, it will wait for a little while before stopping if the camera is too far away.
+      zh-CN: |
+        如果启用，当摄像机距离节点的距离超过 {@link updateDistance} 指定的距离时，粒子系统将停止更新。
+
+        动作激活后，它不会立即停止更新。相反，如果摄像机太远，它会等待一小会儿再停止。
   updateDistance:
     field: float
     scale: true
-    desc: |
-      Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+    desc:
+      en-US: |
+        Controls how close the camera needs to be to the node for the particle system to update. Requires {@link limitUpdateDistance} to be enabled.
+      zh-CN: |
+        控制摄像机需要离节点多近，粒子系统才会更新。需要启用 {@link limitUpdateDistance}。
   particleCollision:
     field: bool
     default: false
-    desc: |
-      When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+    desc:
+      en-US: |
+        When enabled, this makes the particles bounce off of any surface they hit. This collision detection is just based on the depth buffer, not the full 3D scene, so it is not always perfect.
+      zh-CN: |
+        当启用时，这会使粒子从它们撞击的任何表面反弹。此碰撞检测仅基于深度缓冲区，而不是完整的 3D 场景，因此并不总是完美的。
     see:
       - particleBounciness
   particleBounciness:
     field: float
-    desc: |
-      Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+    desc:
+      en-US: |
+        Controls how strong the rebound from hitting a surface is when {@link particleCollision} is enabled.
+      zh-CN: |
+        当启用 {@link particleCollision} 时，控制撞击表面反弹的强度。
     see:
       - particleCollision
   unk_ac6_f1_94:
@@ -456,8 +612,11 @@ properties:
   bloom:
     field: bool
     default: false
-    desc: |
-      Controls whether or not the particles have a bloom effect.
+    desc:
+      en-US: |
+        Controls whether or not the particles have a bloom effect.
+      zh-CN: |
+        控制粒子是否具有泛光效果。
     see:
       - bloomColor
   bloomColor:
@@ -465,12 +624,19 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-      Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
+    desc:
+      en-US: |
+        Controls the color of the additional bloom effect. The colors of the particle will be multiplied with this color to get the final color of the bloom effect.
 
-      Note:
-      - This has no effect if the "Effects Quality" setting is set to "Low".
-      - This does not affect the natural bloom effect from high color values.
+        Note:
+        - This has no effect if the "Effects Quality" setting is set to "Low".
+        - This does not affect the natural bloom effect from high color values.
+      zh-CN: |
+        控制额外泛光效果的颜色。粒子的颜色将与此颜色相乘，以获得泛光效果的最终颜色。
+
+        注意：
+        - 如果“特效质量”设置设为“低”，则此项无效。
+        - 这不影响高颜色值产生的自然泛光效果。
     see:
       - bloom
   unk_ac6_f1_101:
@@ -518,12 +684,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link minFadeDistance} to be set to a positive value or 0.
+        This requires {@link minFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link minDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link minFadeDistance} 设置为正值或 0。
+
+        这与 {@link minDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - maxFadeDistance
@@ -534,10 +707,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link minDistance minimum view distance}. At {@link minDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link minDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link minDistance 最小视图距离} 附近衰减为 0 的点。在 {@link minDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link minDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minDistance
       - maxFadeDistance
@@ -548,10 +726,15 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
+    desc:
+      en-US: |
+        This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-      This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+      zh-CN: |
+        控制粒子不透明度开始在 {@link maxDistance 最大视图距离} 附近衰减为 0 的点。在 {@link maxDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
+
+        这要求 {@link maxDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
     see:
       - minFadeDistance
       - minDistance
@@ -562,12 +745,19 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        Minimum view distance. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
 
-      This requires {@link maxFadeDistance} to be set to a positive value or 0.
+        This requires {@link maxFadeDistance} to be set to a positive value or 0.
 
-      This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+        This is different from {@link maxDistanceThreshold}, as this controls the start of a distance range that has smooth transitions at each end, while the threshold value is a hard cut-off.
+      zh-CN: |
+        最小视图距离。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
+
+        这要求 {@link maxFadeDistance} 设置为正值或 0。
+
+        这与 {@link maxDistanceThreshold} 不同，因为此项控制的是两端具有平滑过渡的距离范围的起点，而阈值是硬性截止。
     see:
       - minFadeDistance
       - minDistance
@@ -578,8 +768,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is closer than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离小于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -590,8 +783,11 @@ properties:
     field: float
     default: -1
     scale: distanceIfNotMinusOne
-    desc: |
-      A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+    desc:
+      en-US: |
+        A hard cut-off point for the distance between the camera and the particle. If a particle is farther away than this distance from the camera, it will be hidden. Can be set to -1 to disable the limit.
+      zh-CN: |
+        摄像机与粒子之间距离的硬性截止点。如果粒子与摄像机的距离大于此距离，它将被隐藏。可以设置为 -1 以禁用限制。
     see:
       - minFadeDistance
       - minDistance
@@ -624,14 +820,22 @@ properties:
   shadowDarkness:
     field: float
     default: 1
-    desc: |
-      Controls how dark shaded parts of the particle are.
+    desc:
+      en-US: |
+        Controls how dark shaded parts of the particle are.
+      zh-CN: |
+        控制粒子阴影部分的暗度。
   unkHideIndoors:
     field: int
-    desc: |
-      When set to 1, this stops the particles from being shown indoors.
+    desc:
+      en-US: |
+        When set to 1, this stops the particles from being shown indoors.
 
-      Other values are used in AC6, but what they do is unknown.
+        Other values are used in AC6, but what they do is unknown.
+      zh-CN: |
+        当设置为 1 时，这将停止粒子在室内显示。
+
+        AC6 中使用了其他值，但具体作用未知。
   unk_ac6_f2_32:
     field: int
   unk_ac6_f2_33:

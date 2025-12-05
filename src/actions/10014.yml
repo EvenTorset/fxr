@@ -4,99 +4,150 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Creates lens flares with up to 4 textured layers with different colors and sizes.
+desc:
+    en-US: |
+      Defines a lens flare effect with up to four textured layers with different colors and sizes.
+
+      The name is from Elden Ring's RTTI, where it is named "GXFfxLensFlareAppearance".
+    zh-CN: |
+      定义一个镜头光晕效果，最多可包含四个具有不同颜色和大小的纹理层。
+
+      该名称来自《艾尔登法环》的RTTI，其中名为“GXFfxLensFlareAppearance”。
 properties:
   layer1Width:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 1 width.
+    desc:
+      en-US: |
+        Layer 1 width.
+      zh-CN: |
+        第 1 层宽度。
   layer1Height:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 1 height.
+    desc:
+      en-US: |
+        Layer 1 height.
+      zh-CN: |
+        第 1 层高度。
   layer1Color:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
     color: primary
-    desc: |
-      Layer 1 color.
+    desc:
+      en-US: |
+        Layer 1 color.
 
-      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer1ColorMultiplier}.
+        Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer1ColorMultiplier}.
+      zh-CN: |
+        第 1 层颜色。
+
+        此处的数值将被限制在 0-1 范围内。要使用超出此范围的值，请参阅 {@link layer1ColorMultiplier}。
     see:
       - layer1ColorMultiplier
   layer2Width:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 2 width.
+    desc:
+      en-US: |
+        Layer 2 width.
+      zh-CN: |
+        第 2 层宽度。
   layer2Height:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 2 height.
+    desc:
+      en-US: |
+        Layer 2 height.
+      zh-CN: |
+        第 2 层高度。
   layer2Color:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
     color: primary
-    desc: |
-      Layer 2 color.
+    desc:
+      en-US: |
+        Layer 2 color.
 
-      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer2ColorMultiplier}.
+        Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer2ColorMultiplier}.
+      zh-CN: |
+        第 2 层颜色。
+
+        此处的数值将被限制在 0-1 范围内。要使用超出此范围的值，请参阅 {@link layer2ColorMultiplier}。
     see:
       - layer2ColorMultiplier
   layer3Width:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 3 width.
+    desc:
+      en-US: |
+        Layer 3 width.
+      zh-CN: |
+        第 3 层宽度。
   layer3Height:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 3 height.
+    desc:
+      en-US: |
+        Layer 3 height.
+      zh-CN: |
+        第 3 层高度。
   layer3Color:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
     color: primary
-    desc: |
-      Layer 3 color.
+    desc:
+      en-US: |
+        Layer 3 color.
 
-      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer3ColorMultiplier}.
+        Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer3ColorMultiplier}.
+      zh-CN: |
+        第 3 层颜色。
+
+        此处的数值将被限制在 0-1 范围内。要使用超出此范围的值，请参阅 {@link layer3ColorMultiplier}。
     see:
       - layer3ColorMultiplier
   layer4Width:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 4 width.
+    desc:
+      en-US: |
+        Layer 4 width.
+      zh-CN: |
+        第 4 层宽度。
   layer4Height:
     type: ScalarValue
     default: 1
     scale: instanceSize
-    desc: |
-      Layer 4 height.
+    desc:
+      en-US: |
+        Layer 4 height.
+      zh-CN: |
+        第 4 层高度。
   layer4Color:
     type: Vector4Value
     components: 4
     default: [1, 1, 1, 1]
     color: primary
-    desc: |
-      Layer 4 color.
+    desc:
+      en-US: |
+        Layer 4 color.
 
-      Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer4ColorMultiplier}.
+        Values in this will be clamped to the 0-1 range. To use values outside of this range, see {@link layer4ColorMultiplier}.
+      zh-CN: |
+        第 4 层颜色。
+
+        此处的数值将被限制在 0-1 范围内。要使用超出此范围的值，请参阅 {@link layer4ColorMultiplier}。
     see:
       - layer4ColorMultiplier
   layer1:
@@ -104,61 +155,91 @@ properties:
     default: 1
     resource: texture
     textureType: a
-    desc: |
-      Layer 1 texture ID.
+    desc:
+      en-US: |
+        Layer 1 texture ID.
+      zh-CN: |
+        第 1 层纹理 ID。
   layer2:
     field: int
     default: 0
     resource: texture
     textureType: a
-    desc: |
-      Layer 2 texture ID.
+    desc:
+      en-US: |
+        Layer 2 texture ID.
+      zh-CN: |
+        第 2 层纹理 ID。
   layer3:
     field: int
     default: 0
     resource: texture
     textureType: a
-    desc: |
-      Layer 3 texture ID.
+    desc:
+      en-US: |
+        Layer 3 texture ID.
+      zh-CN: |
+        第 3 层纹理 ID。
   layer4:
     field: int
     default: 0
     resource: texture
     textureType: a
-    desc: |
-      Layer 4 texture ID.
+    desc:
+      en-US: |
+        Layer 4 texture ID.
 
-      This layer seems to work a bit differently from the others in Sekiro.
+        This layer seems to work a bit differently from the others in Sekiro.
+      zh-CN: |
+        第 4 层纹理 ID。
+
+        在《只狼》中，此层的工作方式似乎与其他层略有不同。
   blendMode:
     type: BlendMode
     field: int
     enum: BlendMode
     default: BlendMode.Add
-    desc: |
-      Blend mode.
+    desc:
+      en-US: |
+        Blend mode.
+      zh-CN: |
+        混合模式。
   unk_er_f1_4:
     field: int
   sourceSize:
     field: float
     default: 1
-    desc: |
-      Diameter of the lens flare source sphere.
+    desc:
+      en-US: |
+        Diameter of the lens flare source sphere.
 
-      The opacity of the lens flare depends on how much of the source is in view.
+        The opacity of the lens flare depends on how much of the source is in view.
+      zh-CN: |
+        镜头光晕源球体的直径。
+
+        镜头光晕的不透明度取决于源在视野中的比例。
   opacityTransitionDuration:
     field: float
     default: 1
-    desc: |
-      The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
+    desc:
+      en-US: |
+        The time in seconds it takes for the opacity of the lens flare to transition when the source comes more into or goes more out of view.
+      zh-CN: |
+        当源进入或离开视野时，镜头光晕不透明度过渡所需的时间（秒）。
   unk_er_f1_8:
     field: int
   layer1Count:
     field: int
     default: 1
-    desc: |
-      The number of flares to create from {@link layer1}. Unless given {@link layer1OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
+    desc:
+      en-US: |
+        The number of flares to create from {@link layer1}. Unless given {@link layer1OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Setting it to very high values can have a significant impact on performance.
+        Setting it to very high values can have a significant impact on performance.
+      zh-CN: |
+        从 {@link layer1} 创建的光晕数量。除非给予 {@link layer1OffsetVariation 随机偏移}，否则它们将全部堆叠在同一位置。
+
+        将其设置为非常高的值会对性能产生重大影响。
     see:
       - layer1ScaleVariationX
       - layer1ScaleVariationY
@@ -168,8 +249,11 @@ properties:
   layer1ScaleVariationX:
     field: float
     default: 1
-    desc: |
-      The {@link layer1Width width} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer1Width width} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer1Count 每个光晕}的 {@link layer1Width 宽度} 乘以该值和 1 之间的随机值。
     see:
       - layer1Count
       - layer1UniformScale
@@ -177,8 +261,11 @@ properties:
   layer1ScaleVariationY:
     field: float
     default: 1
-    desc: |
-      The {@link layer1Height height} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer1Height height} of {@link layer1Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer1Count 每个光晕}的 {@link layer1Height 高度} 乘以该值和 1 之间的随机值。
     see:
       - layer1Count
       - layer1UniformScale
@@ -186,8 +273,11 @@ properties:
   layer1UniformScale:
     field: bool
     default: false
-    desc: |
-      When enabled, the {@link layer1Width layer's width} also controls the {@link layer1Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+    desc:
+      en-US: |
+        When enabled, the {@link layer1Width layer's width} also controls the {@link layer1Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+      zh-CN: |
+        启用时，{@link layer1Width 层的宽度} 也控制 {@link layer1Height 高度}，高度属性被忽略。缩放变化字段也是如此。
     see:
       - layer1Width
       - layer1Height
@@ -198,29 +288,44 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     color: true
-    desc: |
-      Multiplier for the {@link layer1Color layer's color}.
+    desc:
+      en-US: |
+        Multiplier for the {@link layer1Color layer's color}.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
+      zh-CN: |
+        {@link layer1Color 层的颜色} 的乘数。
+
+        此处的数值不设限，可以超过 1。
     see:
       - layer1Color
   layer1Reflection:
     field: int
     enum: ReflectionMode
     default: ReflectionMode.None
-    desc: |
-      Controls how the offset vector is calculated for {@link layer1}. See {@link ReflectionMode} for more details.
+    desc:
+      en-US: |
+        Controls how the offset vector is calculated for {@link layer1}. See {@link ReflectionMode} for more details.
+      zh-CN: |
+        控制如何计算 {@link layer1} 的偏移向量。有关更多详细信息，请参阅 {@link ReflectionMode}。
     see:
       - layer1Offset
       - layer1OffsetVariation
   layer1Offset:
     field: float
-    desc: |
-      Controls where the lens flare(s) from {@link layer1} will appear on the screen relative to the source and the center of the screen.
+    desc:
+      en-US: |
+        Controls where the lens flare(s) from {@link layer1} will appear on the screen relative to the source and the center of the screen.
 
-      This is basically a scalar multiplier for the {@link layer1Reflection offset vector}.
+        This is basically a scalar multiplier for the {@link layer1Reflection offset vector}.
 
-      This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        控制来自 {@link layer1} 的镜头光晕相对于源和屏幕中心在屏幕上显示的位置。
+
+        这基本上是 {@link layer1Reflection 偏移向量} 的标量乘数。
+
+        这要求 {@link layer1Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer1Reflection
       - layer1OffsetVariation
@@ -228,10 +333,15 @@ properties:
   layer1OffsetVariation:
     field: float
     default: 1
-    desc: |
-      For {@link layer1Count each flare} of {@link layer1}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer1Offset} to get the final offset for the flare.
+    desc:
+      en-US: |
+        For {@link layer1Count each flare} of {@link layer1}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer1Offset} to get the final offset for the flare.
 
-      This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer1Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        对于 {@link layer1} 的 {@link layer1Count 每个光晕}，在此值和 1 之间选取一个随机数，然后将此随机数与 {@link layer1Offset} 相乘以获得光晕的最终偏移。
+
+        这要求 {@link layer1Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer1Reflection
       - layer1Offset
@@ -239,11 +349,18 @@ properties:
     field: float
     default: -1
     desc:
-      This controls the radius of a sphere around the source for {@link layer1}. {@link layer1Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer1Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+      en-US: |
+        This controls the radius of a sphere around the source for {@link layer1}. {@link layer1Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer1Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
 
-      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+        In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
 
-      Can be set to -1 to disable this limit and always display the flare(s).
+        Can be set to -1 to disable this limit and always display the flare(s).
+      zh-CN: |
+        控制 {@link layer1} 围绕源的球体半径。{@link layer1Count 每个光晕} 都有其自己的半径，该半径是通过将此半径除以光晕的 {@link layer1Offset 偏移} 的绝对值来计算的。如果屏幕中心不在该球体在屏幕上的投影内，则光晕不可见，并且随着屏幕中心从球体内移出到球体外，光晕会逐渐淡出。
+
+        换句话说，这基于光晕的偏移以及源到屏幕中心的距离来淡出光晕，这意味着离源越远的光晕越难看到，而且如果源离屏幕中心很远也更难看到。
+
+        可以设置为 -1 以禁用此限制并始终显示光晕。
     see:
       - layer1Reflection
       - layer1Offset
@@ -251,10 +368,15 @@ properties:
   layer2Count:
     field: int
     default: 1
-    desc: |
-      The number of flares to create from {@link layer2}. Unless given {@link layer2OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
+    desc:
+      en-US: |
+        The number of flares to create from {@link layer2}. Unless given {@link layer2OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Setting it to very high values can have a significant impact on performance.
+        Setting it to very high values can have a significant impact on performance.
+      zh-CN: |
+        从 {@link layer2} 创建的光晕数量。除非给予 {@link layer2OffsetVariation 随机偏移}，否则它们将全部堆叠在同一位置。
+
+        将其设置为非常高的值会对性能产生重大影响。
     see:
       - layer2ScaleVariationX
       - layer2ScaleVariationY
@@ -264,8 +386,11 @@ properties:
   layer2ScaleVariationX:
     field: float
     default: 1
-    desc: |
-      The {@link layer2Width width} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer2Width width} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer2Count 每个光晕}的 {@link layer2Width 宽度} 乘以该值和 1 之间的随机值。
     see:
       - layer2Count
       - layer2UniformScale
@@ -273,8 +398,11 @@ properties:
   layer2ScaleVariationY:
     field: float
     default: 1
-    desc: |
-      The {@link layer2Height height} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer2Height height} of {@link layer2Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer2Count 每个光晕}的 {@link layer2Height 高度} 乘以该值和 1 之间的随机值。
     see:
       - layer2Count
       - layer2UniformScale
@@ -282,8 +410,11 @@ properties:
   layer2UniformScale:
     field: bool
     default: false
-    desc: |
-      When enabled, the {@link layer2Width layer's width} also controls the {@link layer2Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+    desc:
+      en-US: |
+        When enabled, the {@link layer2Width layer's width} also controls the {@link layer2Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+      zh-CN: |
+        启用时，{@link layer2Width 层的宽度} 也控制 {@link layer2Height 高度}，高度属性被忽略。缩放变化字段也是如此。
     see:
       - layer2Width
       - layer2Height
@@ -294,29 +425,44 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     color: true
-    desc: |
-      Multiplier for the {@link layer2Color layer's color}.
+    desc:
+      en-US: |
+        Multiplier for the {@link layer2Color layer's color}.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
+      zh-CN: |
+        {@link layer2Color 层的颜色} 的乘数。
+
+        此处的数值不设限，可以超过 1。
     see:
       - layer2Color
   layer2Reflection:
     field: int
     enum: ReflectionMode
     default: ReflectionMode.None
-    desc: |
-      Controls how the offset vector is calculated for {@link layer2}. See {@link ReflectionMode} for more details.
+    desc:
+      en-US: |
+        Controls how the offset vector is calculated for {@link layer2}. See {@link ReflectionMode} for more details.
+      zh-CN: |
+        控制如何计算 {@link layer2} 的偏移向量。有关更多详细信息，请参阅 {@link ReflectionMode}。
     see:
       - layer2Offset
       - layer2OffsetVariation
   layer2Offset:
     field: float
-    desc: |
-      Controls where the lens flare(s) from {@link layer2} will appear on the screen relative to the source and the center of the screen.
+    desc:
+      en-US: |
+        Controls where the lens flare(s) from {@link layer2} will appear on the screen relative to the source and the center of the screen.
 
-      This is basically a scalar multiplier for the {@link layer2Reflection offset vector}.
+        This is basically a scalar multiplier for the {@link layer2Reflection offset vector}.
 
-      This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        控制来自 {@link layer2} 的镜头光晕相对于源和屏幕中心在屏幕上显示的位置。
+
+        这基本上是 {@link layer2Reflection 偏移向量} 的标量乘数。
+
+        这要求 {@link layer2Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer2Reflection
       - layer2OffsetVariation
@@ -324,10 +470,15 @@ properties:
   layer2OffsetVariation:
     field: float
     default: 1
-    desc: |
-      For {@link layer2Count each flare} of {@link layer2}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer2Offset} to get the final offset for the flare.
+    desc:
+      en-US: |
+        For {@link layer2Count each flare} of {@link layer2}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer2Offset} to get the final offset for the flare.
 
-      This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer2Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        对于 {@link layer2} 的 {@link layer2Count 每个光晕}，在此值和 1 之间选取一个随机数，然后将此随机数与 {@link layer2Offset} 相乘以获得光晕的最终偏移。
+
+        这要求 {@link layer2Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer2Reflection
       - layer2Offset
@@ -335,11 +486,18 @@ properties:
     field: float
     default: -1
     desc:
-      This controls the radius of a sphere around the source for {@link layer2}. {@link layer2Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer2Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+      en-US: |
+        This controls the radius of a sphere around the source for {@link layer2}. {@link layer2Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer2Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
 
-      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+        In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
 
-      Can be set to -1 to disable this limit and always display the flare(s).
+        Can be set to -1 to disable this limit and always display the flare(s).
+      zh-CN: |
+        控制 {@link layer2} 围绕源的球体半径。{@link layer2Count 每个光晕} 都有其自己的半径，该半径是通过将此半径除以光晕的 {@link layer2Offset 偏移} 的绝对值来计算的。如果屏幕中心不在该球体在屏幕上的投影内，则光晕不可见，并且随着屏幕中心从球体内移出到球体外，光晕会逐渐淡出。
+
+        换句话说，这基于光晕的偏移以及源到屏幕中心的距离来淡出光晕，这意味着离源越远的光晕越难看到，而且如果源离屏幕中心很远也更难看到。
+
+        可以设置为 -1 以禁用此限制并始终显示光晕。
     see:
       - layer2Reflection
       - layer2Offset
@@ -347,10 +505,15 @@ properties:
   layer3Count:
     field: int
     default: 1
-    desc: |
-      The number of flares to create from {@link layer3}. Unless given {@link layer3OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
+    desc:
+      en-US: |
+        The number of flares to create from {@link layer3}. Unless given {@link layer3OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Setting it to very high values can have a significant impact on performance.
+        Setting it to very high values can have a significant impact on performance.
+      zh-CN: |
+        从 {@link layer3} 创建的光晕数量。除非给予 {@link layer3OffsetVariation 随机偏移}，否则它们将全部堆叠在同一位置。
+
+        将其设置为非常高的值会对性能产生重大影响。
     see:
       - layer3ScaleVariationX
       - layer3ScaleVariationY
@@ -360,8 +523,11 @@ properties:
   layer3ScaleVariationX:
     field: float
     default: 1
-    desc: |
-      The {@link layer3Width width} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer3Width width} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer3Count 每个光晕}的 {@link layer3Width 宽度} 乘以该值和 1 之间的随机值。
     see:
       - layer3Count
       - layer3UniformScale
@@ -369,8 +535,11 @@ properties:
   layer3ScaleVariationY:
     field: float
     default: 1
-    desc: |
-      The {@link layer3Height height} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer3Height height} of {@link layer3Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer3Count 每个光晕}的 {@link layer3Height 高度} 乘以该值和 1 之间的随机值。
     see:
       - layer3Count
       - layer3UniformScale
@@ -378,8 +547,11 @@ properties:
   layer3UniformScale:
     field: bool
     default: false
-    desc: |
-      When enabled, the {@link layer3Width layer's width} also controls the {@link layer3Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+    desc:
+      en-US: |
+        When enabled, the {@link layer3Width layer's width} also controls the {@link layer3Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+      zh-CN: |
+        启用时，{@link layer3Width 层的宽度} 也控制 {@link layer3Height 高度}，高度属性被忽略。缩放变化字段也是如此。
     see:
       - layer3Width
       - layer3Height
@@ -390,29 +562,44 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     color: true
-    desc: |
-      Multiplier for the {@link layer3Color layer's color}.
+    desc:
+      en-US: |
+        Multiplier for the {@link layer3Color layer's color}.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
+      zh-CN: |
+        {@link layer3Color 层的颜色} 的乘数。
+
+        此处的数值不设限，可以超过 1。
     see:
       - layer3Color
   layer3Reflection:
     field: int
     enum: ReflectionMode
     default: ReflectionMode.None
-    desc: |
-      Controls how the offset vector is calculated for {@link layer3}. See {@link ReflectionMode} for more details.
+    desc:
+      en-US: |
+        Controls how the offset vector is calculated for {@link layer3}. See {@link ReflectionMode} for more details.
+      zh-CN: |
+        控制如何计算 {@link layer3} 的偏移向量。有关更多详细信息，请参阅 {@link ReflectionMode}。
     see:
       - layer3Offset
       - layer3OffsetVariation
   layer3Offset:
     field: float
-    desc: |
-      Controls where the lens flare(s) from {@link layer3} will appear on the screen relative to the source and the center of the screen.
+    desc:
+      en-US: |
+        Controls where the lens flare(s) from {@link layer3} will appear on the screen relative to the source and the center of the screen.
 
-      This is basically a scalar multiplier for the {@link layer3Reflection offset vector}.
+        This is basically a scalar multiplier for the {@link layer3Reflection offset vector}.
 
-      This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        控制来自 {@link layer3} 的镜头光晕相对于源和屏幕中心在屏幕上显示的位置。
+
+        这基本上是 {@link layer3Reflection 偏移向量} 的标量乘数。
+
+        这要求 {@link layer3Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer3Reflection
       - layer3OffsetVariation
@@ -420,10 +607,15 @@ properties:
   layer3OffsetVariation:
     field: float
     default: 1
-    desc: |
-      For {@link layer3Count each flare} of {@link layer3}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer3Offset} to get the final offset for the flare.
+    desc:
+      en-US: |
+        For {@link layer3Count each flare} of {@link layer3}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer3Offset} to get the final offset for the flare.
 
-      This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer3Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        对于 {@link layer3} 的 {@link layer3Count 每个光晕}，在此值和 1 之间选取一个随机数，然后将此随机数与 {@link layer3Offset} 相乘以获得光晕的最终偏移。
+
+        这要求 {@link layer3Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer3Reflection
       - layer3Offset
@@ -431,11 +623,18 @@ properties:
     field: float
     default: -1
     desc:
-      This controls the radius of a sphere around the source for {@link layer3}. {@link layer3Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer3Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+      en-US: |
+        This controls the radius of a sphere around the source for {@link layer3}. {@link layer3Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer3Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
 
-      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+        In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
 
-      Can be set to -1 to disable this limit and always display the flare(s).
+        Can be set to -1 to disable this limit and always display the flare(s).
+      zh-CN: |
+        控制 {@link layer3} 围绕源的球体半径。{@link layer3Count 每个光晕} 都有其自己的半径，该半径是通过将此半径除以光晕的 {@link layer3Offset 偏移} 的绝对值来计算的。如果屏幕中心不在该球体在屏幕上的投影内，则光晕不可见，并且随着屏幕中心从球体内移出到球体外，光晕会逐渐淡出。
+
+        换句话说，这基于光晕的偏移以及源到屏幕中心的距离来淡出光晕，这意味着离源越远的光晕越难看到，而且如果源离屏幕中心很远也更难看到。
+
+        可以设置为 -1 以禁用此限制并始终显示光晕。
     see:
       - layer3Reflection
       - layer3Offset
@@ -443,10 +642,15 @@ properties:
   layer4Count:
     field: int
     default: 1
-    desc: |
-      The number of flares to create from {@link layer4}. Unless given {@link layer4OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
+    desc:
+      en-US: |
+        The number of flares to create from {@link layer4}. Unless given {@link layer4OffsetVariation random offsets}, they will all just stack on top of each other in the same spot.
 
-      Setting it to very high values can have a significant impact on performance.
+        Setting it to very high values can have a significant impact on performance.
+      zh-CN: |
+        从 {@link layer4} 创建的光晕数量。除非给予 {@link layer4OffsetVariation 随机偏移}，否则它们将全部堆叠在同一位置。
+
+        将其设置为非常高的值会对性能产生重大影响。
     see:
       - layer4ScaleVariationX
       - layer4ScaleVariationY
@@ -456,8 +660,11 @@ properties:
   layer4ScaleVariationX:
     field: float
     default: 1
-    desc: |
-      The {@link layer4Width width} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer4Width width} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer4Count 每个光晕}的 {@link layer4Width 宽度} 乘以该值和 1 之间的随机值。
     see:
       - layer4Count
       - layer4UniformScale
@@ -465,8 +672,11 @@ properties:
   layer4ScaleVariationY:
     field: float
     default: 1
-    desc: |
-      The {@link layer4Height height} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
+    desc:
+      en-US: |
+        The {@link layer4Height height} of {@link layer4Count each flare} is multiplied by a random value between this and 1.
+      zh-CN: |
+        {@link layer4Count 每个光晕}的 {@link layer4Height 高度} 乘以该值和 1 之间的随机值。
     see:
       - layer4Count
       - layer4UniformScale
@@ -474,8 +684,11 @@ properties:
   layer4UniformScale:
     field: bool
     default: false
-    desc: |
-      When enabled, the {@link layer4Width layer's width} also controls the {@link layer4Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+    desc:
+      en-US: |
+        When enabled, the {@link layer4Width layer's width} also controls the {@link layer4Height height}, and the height property is ignored. The same is also true for the scale variation fields.
+      zh-CN: |
+        启用时，{@link layer4Width 层的宽度} 也控制 {@link layer4Height 高度}，高度属性被忽略。缩放变化字段也是如此。
     see:
       - layer4Width
       - layer4Height
@@ -486,29 +699,44 @@ properties:
     components: 4
     default: [1, 1, 1, 1]
     color: true
-    desc: |
-      Multiplier for the {@link layer4Color layer's color}.
+    desc:
+      en-US: |
+        Multiplier for the {@link layer4Color layer's color}.
 
-      Values in this are unrestricted and can go above 1.
+        Values in this are unrestricted and can go above 1.
+      zh-CN: |
+        {@link layer4Color 层的颜色} 的乘数。
+
+        此处的数值不设限，可以超过 1。
     see:
       - layer4Color
   layer4Reflection:
     field: int
     enum: ReflectionMode
     default: ReflectionMode.None
-    desc: |
-      Controls how the offset vector is calculated for {@link layer4}. See {@link ReflectionMode} for more details.
+    desc:
+      en-US: |
+        Controls how the offset vector is calculated for {@link layer4}. See {@link ReflectionMode} for more details.
+      zh-CN: |
+        控制如何计算 {@link layer4} 的偏移向量。有关更多详细信息，请参阅 {@link ReflectionMode}。
     see:
       - layer4Offset
       - layer4OffsetVariation
   layer4Offset:
     field: float
-    desc: |
-      Controls where the lens flare(s) from {@link layer4} will appear on the screen relative to the source and the center of the screen.
+    desc:
+      en-US: |
+        Controls where the lens flare(s) from {@link layer4} will appear on the screen relative to the source and the center of the screen.
 
-      This is basically a scalar multiplier for the {@link layer4Reflection offset vector}.
+        This is basically a scalar multiplier for the {@link layer4Reflection offset vector}.
 
-      This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        控制来自 {@link layer4} 的镜头光晕相对于源和屏幕中心在屏幕上显示的位置。
+
+        这基本上是 {@link layer4Reflection 偏移向量} 的标量乘数。
+
+        这要求 {@link layer4Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer4Reflection
       - layer4OffsetVariation
@@ -516,10 +744,15 @@ properties:
   layer4OffsetVariation:
     field: float
     default: 1
-    desc: |
-      For {@link layer4Count each flare} of {@link layer4}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer4Offset} to get the final offset for the flare.
+    desc:
+      en-US: |
+        For {@link layer4Count each flare} of {@link layer4}, a random number is picked between this value and 1, and this random number is then multiplied with {@link layer4Offset} to get the final offset for the flare.
 
-      This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
+        This requires {@link layer4Reflection} to not be set to {@link ReflectionMode.None}.
+      zh-CN: |
+        对于 {@link layer4} 的 {@link layer4Count 每个光晕}，在此值和 1 之间选取一个随机数，然后将此随机数与 {@link layer4Offset} 相乘以获得光晕的最终偏移。
+
+        这要求 {@link layer4Reflection} 不设置为 {@link ReflectionMode.None}。
     see:
       - layer4Reflection
       - layer4Offset
@@ -527,11 +760,18 @@ properties:
     field: float
     default: -1
     desc:
-      This controls the radius of a sphere around the source for {@link layer4}. {@link layer4Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer4Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
+      en-US: |
+        This controls the radius of a sphere around the source for {@link layer4}. {@link layer4Count Each flare} has its own radius, which calculated by dividing this radius by the absolute value of the flare's {@link layer4Offset offset}. If the center of the screen is not within the projection of this sphere on the screen, the flare will not be visible, and it fades out gradually as the center of the screen moves from within the sphere to outside it.
 
-      In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
+        In other words, this fades out flares based on their offset and the distance from the source to the center of the screen, which means it's harder to see flares farther away from the source, and if the source is far away from the center of the screen.
 
-      Can be set to -1 to disable this limit and always display the flare(s).
+        Can be set to -1 to disable this limit and always display the flare(s).
+      zh-CN: |
+        控制 {@link layer4} 围绕源的球体半径。{@link layer4Count 每个光晕} 都有其自己的半径，该半径是通过将此半径除以光晕的 {@link layer4Offset 偏移} 的绝对值来计算的。如果屏幕中心不在该球体在屏幕上的投影内，则光晕不可见，并且随着屏幕中心从球体内移出到球体外，光晕会逐渐淡出。
+
+        换句话说，这基于光晕的偏移以及源到屏幕中心的距离来淡出光晕，这意味着离源越远的光晕越难看到，而且如果源离屏幕中心很远也更难看到。
+
+        可以设置为 -1 以禁用此限制并始终显示光晕。
     see:
       - layer4Reflection
       - layer4Offset
@@ -542,10 +782,15 @@ properties:
   bloom:
     field: bool
     default: false
-    desc: |
-      When enabled, this allows the lens flare to have a bloom effect.
+    desc:
+      en-US: |
+        When enabled, this allows the lens flare to have a bloom effect.
 
-      Does not seem to work in Sekiro.
+        Does not seem to work in Sekiro.
+      zh-CN: |
+        如果启用，允许镜头光晕具有泛光效果。
+
+        在《只狼》中似乎无效。
     see:
       - layer1BloomColor
       - layer2BloomColor
@@ -556,8 +801,11 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-       The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+    desc:
+      en-US: |
+         The bloom color for layer 1. This is multiplied with the {@link layer1Color layer's color} to get the final color for the bloom.
+      zh-CN: |
+        第 1 层的泛光颜色。这与 {@link layer1Color 层的颜色} 相乘，以获得泛光的最终颜色。
     see:
       - bloom
       - layer1Color
@@ -566,8 +814,11 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-      The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+    desc:
+      en-US: |
+        The bloom color for layer 2. This is multiplied with the {@link layer2Color layer's color} to get the final color for the bloom.
+      zh-CN: |
+        第 2 层的泛光颜色。这与 {@link layer2Color 层的颜色} 相乘，以获得泛光的最终颜色。
     see:
       - bloom
       - layer2Color
@@ -576,8 +827,11 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-      The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+    desc:
+      en-US: |
+        The bloom color for layer 3. This is multiplied with the {@link layer3Color layer's color} to get the final color for the bloom.
+      zh-CN: |
+        第 3 层的泛光颜色。这与 {@link layer3Color 层的颜色} 相乘，以获得泛光的最终颜色。
     see:
       - bloom
       - layer3Color
@@ -586,8 +840,11 @@ properties:
     components: 4
     default: [1, 1, 1, 0]
     color: true
-    desc: |
-      The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+    desc:
+      en-US: |
+        The bloom color for layer 4. This is multiplied with the {@link layer4Color layer's color} to get the final color for the bloom.
+      zh-CN: |
+        第 4 层的泛光颜色。这与 {@link layer4Color 层的颜色} 相乘，以获得泛光的最终颜色。
     see:
       - bloom
       - layer4Color

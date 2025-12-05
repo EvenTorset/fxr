@@ -4,34 +4,55 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Controls the volume used to detect whether or not the node is inside a force volume.
+desc:
+    en-US: |
+      Defines a volume used to detect whether or not the node is inside a force volume.
 
-  The name of this action is based on Elden Ring's RTTI, where it's called "CollisionFieldArea".
+      The name is from Elden Ring's RTTI, where it is named "GXCollisionFieldAreaAppearance".
+    zh-CN: |
+      定义一个用于检测节点是否在力场体积内的体积。
+
+      该名称来自《艾尔登法环》的 RTTI，其中名为“GXCollisionFieldAreaAppearance”。
 properties:
   shape:
     type: ForceVolumeShape
     field: int
     enum: ForceVolumeShape
     default: ForceVolumeShape.Sphere
-    desc: |
-      The shape of the volume.
+    desc:
+      en-US: |
+        The shape of the volume.
 
-      Each shape has different fields controlling the size of the volume:
-      | Shape | Fields |
-      |-|-|
-      | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
-      | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
-      | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
-      | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
+        Each shape has different fields controlling the size of the volume:
+        | Shape | Fields |
+        |-|-|
+        | {@link ForceVolumeShape.Boundless Boundless} | *n/a* |
+        | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} |
+        | {@link ForceVolumeShape.Box Box} | {@link boxSize} |
+        | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} |
 
-      **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
+        **Note**: The {@link ForceVolumeShape.SquarePrism SquarePrism} shape is not valid for this action.
+      zh-CN: |
+        体积的形状。
+
+        每种形状都有不同的字段控制体积的大小：
+        | 形状 | 字段 |
+        |-|-|
+        | {@link ForceVolumeShape.Boundless Boundless 无限} | *不适用* |
+        | {@link ForceVolumeShape.Sphere Sphere 球体} | {@link sphereRadius} |
+        | {@link ForceVolumeShape.Box Box 长方体} | {@link boxSize} |
+        | {@link ForceVolumeShape.Cylinder Cylinder 圆柱体} | {@link cylinderHeight}, {@link cylinderRadius} |
+
+        **注意**：{@link ForceVolumeShape.SquarePrism SquarePrism 四棱柱} 形状对此行为无效。
   sphereRadius:
     field: float
     default: 10
     scale: true
-    desc: |
-      The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+    desc:
+      en-US: |
+        The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Sphere 球体}体积的半径。
     see:
       - shape
   boxSize:
@@ -39,23 +60,32 @@ properties:
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      The size of the {@link ForceVolumeShape.Box box} volume.
+    desc:
+      en-US: |
+        The size of the {@link ForceVolumeShape.Box box} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Box 长方体}体积的大小。
     see:
       - shape
   cylinderHeight:
     field: float
     scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+    desc:
+      en-US: |
+        The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Cylinder 圆柱体}体积的高度。
     see:
       - shape
       - cylinderRadius
   cylinderRadius:
     field: float
     scale: true
-    desc: |
-      The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+    desc:
+      en-US: |
+        The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Cylinder 圆柱体}体积的半径。
     see:
       - shape
       - cylinderHeight

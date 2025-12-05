@@ -4,8 +4,11 @@ slot: Unknown10100
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Unknown root node action.
+desc:
+  en-US: |
+    Unknown root node action.
+  zh-CN: |
+    未知根节点行为。
 properties:
   unk_ds3_f1_0:
     field: int
@@ -18,8 +21,11 @@ properties:
   unk_ds3_f1_3:
     field: int
     default: 1
-    desc: |
-      Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
+    desc:
+      en-US: |
+        Unknown integer. The only known thing about this field is that setting it to 0 stops action 10300 from doing anything.
+      zh-CN: |
+        未知整数。关于此字段唯一已知的是将其设置为 0 会阻止行为 10300 产生任何效果。
   unk_ds3_f1_4:
     field: int
   unk_ds3_f1_5:

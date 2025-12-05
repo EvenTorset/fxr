@@ -1,0 +1,37 @@
+unknown.field:
+  en-US: "Unknown {fieldType}."
+  zh-CN: "未知 {fieldType}。"
+unknown.section10:
+  en-US: Unknown section10.
+  zh-CN: 未知 section10。
+unknown.property:
+  en-US: "Unknown {tensorType} property."
+  zh-CN: "未知 {tensorType} 属性。"
+
+fieldType:
+  en-US:
+    bool: boolean
+    int: integer
+    float: float
+    vec2: vector2
+    vec3: vector3
+    vec4: vector4
+  zh-CN:
+    bool: 布尔值
+    int: 整数
+    float: 浮点数
+    vec2: 二维向量
+    vec3: 三维向量
+    vec4: 四维向量
+
+tensorType:
+  en-US:
+    - scalar
+    - vector2
+    - vector3
+    - vector4
+  zh-CN:
+    - 标量
+    - 二维向量
+    - 三维向量
+    - 四维向量

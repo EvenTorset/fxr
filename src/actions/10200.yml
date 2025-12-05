@@ -4,36 +4,59 @@ slot: Appearance
 meta:
   isAppearance: true
   isParticle: false
-desc: |
-  Cancels all forces in a volume. This includes wind from weather, and forces from the following actions:
-  - {@link ActionType.WindForce WindForce}
-  - {@link ActionType.GravityForce GravityForce}
-  - {@link ActionType.TurbulenceForce TurbulenceForce}
-
-  The name of this action is based on Elden Ring's RTTI, where it's called "ForceFieldCancelArea".
+desc:
+    en-US: |
+      Defines a volume that cancels all other SFX forces. This includes wind from weather, and forces from the following actions:
+      - {@link WindForce}
+      - {@link GravityForce}
+      - {@link TurbulenceForce}
+    
+      The name is from Elden Ring's RTTI, where it is named "GXForceFieldCancelAreaAppearance".
+    zh-CN: |
+      定义一个用于取消所有其他 SFX 力的体积。这包括来自天气的风力以及以下行为产生的力：
+      - {@link WindForce}
+      - {@link GravityForce}
+      - {@link TurbulenceForce}
+    
+      该名称源自艾尔登法环的 RTTI，其中它被命名为 "GXForceFieldCancelAreaAppearance"。
 properties:
   shape:
     type: ForceVolumeShape
     field: int
     enum: ForceVolumeShape
     default: ForceVolumeShape.Sphere
-    desc: |
-      The shape of the volume.
+    desc:
+      en-US: |
+        The shape of the volume.
 
-      Each shape has different fields controlling the size of the volume:
-      | Shape | Fields | Origin |
-      |-|-|-|
-      | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
-      | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
-      | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
-      | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
-      | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+        Each shape has different fields controlling the size of the volume:
+        | Shape | Fields | Origin |
+        |-|-|-|
+        | {@link ForceVolumeShape.Boundless Boundless} | *n/a* | *n/a* |
+        | {@link ForceVolumeShape.Sphere Sphere} | {@link sphereRadius} | Center of the sphere |
+        | {@link ForceVolumeShape.Box Box} | {@link boxSize} | Center of the box |
+        | {@link ForceVolumeShape.Cylinder Cylinder} | {@link cylinderHeight}, {@link cylinderRadius} | Center of the cylinder |
+        | {@link ForceVolumeShape.SquarePrism SquarePrism} | {@link squarePrismHeight}, {@link squarePrismApothem} | Center of the base of the prism |
+      zh-CN: |
+        体积的形状。
+
+        每种形状都有不同的字段控制体积的大小：
+        | 形状 | 字段 | 原点 |
+        |-|-|-|
+        | {@link ForceVolumeShape.Boundless Boundless (无限)} | *不适用* | *不适用* |
+        | {@link ForceVolumeShape.Sphere Sphere 球体} | {@link sphereRadius} | 球体中心 |
+        | {@link ForceVolumeShape.Box Box 长方体} | {@link boxSize} | 长方体中心 |
+        | {@link ForceVolumeShape.Cylinder Cylinder 圆柱体} | {@link cylinderHeight}, {@link cylinderRadius} | 圆柱体中心 |
+        | {@link ForceVolumeShape.SquarePrism SquarePrism 四棱柱} | {@link squarePrismHeight}, {@link squarePrismApothem} | 棱柱底面中心 |
   sphereRadius:
     field: float
     default: 10
     scale: true
-    desc: |
-      The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+    desc:
+      en-US: |
+        The radius of the {@link ForceVolumeShape.Sphere sphere} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Sphere 球体}体积的半径。
     see:
       - shape
   boxSize:
@@ -41,39 +64,54 @@ properties:
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      The size of the {@link ForceVolumeShape.Box box} volume.
+    desc:
+      en-US: |
+        The size of the {@link ForceVolumeShape.Box box} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Box 长方体}体积的大小。
     see:
       - shape
   cylinderHeight:
     field: float
     scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+    desc:
+      en-US: |
+        The height of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Cylinder 圆柱体}体积的高度。
     see:
       - shape
       - cylinderRadius
   cylinderRadius:
     field: float
     scale: true
-    desc: |
-      The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+    desc:
+      en-US: |
+        The radius of the {@link ForceVolumeShape.Cylinder cylinder} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.Cylinder 圆柱体}体积的半径。
     see:
       - shape
       - cylinderHeight
   squarePrismHeight:
     field: float
     scale: true
-    desc: |
-      The height of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+    desc:
+      en-US: |
+        The height of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.SquarePrism 四棱柱}体积的高度。
     see:
       - shape
       - squarePrismApothem
   squarePrismApothem:
     field: float
     scale: true
-    desc: |
-      The apothem of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+    desc:
+      en-US: |
+        The apothem of the {@link ForceVolumeShape.SquarePrism square prism} volume.
+      zh-CN: |
+        {@link ForceVolumeShape.SquarePrism 四棱柱}体积的边心距。
     see:
       - shape
       - squarePrismHeight

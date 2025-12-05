@@ -4,8 +4,11 @@ slot: NodeMovement
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
+desc:
+  en-US: |
+    Translates the node using a property, meaning it can be animated. This can be useful if you need the node to follow a specific path.
+  zh-CN: |
+    使用属性来平移节点，意味着它可以被动画化。如果需要节点沿着特定路径移动，这很有用。
 properties:
   translation:
     type: Vector3Value
@@ -13,12 +16,18 @@ properties:
     default: [0, 0, 0]
     argument: ActiveTime
     scale: true
-    desc: |
-      An offset for the position of the node.
+    desc:
+      en-US: |
+        An offset for the position of the node.
+      zh-CN: |
+        节点位置的偏移量。
   alignWithMotion:
     field: int
-    desc: |
-      When set to 1, this makes the node align with the direction it's moving. There are cases of this being set to 2 in vanilla, and it seems to behave similarly to when it is set to 0, so this is not a boolean. The actual differences between 0 and 2 are unknown.
+    desc:
+      en-US: |
+        When set to 1, this makes the node align with the direction it's moving. There are cases of this being set to 2 in vanilla, and it seems to behave similarly to when it is set to 0, so this is not a boolean. The actual differences between 0 and 2 are unknown.
+      zh-CN: |
+        当设置为 1 时，使节点与移动方向对齐。原版游戏中有设置为 2 的情况，其表现似乎与设置为 0 时相似，因此这不是一个布尔值。0 和 2 之间的实际差异未知。
 games:
   DS3:
     properties1:

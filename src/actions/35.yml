@@ -4,26 +4,39 @@ slot: NodeTransform
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Controls the translation and rotation of a node.
+desc:
+  en-US: |
+    Controls the translation and rotation of a node.
+  zh-CN: |
+    控制节点的平移和旋转。
 properties:
   offset:
     field: vec3
     components: 3
     default: [0, 0, 0]
     scale: true
-    desc: |
-      Translation of the node.
+    desc:
+      en-US: |
+        Translation of the node.
 
-      This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+        This translation happens after all {@link rotation rotations}, meaning the rotations will not affect the translation.
+      zh-CN: |
+        节点的平移。
+
+        此平移发生在所有 {@link rotation 旋转}之后，意味着旋转不会影响平移。
   rotation:
     field: vec3
     components: 3
     default: [0, 0, 0]
-    desc: |
-      The rotation of the node.
+    desc:
+      en-US: |
+        The rotation of the node.
 
-      The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
+        The order the rotations happen in is Z -> X -> Y, and the translation from {@link offset} happens after all rotations.
+      zh-CN: |
+        节点的旋转。
+
+        旋转顺序为 Z -> X -> Y，且 {@link offset} 的平移发生在所有旋转之后。
 games:
   DS3:
     fields1:

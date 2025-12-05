@@ -4,31 +4,45 @@ slot: Emitter
 meta:
   isAppearance: false
   isParticle: false
-desc: |
-  Emits particles once it has moved a certain distance from where it last emitted particles.
+desc:
+  en-US: |
+    Emits particles once it has moved a certain distance from where it last emitted particles.
+  zh-CN: |
+    当发射器移动了距离上次发射位置一定距离后发射粒子。
 properties:
   threshold:
     type: ScalarValue
     default: 0.1
     argument: ActiveTime
     scale: true
-    desc: |
-      How much the emitter must move to trigger emission.
+    desc:
+      en-US: |
+        How much the emitter must move to trigger emission.
+      zh-CN: |
+        触发发射需要移动的距离。
   totalEmissions:
     type: ScalarValue
     default: -1
     argument: ActiveTime
-    desc: |
-      The total number of emissions. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
+    desc:
+      en-US: |
+        The total number of emissions. Once this limit is reached, the branch will be *removed from the effect*. The node and all of its descendants will be destroyed, and there are no ways to re-enable them without respawning the entire effect as they no longer exist.
 
-      Can be set to `-1` to disable the limit.
+        Can be set to `-1` to disable the limit.
+      zh-CN: |
+        总发射次数。一旦达到此限制，该分支将*从效果中移除*。该节点及其所有后代将被销毁，除非重新生成整个效果，否则无法重新启用它们，因为它们已不复存在。
+
+        可以设置为 `-1` 以禁用限制。
   maxConcurrent:
     type: ScalarValue
     field: int
     default: -1
     argument: ActiveTime
-    desc: |
-      Maximum number of concurrent emitted particles or nodes. Can be set to `-1` to disable the limit.
+    desc:
+      en-US: |
+        Maximum number of concurrent emitted particles or nodes. Can be set to `-1` to disable the limit.
+      zh-CN: |
+        同时存在的发射粒子或节点的最大数量。可以设置为 `-1` 以禁用限制。
   unk_ds3_p1_1:
     type: ScalarValue
     default: 1

@@ -10,5 +10,8 @@ inGames:
   - ER
   - AC6
   - NR
-desc: |
-  Emits one particle once.
+desc:
+  en-US: |
+    Emits one particle once.
+  zh-CN: |
+    发射单个粒子。
