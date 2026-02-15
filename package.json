@@ -48,14 +48,14 @@
   },
   "homepage": "https://fxr-docs.pages.dev/",
   "devDependencies": {
-    "@types/node": "^25.0.2",
-    "cheerio": "^1.1.2",
+    "@types/node": "^25.2.3",
+    "cheerio": "^1.2.0",
     "chokidar": "^5.0.0",
     "fabulous-json": "^1.0.3",
     "npm-run-all2": "^8.0.4",
-    "typedoc": "^0.28.9",
-    "typedoc-github-theme": "^0.3.0",
-    "typescript": "^5.9.2",
-    "yaml": "^2.8.1"
+    "typedoc": "^0.28.17",
+    "typedoc-github-theme": "^0.3.1",
+    "typescript": "^5.9.3",
+    "yaml": "^2.8.2"
   }
 }
