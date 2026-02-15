@@ -11453,7 +11453,7 @@ class GenericNode extends Node {
       configs: this.configs.map(config => config.serialize(options)),
       nodes: this.nodes.map(node => node.serialize(options)),
     }
-    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 1) {
+    if (serializeFilter('nodeList', options?.filter) && obj.nodes.length === 0) {
       delete obj.nodes
     }
     return obj
