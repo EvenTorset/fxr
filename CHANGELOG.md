@@ -1,5 +1,10 @@
 # Changelog
 
+## [v31.0.1](https://github.com/EvenTorset/fxr/compare/v31.0.0...v31.0.1) - 2026-02-15
+
+### Bug fixes
+- Fixed serialization of generic nodes with a single child node removing the child nodes list if the seralization options filters empty node lists. This also fixes the node list not being filtered in the same situation if the node does not have any child nodes.
+
 ## [v31.0.0](https://github.com/EvenTorset/fxr/compare/v30.0.0...v31.0.0) - 2025-12-05
 
 ### Breaking Changes
