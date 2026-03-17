@@ -5,6 +5,9 @@
 ### Breaking changes
 - Replaced the `alignWithMotion` field for all node movement actions that have it (except `NodeTranslation`) with a new unknown field for Dark Souls 3. In DS3, this field seems to just prevent the positional motion from the action for some reason. Splitting it into two different fields like this allows converted effects from later games to still work correctly in DS3. The `alignWithMotion` field has also been renamed to `unkAlignWithMotion` (including in `NodeTranslation`) to properly convey that how it works is still mostly unknown.
 
+### Improvements
+- `RichModel` actions will now automatically be converted to similar `Model` actions when writing an FXR file for Dark Souls 3 or Sekiro.
+
 ## [v31.0.1](https://github.com/EvenTorset/fxr/compare/v31.0.0...v31.0.1) - 2026-02-15
 
 ### Bug fixes

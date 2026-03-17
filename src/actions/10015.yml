@@ -884,6 +884,8 @@ properties:
     default: []
     s10: true
 games:
+  DS3: fallback
+  SDT: fallback
   ER:
     fields1:
       - orientation

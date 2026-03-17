@@ -5574,6 +5574,8 @@ const ActionData: Record<string, ActionDataEntry> = {
       unk_nr_s10_3: { default: [], s10: 1 },
     },
     games: {
+      [Game.DarkSouls3]: -2,
+      [Game.Sekiro]: -2,
       [Game.EldenRing]: {
         fields1: ['orientation','scaleVariationX','scaleVariationY','scaleVariationZ','uniformScale','unk_er_f1_5','unk_er_f1_6','dither','unk_er_f1_8','unk_er_f1_9','anibnd','animation','loopAnimation','animationSpeed','unk_er_f1_14','unk_er_f1_15','unk_er_f1_16','unk_er_f1_17','unk_er_f1_18','unk_er_f1_19','unk_er_f1_20','unk_er_f1_21','unk_er_f1_22','unkBlendMode','unk_er_f1_24','unk_er_f1_25'],
         fields2: ['unk_er_f2_0','unk_er_f2_1','unk_er_f2_2','unk_er_f2_3','bloomColor','unk_er_f2_8','unk_er_f2_9','unk_er_f2_10','unk_er_f2_11','unk_er_f2_12','unk_er_f2_13','minFadeDistance','minDistance','maxFadeDistance','maxDistance','minDistanceThreshold','maxDistanceThreshold','unk_er_f2_20','unk_er_f2_21','unk_er_f2_22','unk_er_f2_23','unk_er_f2_24','unkDepthBlend1','unkDepthBlend2','unk_er_f2_27','unk_er_f2_28','unk_er_f2_29','unk_er_f2_30','unk_er_f2_31','unk_er_f2_32','unk_er_f2_33','unk_er_f2_34','unk_er_f2_35','unk_er_f2_36','unk_er_f2_37'],
@@ -9326,6 +9328,71 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
         ;[props.speedMultiplierU, props.speedMultiplierV] = separateComponents(props.speedMultiplierUV)
       }
       return props
+    },
+    fallback(action: RichModel, game: Game) {
+      const offsetUV = separateComponents(action.offsetUV)
+      const speedMultUV = separateComponents(action.speedMultiplierUV)
+      const speedUV = separateComponents(action.speedUV)
+      function convertOrientation(orientation: RichModelOrientationMode): ModelOrientationMode {
+        switch (orientation) {
+          case RichModelOrientationMode.CameraPlane: return ModelOrientationMode.CameraPlane
+          case RichModelOrientationMode.GlobalYaw: return ModelOrientationMode.GlobalYaw
+          case RichModelOrientationMode.North: return ModelOrientationMode.North
+          case RichModelOrientationMode.ParticleDirection: return ModelOrientationMode.ParticleDirection
+          case RichModelOrientationMode.UnkNorth: return ModelOrientationMode.North
+          default: return ModelOrientationMode.ParticleDirection
+        }
+      }
+      return new Model({
+        alphaMultiplier: action.alphaMultiplier,
+        angularSpeedMultiplierX: action.angularSpeedMultiplierX,
+        angularSpeedMultiplierY: action.angularSpeedMultiplierY,
+        angularSpeedMultiplierZ: action.angularSpeedMultiplierZ,
+        angularSpeedX: action.angularSpeedX,
+        angularSpeedY: action.angularSpeedY,
+        angularSpeedZ: action.angularSpeedZ,
+        anibnd: action.anibnd,
+        animation: action.animation,
+        animationSpeed: action.animationSpeed,
+        bloomColor: action.bloomColor,
+        color1: action.color1,
+        color2: action.color2,
+        color3: action.color3,
+        loopAnimation: action.loopAnimation,
+        maxDistance: action.maxDistance,
+        maxDistanceThreshold: action.maxDistanceThreshold,
+        maxFadeDistance: action.maxFadeDistance,
+        model: action.model,
+        minDistance: action.minDistance,
+        minDistanceThreshold: action.minDistanceThreshold,
+        minFadeDistance: action.minFadeDistance,
+        offsetU: offsetUV[0],
+        offsetV: offsetUV[1],
+        orientation: convertOrientation(action.orientation),
+        rgbMultiplier: anyValueMult(action.rgbMultiplier, action.rgbMultiplier2),
+        rotationX: action.rotationX,
+        rotationY: action.rotationY,
+        rotationZ: action.rotationZ,
+        scaleVariationX: action.scaleVariationX,
+        scaleVariationY: action.scaleVariationY,
+        scaleVariationZ: action.scaleVariationZ,
+        sizeX: action.sizeX,
+        sizeY: action.sizeY,
+        sizeZ: action.sizeZ,
+        speedMultiplierU: speedMultUV[0],
+        speedMultiplierV: speedMultUV[1],
+        speedU: speedUV[0],
+        speedV: speedUV[1],
+        uniformScale: action.uniformScale,
+        unkDepthBlend1: action.unkDepthBlend1,
+        unkDepthBlend2: action.unkDepthBlend2,
+        unk_ds3_f1_9: action.unk_er_f1_8,
+        unk_ds3_f1_10: action.unk_er_f1_9,
+        unk_ds3_f2_0: action.unk_er_f2_0,
+        unk_ds3_f2_1: action.unk_er_f2_1,
+        unk_ds3_f2_2: action.unk_er_f2_2,
+        unk_ds3_f2_3: action.unk_er_f2_3,
+      }).toAction(game)
     }
   },
   [ActionType.GPUStandardParticle]: {
