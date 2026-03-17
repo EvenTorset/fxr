@@ -51,7 +51,11 @@ properties:
         控制节点沿其 Y 轴的加速度。
   unk_ds3_f1_0:
     field: int
-  alignWithMotion:
+  unk_ds3_f1_1:
+    field: int
+    desc: |
+      This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+  unkAlignWithMotion:
     field: int
     desc:
       en-US: |
@@ -64,14 +68,23 @@ games:
   DS3:
     fields1:
       - unk_ds3_f1_0
-      - alignWithMotion
+      - unk_ds3_f1_1
       - unk_ds3_f1_2
     properties1:
       - speedZ
       - accelerationZ
       - accelerationMultiplierZ
       - accelerationY
-  SDT: DS3
-  ER: DS3
-  AC6: DS3
-  NR: DS3
+  SDT:
+    fields1:
+      - unk_ds3_f1_0
+      - unkAlignWithMotion
+      - unk_ds3_f1_2
+    properties1:
+      - speedZ
+      - accelerationZ
+      - accelerationMultiplierZ
+      - accelerationY
+  ER: SDT
+  AC6: SDT
+  NR: SDT

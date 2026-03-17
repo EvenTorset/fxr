@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v31.0.1...HEAD)
+
+### Breaking changes
+- Replaced the `alignWithMotion` field for all node movement actions that have it (except `NodeTranslation`) with a new unknown field for Dark Souls 3. In DS3, this field seems to just prevent the positional motion from the action for some reason. Splitting it into two different fields like this allows converted effects from later games to still work correctly in DS3. The `alignWithMotion` field has also been renamed to `unkAlignWithMotion` (including in `NodeTranslation`) to properly convey that how it works is still mostly unknown.
+
 ## [v31.0.1](https://github.com/EvenTorset/fxr/compare/v31.0.0...v31.0.1) - 2026-02-15
 
 ### Bug fixes
@@ -7,7 +12,7 @@
 
 ## [v31.0.0](https://github.com/EvenTorset/fxr/compare/v30.0.0...v31.0.0) - 2025-12-05
 
-### Breaking Changes
+### Breaking changes
 - The return type of the `getActiveConfig` methods on `LevelsOfDetailNode`, `BasicNode`, and `NodeEmitterNode` now match their respective config lists. For example, the method in `BasicNode` now returns `BasicConfig | null` instead of `IConfig | null`. This is not a functional change, only the type was changed to be more accurate.
 - To support localization, all descriptions in `actions.json` are now objects instead of strings. The keys of these objects are BCP 47 language tags. All of the English description strings are now in the `en-US` property of these description objects.
 
@@ -21,13 +26,13 @@
 
 ## [v30.0.0](https://github.com/EvenTorset/fxr/compare/v29.0.0...v30.0.0) - 2025-11-01
 
-### Breaking Changes
+### Breaking changes
 A previously unknown field of `BillboardEx`, `MultiTextureBillboardEx`, `LegacyTracer`, and `Tracer` was figured out since the last update, and has now been renamed and documented. Its default value is now `false`, which is the opposite of the previous default. To update scripts to this version without changing the output, make sure to set `premultiplyAlpha` to `true` when constructing any of these four actions.
 - `unk_ds3_f2_27` -> `premultiplyAlpha`
 
 ## [v29.0.0](https://github.com/EvenTorset/fxr/compare/v28.0.1...v29.0.0) - 2025-09-26
 
-### Breaking Changes
+### Breaking changes
 #### Distortion
 Two previously unknown properties of this action were figured out since the last update, and has now been renamed and documented.
 - `unk_er_p2_7` -> `normalMapScaleU`

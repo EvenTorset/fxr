@@ -61,7 +61,11 @@ properties:
         控制节点在未附着时跟随父节点的程度。0 为完全不跟随。1 为完全跟随（如同附着到父节点）。负值使节点向父节点相反的方向移动。大于 1 的值使节点夸大父节点的移动。
     see:
       - followRotation
-  alignWithMotion:
+  unk_ds3_f1_0:
+    field: int
+    desc: |
+      This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+  unkAlignWithMotion:
     field: int
     desc:
       en-US: |
@@ -90,7 +94,7 @@ properties:
 games:
   DS3:
     fields1:
-      - alignWithMotion
+      - unk_ds3_f1_0
       - unk_ds3_f1_1
       - turnInterval
       - followRotation
@@ -100,7 +104,18 @@ games:
       - accelerationY
       - maxTurnAngle
       - followFactor
-  SDT: DS3
-  ER: DS3
-  AC6: DS3
-  NR: DS3
+  SDT:
+    fields1:
+      - unkAlignWithMotion
+      - unk_ds3_f1_1
+      - turnInterval
+      - followRotation
+    properties1:
+      - speedZ
+      - speedMultiplierZ
+      - accelerationY
+      - maxTurnAngle
+      - followFactor
+  ER: SDT
+  AC6: SDT
+  NR: SDT

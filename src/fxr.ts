@@ -2253,18 +2253,22 @@ const ActionData: Record<string, ActionDataEntry> = {
       accelerationMultiplierZ: { default: 1 },
       accelerationY: { default: 0, scale: 1, time: 4 },
       unk_ds3_f1_0: { default: 0, field: 1 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_1: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_2: { default: 0, field: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','alignWithMotion','unk_ds3_f1_2'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_0','unkAlignWithMotion','unk_ds3_f1_2'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeTranslation]: {
@@ -2273,7 +2277,7 @@ const ActionData: Record<string, ActionDataEntry> = {
     slotDefault: false,
     props: {
       translation: { default: [0, 0, 0], scale: 1 },
-      alignWithMotion: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
@@ -2281,7 +2285,7 @@ const ActionData: Record<string, ActionDataEntry> = {
       },
       [Game.Sekiro]: Game.DarkSouls3,
       [Game.EldenRing]: {
-        fields1: ['alignWithMotion'],
+        fields1: ['unkAlignWithMotion'],
         properties1: Game.DarkSouls3
       },
       [Game.ArmoredCore6]: Game.EldenRing,
@@ -2507,19 +2511,23 @@ const ActionData: Record<string, ActionDataEntry> = {
       accelerationMultiplierZ: { default: 1 },
       accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_0: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 2 },
       turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.ParticleAccelerationRandomTurns]: {
@@ -2581,20 +2589,24 @@ const ActionData: Record<string, ActionDataEntry> = {
       accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_0: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
       turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval','followRotation'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle','followFactor']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle','followFactor']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeAccelerationSpin]: {
@@ -2614,18 +2626,22 @@ const ActionData: Record<string, ActionDataEntry> = {
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_2: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_3: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','alignWithMotion','unk_ds3_f1_3'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unkAlignWithMotion','unk_ds3_f1_3'],
+        properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeSpeed]: {
@@ -2637,18 +2653,22 @@ const ActionData: Record<string, ActionDataEntry> = {
       speedMultiplierZ: { default: 1 },
       accelerationY: { default: 0, scale: 1, time: 4 },
       unk_ds3_f1_0: { default: 0, field: 1 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_1: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_2: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','alignWithMotion','unk_ds3_f1_2'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_0','unkAlignWithMotion','unk_ds3_f1_2'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeSpeedRandomTurns]: {
@@ -2660,19 +2680,23 @@ const ActionData: Record<string, ActionDataEntry> = {
       speedMultiplierZ: { default: 1 },
       accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_0: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
       turnInterval: { default: 0, field: 1, time: 2 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeSpeedPartialFollow]: {
@@ -2685,20 +2709,24 @@ const ActionData: Record<string, ActionDataEntry> = {
       accelerationY: { default: 0, scale: 1, time: 4 },
       maxTurnAngle: { default: 0 },
       followFactor: { default: 0 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_0: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
       turnInterval: { default: 0, field: 1, time: 2 },
       followRotation: { default: true, field: 0 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['alignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval','followRotation'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle','followFactor']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle','followFactor']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeSpeedSpin]: {
@@ -2717,18 +2745,22 @@ const ActionData: Record<string, ActionDataEntry> = {
       angularSpeedMultiplierZ: { default: 1 },
       unk_ds3_f1_0: { default: 0, field: 1 },
       unk_ds3_f1_1: { default: 0, field: 1 },
-      alignWithMotion: { default: 0, field: 1 },
+      unk_ds3_f1_2: { default: 0, field: 1 },
+      unkAlignWithMotion: { default: 0, field: 1 },
       unk_ds3_f1_3: { default: 0, field: 1 },
     },
     games: {
       [Game.DarkSouls3]: {
-        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','alignWithMotion','unk_ds3_f1_3'],
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
-      [Game.Sekiro]: Game.DarkSouls3,
-      [Game.EldenRing]: Game.DarkSouls3,
-      [Game.ArmoredCore6]: Game.DarkSouls3,
-      [Game.Nightreign]: Game.DarkSouls3
+      [Game.Sekiro]: {
+        fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unkAlignWithMotion','unk_ds3_f1_3'],
+        properties1: ['speedZ','speedMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
+      },
+      [Game.EldenRing]: Game.Sekiro,
+      [Game.ArmoredCore6]: Game.Sekiro,
+      [Game.Nightreign]: Game.Sekiro
     }
   },
   [ActionType.NodeAttributes]: {
@@ -13601,11 +13633,17 @@ class NodeAcceleration extends DataAction {
    */
   unk_ds3_f1_0: number
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown float.
    * 
@@ -13639,7 +13677,7 @@ class NodeTranslation extends DataAction {
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   constructor(props: Partial<Props<NodeTranslation>> = {}) {
     super(ActionType.NodeTranslation)
     this.assign(props)
@@ -14177,11 +14215,17 @@ class NodeAccelerationRandomTurns extends DataAction {
    */
   maxTurnAngle: ScalarValue
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown float.
    * 
@@ -14410,11 +14454,17 @@ class NodeAccelerationPartialFollow extends DataAction {
    */
   followFactor: ScalarValue
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown integer.
    * 
@@ -14549,11 +14599,17 @@ class NodeAccelerationSpin extends DataAction {
    */
   unk_ds3_f1_1: number
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown integer.
    * 
@@ -14605,11 +14661,17 @@ class NodeSpeed extends DataAction {
    */
   unk_ds3_f1_0: number
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_1: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown integer.
    * 
@@ -14663,11 +14725,17 @@ class NodeSpeedRandomTurns extends DataAction {
    */
   maxTurnAngle: ScalarValue
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown integer.
    * 
@@ -14740,11 +14808,17 @@ class NodeSpeedPartialFollow extends DataAction {
    */
   followFactor: ScalarValue
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_0: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown integer.
    * 
@@ -14871,11 +14945,17 @@ class NodeSpeedSpin extends DataAction {
    */
   unk_ds3_f1_1: number
   /**
+   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * 
+   * **Default**: `0`
+   */
+  unk_ds3_f1_2: number
+  /**
    * When set to 1, this makes the node align with the direction it's moving, which also disables the angular speed from this action. Setting it to higher values seems to do the same as setting it to 0, which means it's probably not a boolean, but what those values do exactly is unknown.
    * 
    * **Default**: `0`
    */
-  alignWithMotion: number
+  unkAlignWithMotion: number
   /**
    * Unknown integer.
    * 
