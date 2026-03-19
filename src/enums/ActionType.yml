@@ -15,3 +15,7 @@ members:
     value: 10010
     desc: |
       Unknown action that *may* exist in Dark Souls 3. It is not used in vanilla, but its name and ID have been found in the game's executable.
+  Unk20000_GPUBillboard:
+    value: 20000
+    desc: |
+      Unknown action that exists in Elden Ring and possibly other games. It is not used in vanilla, but its name and ID have been found in the game's executable. Its structure is currently entirely unknown.

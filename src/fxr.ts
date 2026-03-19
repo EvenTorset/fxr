@@ -85,6 +85,10 @@ export enum ActionType {
    */
   Unk10010_Tracer = 10010,
   /**
+   * Unknown action that exists in Elden Ring and possibly other games. It is not used in vanilla, but its name and ID have been found in the game's executable. Its structure is currently entirely unknown.
+   */
+  Unk20000_GPUBillboard = 20000,
+  /**
    * ### Action 1 - NodeAcceleration
    * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
    * - **Class**: {@link NodeAcceleration}
@@ -1577,18 +1581,18 @@ namespace ExternalValue {
 }
 
 enum Operator {
-  NotEqual = 0,
-  Equal = 1,
-  GreaterThanOrEqual = 2,
-  GreaterThan = 3,
+  Equal = 0,
+  NotEqual = 1,
+  LessThan = 2,
+  LessThanOrEqual = 3,
 
   /*
     These two are not part of the format. The StateCondition class will just
-    switch the operands around and use the greater than operators automatically
+    switch the operands around and use the less than operators automatically
     when these are used.
   */
-  LessThanOrEqual = 4,
-  LessThan = 5,
+  GreaterThan = 4,
+  GreaterThanOrEqual = 5,
 }
 
 enum OperandType {
@@ -6567,7 +6571,7 @@ function writeActionFields(action: Action, bw: BinaryWriter, index: number): num
 function readDataAction(
   br: BinaryReader,
   gameData: FilledActionGameDataEntry,
-  type: ActionType,
+  type: Exclude<ActionType, 0 | 10002 | 10010 | 20000>,
   fieldCount1: number,
   propertyCount1: number,
   fieldCount2: number,
@@ -6651,9 +6655,9 @@ function readDataAction(
     params = ActionDataConversion[type].read(params, game)
   }
   if (Object.keys(adt.props).length === 1) {
-    return new DataActions[type](Object.values(params)[0])
+    return new (DataActions as any)[type](Object.values(params)[0])
   }
-  return new DataActions[type](params)
+  return new (DataActions as any)[type](params)
 }
 
 function writeDataAction(action: DataAction, bw: BinaryWriter, game: Game, actions: AnyAction[]) {
@@ -7107,7 +7111,7 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
   }
   br.stepOut()
   if (br.game === Game.Generic) {
-    const fields = readFieldsAt(br, fieldOffset, fieldCount, this)
+    const fields = readFieldsAt(br, fieldOffset, fieldCount, null)
     return new GenericModifier(modifierType, valueType, fields, properties)
   } else switch (modifierType) {
     case ModifierType.RandomDelta: {
@@ -7118,7 +7122,7 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
         ...arrayOf(valueType + 1, () => FieldType.Float),
-      ], this) as NumericalField[]
+      ], null) as NumericalField[]
       if (valueType === ValueType.Scalar) {
         return new RandomDeltaModifier(fields[1].value, fields[0].value)
       }
@@ -7135,7 +7139,7 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
         ...arrayOf((valueType + 1) * 2, () => FieldType.Float),
-      ], this) as NumericalField[]
+      ], null) as NumericalField[]
       if (valueType === ValueType.Scalar) {
         return new RandomRangeModifier(fields[1].value, fields[2].value, fields[0].value)
       }
@@ -7153,7 +7157,7 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
       const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [
         ...arrayOf(valueType + 1, () => FieldType.Integer),
         ...arrayOf(valueType + 1, () => FieldType.Float),
-      ], this) as NumericalField[]
+      ], null) as NumericalField[]
       if (valueType === ValueType.Scalar) {
         return new RandomFractionModifier(fields[1].value, fields[0].value)
       }
@@ -7167,7 +7171,7 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
       if (fieldCount !== expFieldCount) {
         console.warn(`Warning: Invalid field count for ${ValueType[valueType]} ExternalValue1 modifier: ${fieldCount}, expected ${expFieldCount}.`)
       }
-      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], this) as NumericalField[]
+      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], null) as NumericalField[]
       return new ExternalValue1Modifier(fields[0].value, properties[0])
     }
     case ModifierType.ExternalValue2: {
@@ -7175,7 +7179,7 @@ function readModifier(br: BinaryReader): IModifier<Tensor> {
       if (fieldCount !== expFieldCount) {
         console.warn(`Warning: Invalid field count for ${ValueType[valueType]} ExternalValue2 modifier: ${fieldCount}, expected ${expFieldCount}.`)
       }
-      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], this) as NumericalField[]
+      const fields = readFieldsWithTypesAt(br, fieldOffset, expFieldCount, [FieldType.Integer], null) as NumericalField[]
       return new ExternalValue2Modifier(fields[0].value, properties[0])
     }
   }
@@ -7320,7 +7324,7 @@ function readStateCondition(br: BinaryReader) {
   ).sortOperands()
 }
 
-function readStateConditionOperandValue(br: BinaryReader, type: number, offset: number) {
+function readStateConditionOperandValue(br: BinaryReader, type: number, offset: number): number | null {
   switch (type) {
     case OperandType.Literal: {
       br.stepIn(offset)
@@ -7345,6 +7349,8 @@ function readStateConditionOperandValue(br: BinaryReader, type: number, offset: 
         'In most cases, this is caused by other (outdated) tools being used to modify the FXR file.'
       )
       return null
+    default:
+      throw new Error(`Unknown state condition operand type: ${type}`)
   }
 }
 
@@ -7354,7 +7360,7 @@ function writeFormattedStateCondition(con: StateCondition, bw: BinaryWriter, acc
   bw.writeUint8(0)
   bw.writeUint8(1)
   bw.writeInt32(0)
-  bw.writeInt32(con.nextState)
+  bw.writeInt32(con.state)
   bw.writeInt32(0)
   bw.writeInt16(con.leftOperandType)
   bw.writeInt8(0)
@@ -7418,7 +7424,7 @@ function writeStateConditionFields(con: StateCondition, bw: BinaryWriter, index:
 
 //#region Functions - Field
 function readField(br: BinaryReader, context: any, index: number) {
-  let field: NumericalField = null
+  let field: NumericalField | undefined
   let isInt = false
 
   if (context?.[0] in PropertyFunction) {
@@ -7438,7 +7444,7 @@ function readField(br: BinaryReader, context: any, index: number) {
     }
   }
 
-  if (field === null) {
+  if (field === undefined) {
     if (isInt) {
       field = new IntField(br.getInt32(br.position))
     } else {
@@ -8342,7 +8348,7 @@ function combineComponents<T extends Vector>(...comps: TypeMap.ComponentsOfTenso
       keyframes
     ).withModifiers(...combineModifiers())
   } else {
-    return new ConstantProperty<T>(
+    return new ValueProperty<T>(
       comps.map(c => c instanceof Property ? c.valueAt(0) : c) as T
     ).withModifiers(...combineModifiers())
   }
@@ -8915,29 +8921,29 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('gpuParticle' in palette) {
       const e = averagePaletteEntries(palette.gpuParticle)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty([1, 1, 1, 1]),
-        color1: new ConstantProperty([1, 1, 1, 1]),
-        color2: new ConstantProperty([1, 1, 1, 1]),
+        modifier: new ValueProperty([1, 1, 1, 1]),
+        color1: new ValueProperty([1, 1, 1, 1]),
+        color2: new ValueProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor ?? [1, 1, 1, 1],
-        rgbMultiplier: new ConstantProperty(e.rgbMultiplier),
+        rgbMultiplier: new ValueProperty(e.rgbMultiplier),
       }]
     } else if ('lensFlare' in palette) {
       const e = averagePaletteEntries(palette.lensFlare)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty([1, 1, 1, 1]),
-        color1: new ConstantProperty([1, 1, 1, 1]),
-        color2: new ConstantProperty([1, 1, 1, 1]),
+        modifier: new ValueProperty([1, 1, 1, 1]),
+        color1: new ValueProperty([1, 1, 1, 1]),
+        color2: new ValueProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
-        rgbMultiplier: new ConstantProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
+        rgbMultiplier: new ValueProperty(Math.max(...e.colorMultiplier.slice(0, 3))),
       }]
     } else if ('distortionParticle' in palette) {
       const e = averagePaletteEntries(palette.distortionParticle)[0]
       palette.commonParticleNormal = [{
         modifier: e.modifier,
-        color1: new ConstantProperty([1, 1, 1, 1]),
-        color2: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ValueProperty([1, 1, 1, 1]),
+        color2: new ValueProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: e.rgbMultiplier,
@@ -8946,8 +8952,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
       const e = averagePaletteEntries(palette.blurParticle)[0]
       palette.commonParticleNormal = [{
         modifier: e.modifier,
-        color1: new ConstantProperty([1, 1, 1, 1]),
-        color2: new ConstantProperty([1, 1, 1, 1]),
+        color1: new ValueProperty([1, 1, 1, 1]),
+        color2: new ValueProperty([1, 1, 1, 1]),
         color3: e.color,
         bloomColor: e.bloomColor,
         rgbMultiplier: e.rgbMultiplier,
@@ -8955,9 +8961,9 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
     } else if ('light' in palette) {
       const e = averagePaletteEntries(palette.light)[0]
       palette.commonParticleNormal = [{
-        modifier: new ConstantProperty([1, 1, 1, 1]),
-        color1: new ConstantProperty([1, 1, 1, 1]),
-        color2: new ConstantProperty([1, 1, 1, 1]),
+        modifier: new ValueProperty([1, 1, 1, 1]),
+        color1: new ValueProperty([1, 1, 1, 1]),
+        color2: new ValueProperty([1, 1, 1, 1]),
         color3: e.diffuseColor,
         bloomColor: [1, 1, 1, 0],
         rgbMultiplier: e.diffuseMultiplier,
@@ -8971,8 +8977,8 @@ function genFilledPaletteAndFunctions(inputPalette: Recolor.ColorPalette) {
   if (!('distortionParticle' in palette)) {
     avgCommonNormal ??= averagePaletteEntries(palette.commonParticleNormal)[0]
     palette.distortionParticle = [{
-      modifier: new ConstantProperty([1, 1, 1, 1]),
-      color: new ConstantProperty([1, 1, 1, 1]),
+      modifier: new ValueProperty([1, 1, 1, 1]),
+      color: new ValueProperty([1, 1, 1, 1]),
       rgbMultiplier: 1,
       bloomColor: [1, 1, 1, 0]
     }]
@@ -10170,7 +10176,15 @@ class FXR {
   ) {
     if (typeof states === 'boolean') {
       if (states) {
-        this.states = [ State.from('ext(0) < 1') ]
+        this.states = [
+          new State([
+            new StateCondition(
+              Operator.GreaterThanOrEqual, 2, -1,
+              OperandType.External, 0,
+              OperandType.Literal, 1
+            )
+          ])
+        ]
       } else {
         this.states = [ new State ]
       }
@@ -10178,7 +10192,7 @@ class FXR {
       this.states = [
         new State([
           new StateCondition(
-            Operator.LessThan, 2, -1,
+            Operator.GreaterThanOrEqual, 2, -1,
             OperandType.StateTime, null,
             OperandType.Literal, states
           )
@@ -10408,6 +10422,9 @@ class FXR {
       }
       game = this.#gameHint
     }
+    if (game === Game.Generic) {
+      throw new Error('Game.Generic is not a valid game to write the FXR for.')
+    }
     assertValidFXRID(this.id)
     const version = GameVersionMap[game]
     const bw = new BinaryWriter
@@ -10489,19 +10506,19 @@ class FXR {
           return new StateCondition(
             c.operator,
             c.unk1,
-            c.nextState,
+            c.state,
             c.leftOperandType,
             c.leftOperandValue,
             c.rightOperandType,
-            c.rightOperandValue / rateOfTime,
+            c.rightOperandValue! / rateOfTime,
           )
         } else if (c.rightOperandType === OperandType.StateTime && c.leftOperandType === OperandType.Literal) {
           return new StateCondition(
             c.operator,
             c.unk1,
-            c.nextState,
+            c.state,
             c.leftOperandType,
-            c.leftOperandValue / rateOfTime,
+            c.leftOperandValue! / rateOfTime,
             c.rightOperandType,
             c.rightOperandValue,
           )
@@ -10888,47 +10905,47 @@ class State {
 class StateCondition {
 
   /**
-   * A condition for a state. The state remains active if all of its conditions
-   * are true or if it has no conditions. If the condition is false, the state
-   * is deactivated and the next state (`nextState`) is activated.
+   * A condition for a state. If the condition is true, the state that the
+   * condition leads to will activate.
    * @param operator Controls what operation should be used for the condition.
-   * @param unk1 Unknown. Seems to always be 2 in vanilla Elden Ring. 3 seems
-   * to make the condition always true.
-   * @param nextState If the condition is false, the state at this index will
-   * be checked next. Set it to -1 to disable the sfx if the condition is
-   * false.
+   * @param unk1 Unknown. Seems to always be `2` in vanilla Elden Ring. `3`
+   * seems to make the condition always false.
+   * @param state If the condition is true, the state at this index will
+   * be checked next. If this index is -1, the effect will terminate instead.
    * @param leftOperandType Controls what type of value the operand to the left
    * of the operator should be.
    * @param leftOperandValue This does different things depending on the
    * `leftOperandType`:
-   * - {@link OperandType.Literal}: This value is the operand's value.
-   * - {@link OperandType.External}: This value refers to an external value to
-   * use as the operand's value.
-   * - {@link OperandType.UnkMinus2}: This value is ignored and should be null.
-   * - {@link OperandType.StateTime}: This value is ignored and should be null.
+   * | Operand type | Value description |
+   * |-|-|
+   * | {@link OperandType.Literal Literal} | The value is the operand's value. |
+   * | {@link OperandType.External External} | The value refers to an {@link ExternalValue external value} to use as the operand's value. |
+   * | {@link OperandType.UnkMinus2 UnkMinus2} | The value is ignored and should be `null`. |
+   * | {@link OperandType.StateTime StateTime} | The value is ignored and should be `null`. |
    * @param rightOperandType Controls what type of value the operand to the
    * right of the operator should be.
    * @param rightOperandValue This does different things depending on the
    * `rightOperandType`:
-   * - {@link OperandType.Literal}: This value is the operand's value.
-   * - {@link OperandType.External}: This value refers to an external value to
-   * use as the operand's value.
-   * - {@link OperandType.UnkMinus2}: This value is ignored and should be null.
-   * - {@link OperandType.StateTime}: This value is ignored and should be null.
+   * | Operand type | Value description |
+   * |-|-|
+   * | {@link OperandType.Literal Literal} | The value is the operand's value. |
+   * | {@link OperandType.External External} | The value refers to an {@link ExternalValue external value} to use as the operand's value. |
+   * | {@link OperandType.UnkMinus2 UnkMinus2} | The value is ignored and should be `null`. |
+   * | {@link OperandType.StateTime StateTime} | The value is ignored and should be `null`. |
    */
   constructor(
     public operator: Operator,
     public unk1: number,
-    public nextState: number,
+    public state: number,
     public leftOperandType: OperandType,
     public leftOperandValue: number | null,
     public rightOperandType: OperandType,
     public rightOperandValue: number | null,
   ) {}
 
-  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?:else(?:\sgoto)?\s+(?<else>-?\d+|none))?\s*$/i
+  static #reExpression = /^\s*(?<left>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s*(?<op>==?|<=?|>=?|!=)\s*(?<right>(?:state)?time|(?:unk)?minus2|ext(?:ernal)?\(\d+\)|-?\d+(?:\.\d+)?|-?\.\d+)\s+then\s+(?<then>-1|\d+|terminate)\s*$/i
   static #reLiteralOperand = /^-?\d+(?:\.\d+)?|-?\.\d+$/
-  static #reExternalOperand = /^[Ee]xt(?:ernal)?\((\d+)\)$/
+  static #reExternalOperand = /^ext(?:ernal)?\((\d+)\)$/i
 
   static #parseOperand(op: string) {
     switch (op.toLowerCase()) {
@@ -10949,11 +10966,13 @@ class StateCondition {
           type: OperandType.Literal,
           value: parseFloat(op)
         }
-      } else {
+      } else if (this.#reExternalOperand.test(op)) {
         return {
           type: OperandType.External,
-          value: parseInt(op.match(this.#reExternalOperand)[1])
+          value: parseInt(op.match(this.#reExternalOperand)![1])
         }
+      } else {
+        throw new Error(`Invalid state condition operand: '${op}'`)
       }
     }
   }
@@ -10961,15 +10980,15 @@ class StateCondition {
   /**
    * Parses a logical expression in a string and creates a
    * {@link StateCondition} from it.
-   * @param expression A string with a logical expression and optionally an
-   * `else` statement with a state index.
+   * @param expression A string with a logical expression and optionally a
+   * `then` statement with a state index.
    * 
    * ## Syntax:
    * ```text
-   * expression = <operand> <operator> <operand>[ else[ goto] <stateIndex>]
+   * expression = <operand> <operator> <operand> then <stateIndex>
    * operand = <number> | External(<integer>) | StateTime | UnkMinus2
-   * operator = != | == | > | >= | < | <=
-   * stateIndex = <integer> | none
+   * operator = == | != | < | <= | > | >=
+   * stateIndex = <positive integer> | -1 | terminate
    * ```
    * 
    * `External`, `StateTime`, and `UnkMinus2` are all case-insensitive and have
@@ -10983,9 +11002,9 @@ class StateCondition {
    * 
    * ## Examples:
    * ```text
-   * ext(0) > 1
-   * time < 5 else goto 2
-   * 1 != External(10000) else 1
+   * ext(0) >= 1 then -1
+   * time > 5 then 2
+   * 1 != External(10000) then terminate
    * ```
    * 
    * @returns A new {@link StateCondition} based on the expression.
@@ -10996,33 +11015,34 @@ class StateCondition {
     }
     const m = expression.match(this.#reExpression)
     if (m === null) {
-      throw new Error('Syntax error in condition expression: ' + expression)
+      throw new Error(`Syntax error in condition expression: '${expression}'`)
     }
     let op: Operator
-    switch (m.groups.op) {
-      case '!=': op = Operator.NotEqual; break;
+    switch (m.groups!.op) {
       case '=':
       case '==': op = Operator.Equal; break;
+      case '!=': op = Operator.NotEqual; break;
       case '<': op = Operator.LessThan; break;
-      case '>': op = Operator.GreaterThan; break;
       case '<=': op = Operator.LessThanOrEqual; break;
+      case '>': op = Operator.GreaterThan; break;
       case '>=': op = Operator.GreaterThanOrEqual; break;
+      default: throw new Error(`Invalid state condition operator: '${m.groups!.op}'`)
     }
-    const left = this.#parseOperand(m.groups.left)
-    const right = this.#parseOperand(m.groups.right)
-    let nextState = -1
-    if ('else' in m.groups) {
-      switch (m.groups.else) {
+    const left = this.#parseOperand(m.groups!.left)
+    const right = this.#parseOperand(m.groups!.right)
+    let state = -1
+    if ('then' in m.groups!) {
+      switch (m.groups.then) {
         case '-1':
-        case 'none':
+        case 'terminate':
         case undefined:
           break
         default:
-          nextState = parseInt(m.groups.else)
+          state = parseInt(m.groups.then)
           break
       }
     }
-    return new StateCondition(op, 2, nextState, left.type, left.value, right.type, right.value)
+    return new StateCondition(op, 2, state, left.type, left.value, right.type, right.value)
   }
 
   /**
@@ -11047,26 +11067,26 @@ class StateCondition {
       this.leftOperandValue,
     ]
     switch (this.operator) {
-      case Operator.GreaterThan: this.operator = Operator.LessThan; break;
-      case Operator.GreaterThanOrEqual: this.operator = Operator.LessThanOrEqual; break;
-      case Operator.LessThan: this.operator = Operator.GreaterThan; break;
-      case Operator.LessThanOrEqual: this.operator = Operator.GreaterThanOrEqual; break;
+      case Operator.LessThan: this.operator = Operator.GreaterThanOrEqual; break;
+      case Operator.LessThanOrEqual: this.operator = Operator.GreaterThan; break;
+      case Operator.GreaterThan: this.operator = Operator.LessThanOrEqual; break;
+      case Operator.GreaterThanOrEqual: this.operator = Operator.LessThan; break;
     }
     return this
   }
 
   /**
-   * The {@link Operator.LessThanOrEqual LessThanOrEqual} and
-   * {@link Operator.LessThan LessThan} operators are not valid operators in
-   * the FXR format. This method returns an equivalent condition that *is*
+   * The {@link Operator.GreaterThanOrEqual GreaterThanOrEqual} and
+   * {@link Operator.GreaterThan GreaterThan} operators are not valid operators
+   * in the FXR format. This method returns an equivalent condition that *is*
    * valid.
    */
   formatCondition() {
-    if (this.operator !== Operator.LessThan && this.operator !== Operator.LessThanOrEqual) {
+    if (this.operator !== Operator.GreaterThan && this.operator !== Operator.GreaterThanOrEqual) {
       return this
     }
     return new StateCondition(
-      this.operator - 2, this.unk1, this.nextState,
+      this.operator - 2, this.unk1, this.state,
       this.rightOperandType, this.rightOperandValue,
       this.leftOperandType, this.leftOperandValue
     )
@@ -11074,7 +11094,7 @@ class StateCondition {
 
   clone() {
     return new StateCondition(
-      this.operator, this.unk1, this.nextState,
+      this.operator, this.unk1, this.state,
       this.leftOperandType, this.leftOperandValue,
       this.rightOperandType, this.rightOperandValue
     )
@@ -11091,7 +11111,7 @@ class StateCondition {
         left = OperandType[this.leftOperandType]
         break
       case OperandType.Literal:
-        left = this.leftOperandValue
+        left = this.leftOperandValue!
         break
     }
     switch (this.rightOperandType) {
@@ -11103,10 +11123,17 @@ class StateCondition {
         right = OperandType[this.rightOperandType]
         break
       case OperandType.Literal:
-        right = this.rightOperandValue
+        right = this.rightOperandValue!
         break
     }
-    return `${left} ${['!=','==','>=','>','<=','<'][this.operator]} ${right} else ${this.nextState}`
+    return `${left} ${{
+      [Operator.Equal]: '==',
+      [Operator.NotEqual]: '!=',
+      [Operator.LessThan]: '<',
+      [Operator.LessThanOrEqual]: '<=',
+      [Operator.GreaterThan]: '>',
+      [Operator.GreaterThanOrEqual]: '>=',
+    }[this.operator]} ${right} then ${this.state === -1 ? 'terminate' : this.state}`
   }
 
   toString() {
@@ -11193,7 +11220,7 @@ abstract class Node {
    * @param recurse Controls whether or not to yield actions in descendant
    * nodes. Defaults to true.
    */
-  *walkActions(recurse: boolean = true) {
+  *walkActions(recurse: boolean = true): Generator<Action | DataAction, void, undefined> {
     for (const node of recurse ? this.walk() : [this]) {
       if (node instanceof GenericNode) {
         yield* node.actions
@@ -11545,7 +11572,7 @@ class GenericNode extends Node {
     const actionOptions: FXRSerializeOptions = Object.assign({}, options ?? {}, {
       requireActionDefinition: true
     })
-    const obj = {
+    const obj: any = {
       type: this.type,
       $generic: true,
       actions: this.actions.map(action => action.serialize(actionOptions)),
@@ -11619,6 +11646,8 @@ class RootNode extends Node {
           this.unk10400,
           this.unk10500
         ]
+      default:
+        throw new Error(`Cannot get actions for game: ${game} (${Game[game]})`)
     }
   }
 
@@ -11641,10 +11670,10 @@ class RootNode extends Node {
     }
     return new RootNode(
       (obj.nodes ?? []).map(node => Node.fromJSON(node)),
-      'termination' in obj ? Action.fromJSON(obj.termination) : undefined,
-      'unk10100' in obj ? Action.fromJSON(obj.unk10100) : undefined,
-      'unk10400' in obj ? Action.fromJSON(obj.unk10400) : undefined,
-      'unk10500' in obj ? Action.fromJSON(obj.unk10500) : undefined
+      'termination' in obj ? Action.fromJSON(obj.termination) as ActionSlots.TerminationAction : undefined,
+      'unk10100' in obj ? Action.fromJSON(obj.unk10100) as ActionSlots.Unknown10100Action : undefined,
+      'unk10400' in obj ? Action.fromJSON(obj.unk10400) as ActionSlots.Unknown10400Action : undefined,
+      'unk10500' in obj ? Action.fromJSON(obj.unk10500) as ActionSlots.Unknown10500Action : undefined
     )
   }
 
@@ -11770,7 +11799,7 @@ abstract class NodeWithConfigs extends Node {
   toJSON() { return this.serialize() }
 
   serialize(options?: FXRSerializeOptions): any {
-    const obj = {
+    const obj: any = {
       type: this.type,
       stateConfigMap: this.stateConfigMap,
       configs: this.configs.map(e => e.serialize(options)),
@@ -11931,7 +11960,7 @@ class BasicNode extends NodeWithConfigs {
   }
 
   getColor(opts: NodeColorOptions = {}): Vector4Property | null {
-    let colorProp: Property<Vector4, PropertyFunction> = new ConstantProperty([1, 1, 1, 1])
+    let colorProp: Property<Vector4, PropertyFunction> = new ValueProperty([1, 1, 1, 1])
     let modified = false
     const config = this.getActiveConfig(opts.activeState ?? 0)
     if (config instanceof BasicConfig) {
@@ -12105,7 +12134,7 @@ class BasicNode extends NodeWithConfigs {
         modified = true
       }
       if (!(colorProp instanceof Property)) {
-        colorProp = new ConstantProperty(colorProp as Vector4)
+        colorProp = new ValueProperty(colorProp as Vector4)
       }
     }
     if (modified) {
@@ -12309,35 +12338,35 @@ class NodeConfig implements IConfig {
         return new LevelsOfDetailConfig(Property.fromJSON<number>(obj.duration), obj.thresholds, obj.unk_ac6_f1_5)
       case ConfigType.Basic: {
         const actions: Partial<Props<BasicConfig>> = {}
-        if ('nodeAttributes' in obj) actions.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
-        if ('nodeTransform' in obj) actions.nodeTransform = Action.fromJSON(obj.nodeTransform)
-        if ('nodeMovement' in obj) actions.nodeMovement = Action.fromJSON(obj.nodeMovement)
-        if ('nodeAudio' in obj) actions.nodeAudio = Action.fromJSON(obj.nodeAudio)
-        if ('emitter' in obj) actions.emitter = Action.fromJSON(obj.emitter)
-        if ('emitterShape' in obj) actions.emitterShape = Action.fromJSON(obj.emitterShape)
-        if ('directionSpread' in obj) actions.directionSpread = Action.fromJSON(obj.directionSpread)
-        if ('particleModifier' in obj) actions.particleModifier = Action.fromJSON(obj.particleModifier)
-        if ('particleAttributes' in obj) actions.particleAttributes = Action.fromJSON(obj.particleAttributes)
-        if ('appearance' in obj) actions.appearance = Action.fromJSON(obj.appearance)
-        if ('particleMovement' in obj) actions.particleMovement = Action.fromJSON(obj.particleMovement)
-        if ('emissionAudio' in obj) actions.emissionAudio = Action.fromJSON(obj.emissionAudio)
-        if ('slot12' in obj) actions.slot12 = Action.fromJSON(obj.slot12)
-        if ('nodeForceMovement' in obj) actions.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
-        if ('particleForceMovement' in obj) actions.particleForceMovement = Action.fromJSON(obj.particleForceMovement)
+        if ('nodeAttributes' in obj) actions.nodeAttributes = Action.fromJSON(obj.nodeAttributes) as ActionSlots.NodeAttributesAction
+        if ('nodeTransform' in obj) actions.nodeTransform = Action.fromJSON(obj.nodeTransform) as ActionSlots.NodeTransformAction
+        if ('nodeMovement' in obj) actions.nodeMovement = Action.fromJSON(obj.nodeMovement) as ActionSlots.NodeMovementAction
+        if ('nodeAudio' in obj) actions.nodeAudio = Action.fromJSON(obj.nodeAudio) as ActionSlots.NodeAudioAction
+        if ('emitter' in obj) actions.emitter = Action.fromJSON(obj.emitter) as ActionSlots.EmitterAction
+        if ('emitterShape' in obj) actions.emitterShape = Action.fromJSON(obj.emitterShape) as ActionSlots.EmitterShapeAction
+        if ('directionSpread' in obj) actions.directionSpread = Action.fromJSON(obj.directionSpread) as ActionSlots.DirectionSpreadAction
+        if ('particleModifier' in obj) actions.particleModifier = Action.fromJSON(obj.particleModifier) as ActionSlots.ParticleModifierAction
+        if ('particleAttributes' in obj) actions.particleAttributes = Action.fromJSON(obj.particleAttributes) as ActionSlots.ParticleAttributesAction
+        if ('appearance' in obj) actions.appearance = Action.fromJSON(obj.appearance) as ActionSlots.AppearanceAction
+        if ('particleMovement' in obj) actions.particleMovement = Action.fromJSON(obj.particleMovement) as ActionSlots.ParticleMovementAction
+        if ('emissionAudio' in obj) actions.emissionAudio = Action.fromJSON(obj.emissionAudio) as ActionSlots.EmissionAudioAction
+        if ('slot12' in obj) actions.slot12 = Action.fromJSON(obj.slot12) as ActionSlots.Unknown130Action
+        if ('nodeForceMovement' in obj) actions.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement) as ActionSlots.NodeForceMovementAction
+        if ('particleForceMovement' in obj) actions.particleForceMovement = Action.fromJSON(obj.particleForceMovement) as ActionSlots.ParticleForceMovementAction
         return new BasicConfig(actions)
       }
       case ConfigType.NodeEmitter: {
         const actions: Partial<Props<NodeEmitterConfig>> = {}
-        if ('nodeAttributes' in obj) actions.nodeAttributes = Action.fromJSON(obj.nodeAttributes)
-        if ('nodeTransform' in obj) actions.nodeTransform = Action.fromJSON(obj.nodeTransform)
-        if ('nodeMovement' in obj) actions.nodeMovement = Action.fromJSON(obj.nodeMovement)
-        if ('nodeAudio' in obj) actions.nodeAudio = Action.fromJSON(obj.nodeAudio)
-        if ('emitter' in obj) actions.emitter = Action.fromJSON(obj.emitter)
-        if ('emitterShape' in obj) actions.emitterShape = Action.fromJSON(obj.emitterShape)
-        if ('directionSpread' in obj) actions.directionSpread = Action.fromJSON(obj.directionSpread)
-        if ('nodeSelector' in obj) actions.nodeSelector = Action.fromJSON(obj.nodeSelector)
-        if ('emissionAudio' in obj) actions.emissionAudio = Action.fromJSON(obj.emissionAudio)
-        if ('nodeForceMovement' in obj) actions.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement)
+        if ('nodeAttributes' in obj) actions.nodeAttributes = Action.fromJSON(obj.nodeAttributes) as ActionSlots.NodeAttributesAction
+        if ('nodeTransform' in obj) actions.nodeTransform = Action.fromJSON(obj.nodeTransform) as ActionSlots.NodeTransformAction
+        if ('nodeMovement' in obj) actions.nodeMovement = Action.fromJSON(obj.nodeMovement) as ActionSlots.NodeMovementAction
+        if ('nodeAudio' in obj) actions.nodeAudio = Action.fromJSON(obj.nodeAudio) as ActionSlots.NodeAudioAction
+        if ('emitter' in obj) actions.emitter = Action.fromJSON(obj.emitter) as ActionSlots.EmitterAction
+        if ('emitterShape' in obj) actions.emitterShape = Action.fromJSON(obj.emitterShape) as ActionSlots.EmitterShapeAction
+        if ('directionSpread' in obj) actions.directionSpread = Action.fromJSON(obj.directionSpread) as ActionSlots.DirectionSpreadAction
+        if ('nodeSelector' in obj) actions.nodeSelector = Action.fromJSON(obj.nodeSelector) as ActionSlots.NodeSelectorAction
+        if ('emissionAudio' in obj) actions.emissionAudio = Action.fromJSON(obj.emissionAudio) as ActionSlots.EmissionAudioAction
+        if ('nodeForceMovement' in obj) actions.nodeForceMovement = Action.fromJSON(obj.nodeForceMovement) as ActionSlots.NodeForceMovementAction
         return new NodeEmitterConfig(actions)
       }
     }
@@ -12664,7 +12693,7 @@ class BasicConfig implements IConfig {
         action.recolor(funcOrPalette, this)
       }
     } else {
-      const { palette, durationFallback, proc } = typeof __durationFallback === 'function' ? {
+      const { palette, durationFallback, proc } = typeof __durationFallback === 'function' && typeof __proc === 'function' ? {
         palette: funcOrPalette,
         durationFallback: __durationFallback,
         proc: __proc,
@@ -12976,7 +13005,7 @@ class Action implements IAction {
       if (property instanceof Property) {
         this.properties1[index] = property
       } else {
-        this.properties1[index] = new ConstantProperty(property)
+        this.properties1[index] = new ValueProperty(property)
       }
     }
     return this
@@ -12987,13 +13016,13 @@ class Action implements IAction {
       if (property instanceof Property) {
         this.properties2[index] = property
       } else {
-        this.properties2[index] = new ConstantProperty(property)
+        this.properties2[index] = new ValueProperty(property)
       }
     }
     return this
   }
 
-  static fromJSON(obj: any) {
+  static fromJSON(obj: any): AnyAction {
     if (obj === null) {
       return new Action
     }
@@ -13142,7 +13171,7 @@ class DataAction implements IAction {
     }
     if (
       serializeFilter('action', options?.filter) &&
-      !options.requireActionDefinition &&
+      !options?.requireActionDefinition &&
       ActionData[this.type].slotDefault && Object.keys(obj).length === 1
     ) {
       return undefined
@@ -13191,7 +13220,7 @@ class DataAction implements IAction {
     return (data[list] ?? []).map((name: string) => {
       const prop = ade.props[name]
       validateDataActionProp(props, name, prop)
-      return props[name] instanceof Property ? props[name].for(game) : new ConstantProperty(props[name]).for(game)
+      return props[name] instanceof Property ? props[name].for(game) : new ValueProperty(props[name]).for(game)
     })
   }
 
@@ -33444,15 +33473,15 @@ class ValueProperty<T extends Tensor>
   ): ValueProperty<T> {
     switch (func) {
       case PropertyFunction.Zero:
-        return new ConstantProperty((valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0)) as T).withModifiers(
+        return new ValueProperty((valueType === ValueType.Scalar ? 0 : Array(valueType + 1).fill(0)) as T).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.One:
-        return new ConstantProperty((valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1)) as T).withModifiers(
+        return new ValueProperty((valueType === ValueType.Scalar ? 1 : Array(valueType + 1).fill(1)) as T).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       case PropertyFunction.Constant:
-        return new ConstantProperty(valueType === ValueType.Scalar ? fieldValues[0] : fieldValues as Vector).withModifiers(
+        return new ValueProperty(valueType === ValueType.Scalar ? fieldValues[0] : fieldValues as Vector).withModifiers(
           ...modifiers
         ) as unknown as ValueProperty<T>
       default:
@@ -33463,13 +33492,13 @@ class ValueProperty<T extends Tensor>
   static fromJSON<T extends Tensor>(obj: {
     value: T
     modifiers?: any[]
-  } | T): ConstantProperty<T> {
+  } | T): ValueProperty<T> {
     if (Array.isArray(obj)) {
-      return new ConstantProperty(obj as unknown as T)
+      return new ValueProperty<T>(obj as unknown as T)
     } else if (typeof obj === 'number') {
-      return new ConstantProperty(obj as T)
+      return new ValueProperty<T>(obj as T)
     }
-    return new ConstantProperty<T>(obj.value as T).withModifiers(
+    return new ValueProperty<T>(obj.value as T).withModifiers(
       ...(obj.modifiers ?? []).map(e => Modifier.fromJSON(e) as IModifier<T>)
     )
   }
@@ -33525,7 +33554,7 @@ class ValueProperty<T extends Tensor>
       return [this.clone() as ValueProperty<number>]
     } else {
       const mods = this.modifiers.map(e => e.separateComponents())
-      return (this.value as Vector).map((e, i) => new ConstantProperty(e).withModifiers(
+      return (this.value as Vector).map((e, i) => new ValueProperty(e).withModifiers(
         ...mods.map(comps => comps[i]).filter(Modifier.isEffective)
       ))
     }
@@ -33871,7 +33900,7 @@ class SequenceProperty<T extends Tensor, F extends SequencePropertyFunction>
   minify(): Property<T, PropertyFunction> {
     const mods = this.modifiers.map(mod => mod.minify()).filter(Modifier.isEffective)
     if (this.keyframes.length === 1 || this.keyframes.slice(1).every(kf => Keyframe.equal(this.keyframes[0], kf))) {
-      return new ConstantProperty<T>(this.keyframes[0].value).withModifiers(...mods)
+      return new ValueProperty<T>(this.keyframes[0].value).withModifiers(...mods)
     }
     const clone = this.clone()
     clone.modifiers = mods
@@ -34128,7 +34157,7 @@ class ComponentSequenceProperty<T extends Tensor>
         c.keyframes.slice(1).every(kf => Keyframe.equal(c.keyframes[0], kf))
       )
     ) {
-      return new ConstantProperty<T>(
+      return new ValueProperty<T>(
         this.valueType === ValueType.Scalar ?
           this.components[0].keyframes[0].value as T :
           this.components.map(c => c.keyframes[0].value) as T
@@ -34483,7 +34512,7 @@ function RandomDeltaProperty<T extends Tensor>(
   devation: T,
   seed?: T
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(mean).withModifiers(
+  return new ValueProperty<T>(mean).withModifiers(
     new RandomDeltaModifier(devation, seed)
   )
 }
@@ -34505,7 +34534,7 @@ function RandomRangeProperty<T extends Tensor>(
   maxValue: T,
   seed?: T
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(
+  return new ValueProperty<T>(
     (Array.isArray(minValue) ? Array(minValue.length).fill(0) as Vector : 0) as T
   ).withModifiers(
     new RandomRangeModifier(minValue, maxValue, seed)
@@ -34529,7 +34558,7 @@ function RandomFractionProperty<T extends Tensor>(
   devationFract: T,
   seed?: T
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>(mean).withModifiers(
+  return new ValueProperty<T>(mean).withModifiers(
     new RandomFractionModifier(devationFract, seed)
   )
 }
@@ -34571,7 +34600,7 @@ function BloodVisibilityProperty<T extends Tensor>(
   mildValue: T,
   offValue: T
 ): ConstantProperty<T> {
-  return new ConstantProperty<T>((typeof onValue === 'number' ? 1 : onValue.map(() => 1)) as T, [
+  return new ValueProperty<T>((typeof onValue === 'number' ? 1 : onValue.map(() => 1)) as T, [
     BloodVisibilityModifier(onValue, mildValue, offValue)
   ])
 }

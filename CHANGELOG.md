@@ -3,6 +3,15 @@
 ## [Unreleased](https://github.com/EvenTorset/fxr/compare/v31.0.1...HEAD)
 
 ### Breaking changes
+- State conditions have been reworked. States now have a list of conditions that, when true, will cause the effect to transition to a new state. This is effectively just flipping the operators, but the condition expression string syntax has also been updated:
+  - The old optional `goto` keyword is no longer valid.
+  - The `else` keyword has been replaced with `then`.
+  - The `none` state keyword has been replaced with `terminate`.
+  - The target state index is no longer optional, meaning the expression must end with `then <state index>`.
+  - Negative state indices other than `-1` are now invalid.
+  - These changes ensure that it's impossible for an out-of-date expression to still be valid, which means any attempt to use out-of-date expressions will error instead of silently producing conditions that behave in unintended ways due to the operators flipping.
+
+  On top of this, the way the library turns conditions into expression strings has been modified to use `terminate` instead of `-1` for the state index, making a lot of common conditions more readable.
 - Replaced the `alignWithMotion` field for all node movement actions that have it (except `NodeTranslation`) with a new unknown field for Dark Souls 3. In DS3, this field seems to just prevent the positional motion from the action for some reason. Splitting it into two different fields like this allows converted effects from later games to still work correctly in DS3. The `alignWithMotion` field has also been renamed to `unkAlignWithMotion` (including in `NodeTranslation`) to properly convey that how it works is still mostly unknown.
 
 ### Improvements
