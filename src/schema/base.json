@@ -20,7 +20,7 @@
     "StateCondition": {
       "$id": "#StateCondition",
       "type": "string",
-      "pattern": "^\\s*(?<left>(?:[Ss][Tt][Aa][Tt][Ee])?[Tt][Ii][Mm][Ee]|(?:[Uu][Nn][Kk])?[Mm][Ii][Nn][Uu][Ss]2|[Ee][Xx][Tt](?:[Ee][Rr][Nn][Aa][Ll])?\\(\\d+\\)|-?\\d+(?:\\.\\d+)?|-?\\.\\d+)\\s*(?<op>==?|<=?|>=?|!=)\\s*(?<right>(?:[Ss][Tt][Aa][Tt][Ee])?[Tt][Ii][Mm][Ee]|(?:[Uu][Nn][Kk])?[Mm][Ii][Nn][Uu][Ss]2|[Ee][Xx][Tt](?:[Ee][Rr][Nn][Aa][Ll])?\\(\\d+\\)|-?\\d+(?:\\.\\d+)?|-?\\.\\d+)\\s*(?:[Ee][Ll][Ss][Ee](?:\\s[Gg][Oo][Tt][Oo])?\\s+(?<else>-?\\d+|[Nn][Oo][Nn][Ee]))?\\s*$"
+      "pattern": "^\\s*(?<left>(?:[Ss][Tt][Aa][Tt][Ee])?[Tt][Ii][Mm][Ee]|(?:[Uu][Nn][Kk])?[Mm][Ii][Nn][Uu][Ss]2|[Ee][Xx][Tt](?:[Ee][Rr][Nn][Aa][Ll])?\\(\\d+\\)|-?\\d+(?:\\.\\d+)?|-?\\.\\d+)\\s*(?<op>==?|<=?|>=?|!=)\\s*(?<right>(?:[Ss][Tt][Aa][Tt][Ee])?[Tt][Ii][Mm][Ee]|(?:[Uu][Nn][Kk])?[Mm][Ii][Nn][Uu][Ss]2|[Ee][Xx][Tt](?:[Ee][Rr][Nn][Aa][Ll])?\\(\\d+\\)|-?\\d+(?:\\.\\d+)?|-?\\.\\d+)\\s*[Tt][Hh][Ee][Nn]\\s+(?<then>-1|\\d+|[Tt][Ee][Rr][Mm][Ii][Nn][Aa][Tt][Ee])\\s*$"
     },
 
     "State": {

@@ -1,6 +1,12 @@
 # Changelog
 
-## [v32.0.0](https://github.com/EvenTorset/fxr/compare/v31.0.1...v32.0.0)
+## [v32.0.1](https://github.com/EvenTorset/fxr/compare/v32.0.0...v32.0.1) - 2026-03-29
+
+### Bug fixes
+- Fixed the operand sorting for state conditions causing the wrong operator to be used.
+- Fixed the JSON schema using an outdated pattern for state condition expression strings.
+
+## [v32.0.0](https://github.com/EvenTorset/fxr/compare/v31.0.1...v32.0.0) - 2026-03-29
 
 ### Breaking changes
 - State conditions have been reworked. States now have a list of conditions that, when true, will cause the effect to transition to a new state. This is effectively just flipping the operators, but the condition expression string syntax has also been updated:

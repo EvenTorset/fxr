@@ -11067,10 +11067,10 @@ class StateCondition {
       this.leftOperandValue,
     ]
     switch (this.operator) {
-      case Operator.LessThan: this.operator = Operator.GreaterThanOrEqual; break;
-      case Operator.LessThanOrEqual: this.operator = Operator.GreaterThan; break;
-      case Operator.GreaterThan: this.operator = Operator.LessThanOrEqual; break;
-      case Operator.GreaterThanOrEqual: this.operator = Operator.LessThan; break;
+      case Operator.LessThan: this.operator = Operator.GreaterThan; break;
+      case Operator.LessThanOrEqual: this.operator = Operator.GreaterThanOrEqual; break;
+      case Operator.GreaterThan: this.operator = Operator.LessThan; break;
+      case Operator.GreaterThanOrEqual: this.operator = Operator.LessThanOrEqual; break;
     }
     return this
   }
