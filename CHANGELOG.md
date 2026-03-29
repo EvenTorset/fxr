@@ -3,6 +3,7 @@
 ## [v32.0.1](https://github.com/EvenTorset/fxr/compare/v32.0.0...v32.0.1)
 
 ### Bug fixes
+- Fixed the operand sorting for state conditions causing the wrong operator to be used.
 - Fixed the JSON schema using an outdated pattern for state condition expression strings.
 
 ## [v32.0.0](https://github.com/EvenTorset/fxr/compare/v31.0.1...v32.0.0)
