@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/EvenTorset/fxr/compare/v31.0.1...HEAD)
+## [v32.0.0](https://github.com/EvenTorset/fxr/compare/v31.0.1...v32.0.0)
 
 ### Breaking changes
 - State conditions have been reworked. States now have a list of conditions that, when true, will cause the effect to transition to a new state. This is effectively just flipping the operators, but the condition expression string syntax has also been updated:
