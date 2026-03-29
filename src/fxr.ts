@@ -2266,13 +2266,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','unkAlignWithMotion','unk_ds3_f1_2'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeTranslation]: {
@@ -2525,13 +2525,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.ParticleAccelerationRandomTurns]: {
@@ -2604,13 +2604,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval','followRotation'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle','followFactor']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','maxTurnAngle','followFactor']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeAccelerationSpin]: {
@@ -2639,13 +2639,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unkAlignWithMotion','unk_ds3_f1_3'],
         properties1: ['speedZ','accelerationZ','accelerationMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeSpeed]: {
@@ -2666,13 +2666,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','unkAlignWithMotion','unk_ds3_f1_2'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeSpeedRandomTurns]: {
@@ -2694,13 +2694,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeSpeedPartialFollow]: {
@@ -2724,13 +2724,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','turnInterval','followRotation'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle','followFactor']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unkAlignWithMotion','unk_ds3_f1_1','turnInterval','followRotation'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','maxTurnAngle','followFactor']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeSpeedSpin]: {
@@ -2758,13 +2758,13 @@ const ActionData: Record<string, ActionDataEntry> = {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unk_ds3_f1_2','unk_ds3_f1_3'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
-      [Game.Sekiro]: {
+      [Game.Sekiro]: Game.DarkSouls3,
+      [Game.EldenRing]: {
         fields1: ['unk_ds3_f1_0','unk_ds3_f1_1','unkAlignWithMotion','unk_ds3_f1_3'],
         properties1: ['speedZ','speedMultiplierZ','accelerationY','angularSpeedX','angularSpeedMultiplierX','angularSpeedY','angularSpeedMultiplierY','angularSpeedZ','angularSpeedMultiplierZ']
       },
-      [Game.EldenRing]: Game.Sekiro,
-      [Game.ArmoredCore6]: Game.Sekiro,
-      [Game.Nightreign]: Game.Sekiro
+      [Game.ArmoredCore6]: Game.EldenRing,
+      [Game.Nightreign]: Game.EldenRing
     }
   },
   [ActionType.NodeAttributes]: {
@@ -13729,7 +13729,7 @@ class NodeAcceleration extends DataAction {
    */
   unk_ds3_f1_0: number
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */
@@ -14311,7 +14311,7 @@ class NodeAccelerationRandomTurns extends DataAction {
    */
   maxTurnAngle: ScalarValue
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */
@@ -14550,7 +14550,7 @@ class NodeAccelerationPartialFollow extends DataAction {
    */
   followFactor: ScalarValue
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */
@@ -14695,7 +14695,7 @@ class NodeAccelerationSpin extends DataAction {
    */
   unk_ds3_f1_1: number
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */
@@ -14757,7 +14757,7 @@ class NodeSpeed extends DataAction {
    */
   unk_ds3_f1_0: number
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */
@@ -14821,7 +14821,7 @@ class NodeSpeedRandomTurns extends DataAction {
    */
   maxTurnAngle: ScalarValue
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */
@@ -14904,7 +14904,7 @@ class NodeSpeedPartialFollow extends DataAction {
    */
   followFactor: ScalarValue
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */
@@ -15041,7 +15041,7 @@ class NodeSpeedSpin extends DataAction {
    */
   unk_ds3_f1_1: number
   /**
-   * This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+   * This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
    * 
    * **Default**: `0`
    */

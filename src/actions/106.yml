@@ -76,7 +76,7 @@ properties:
   unk_ds3_f1_0:
     field: int
     desc: |
-      This is replaces {@link unkAlignWithMotion} in DS3 only. When set to 1, this seems to just stop the positional motion from this action entirely.
+      This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
   unkAlignWithMotion:
     field: int
     desc:
@@ -117,7 +117,8 @@ games:
       - accelerationY
       - maxTurnAngle
       - followFactor
-  SDT:
+  SDT: DS3
+  ER:
     fields1:
       - unkAlignWithMotion
       - unk_ds3_f1_1
@@ -130,6 +131,5 @@ games:
       - accelerationY
       - maxTurnAngle
       - followFactor
-  ER: SDT
-  AC6: SDT
-  NR: SDT
+  AC6: ER
+  NR: ER

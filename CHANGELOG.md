@@ -11,11 +11,12 @@
   - Negative state indices other than `-1` are now invalid.
   - These changes ensure that it's impossible for an out-of-date expression to still be valid, which means any attempt to use out-of-date expressions will error instead of silently producing conditions that behave in unintended ways due to the operators flipping.
 
-  On top of this, the way the library turns conditions into expression strings has been modified to use `terminate` instead of `-1` for the state index, making a lot of common conditions more readable.
-- Replaced the `alignWithMotion` field for all node movement actions that have it (except `NodeTranslation`) with a new unknown field for Dark Souls 3. In DS3, this field seems to just prevent the positional motion from the action for some reason. Splitting it into two different fields like this allows converted effects from later games to still work correctly in DS3. The `alignWithMotion` field has also been renamed to `unkAlignWithMotion` (including in `NodeTranslation`) to properly convey that how it works is still mostly unknown.
+  On top of this, the way the library turns conditions into expression strings has been modified to use `terminate` instead of `-1` for the state index, making a lot of common conditions more readable. The index can still be set to `-1`, and that is still the actual value for it, `terminate` is just an alias.
+- Replaced the `alignWithMotion` field for all node movement actions that have it (except `NodeTranslation`) with a new unknown field for Dark Souls 3 and Sekiro. In those games, this field seems to just prevent the positional motion from the action for some reason. Splitting it into two different fields like this allows converted effects from later games to still work correctly in DS3. The `alignWithMotion` field has also been renamed to `unkAlignWithMotion` (including in `NodeTranslation`) to properly convey that how it works is still mostly unknown.
+- The package no longer has an `esm` directory. The previous contents of this directory (`fxr.js`, `fxr.d.ts`, and `fxr.js.map`) are now in the root directory of the package. This change should only affect you if you access the directory itself or any of the previously contained files directly for some reason.
 
 ### Improvements
-- `RichModel` actions will now automatically be converted to similar `Model` actions when writing an FXR file for Dark Souls 3 or Sekiro.
+- `RichModel` actions will now automatically be converted to similar `Model` actions when writing an FXR file for Dark Souls 3 or Sekiro. This should make most conversions from later games of effects that contain models trivial. Note that Nightreign's `RichModel` still has lots of new functionality that can't be converted, and all of this will simply be silently ignored when converting from that game.
 
 ## [v31.0.1](https://github.com/EvenTorset/fxr/compare/v31.0.0...v31.0.1) - 2026-02-15
 
