@@ -76,11 +76,12 @@ function bladeCap(position) {
 
 const fxr = new FXR(1, [
   // This effect uses states to enable the steam when it's raining or snowing
-  // State 0, no rain/snow
-  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 0 else 1`),
+  // State 0, no rain/snow, the condition checks for rain/snow and goes to the
+  // other state if needed
+  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 1 then 1`),
 
   // State 1, rain/snow
-  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 1 else 0`),
+  State.from(`ext(${ExternalValue.EldenRing.Precipitation}) == 0 then 0`),
 ], [
   new BasicNode([
     // This is used to position the entire effect

@@ -47,7 +47,11 @@ properties:
         The node will turn a random amount based on this value at intervals defined by {@link turnInterval}.
       zh-CN: |
         节点将根据 {@link turnInterval} 定义的间隔，基于此值随机转向一定角度。
-  alignWithMotion:
+  unk_ds3_f1_0:
+    field: int
+    desc: |
+      This is replaces {@link unkAlignWithMotion} in DS3 and Sekiro only. When set to 1, this seems to just stop the positional motion from this action entirely.
+  unkAlignWithMotion:
     field: int
     desc:
       en-US: |
@@ -68,7 +72,7 @@ properties:
 games:
   DS3:
     fields1:
-      - alignWithMotion
+      - unk_ds3_f1_0
       - unk_ds3_f1_1
       - turnInterval
     properties1:
@@ -77,6 +81,15 @@ games:
       - accelerationY
       - maxTurnAngle
   SDT: DS3
-  ER: DS3
-  AC6: DS3
-  NR: DS3
+  ER:
+    fields1:
+      - unkAlignWithMotion
+      - unk_ds3_f1_1
+      - turnInterval
+    properties1:
+      - speedZ
+      - speedMultiplierZ
+      - accelerationY
+      - maxTurnAngle
+  AC6: ER
+  NR: ER

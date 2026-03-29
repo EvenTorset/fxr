@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig-build.json",
   "compilerOptions": {
-    "target": "ES2023",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "rootDir": "./src"
   },
   "files": ["src/fxr.ts"],
   "typedocOptions": {
