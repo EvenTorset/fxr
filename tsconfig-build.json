@@ -7,7 +7,8 @@
     "target": "ES2023",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "dist/esm"
+    "outDir": "dist/esm",
+    "strict": false
   },
   "files": ["dist/fxr.ts"]
 }
