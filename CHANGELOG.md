@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased](https://github.com/EvenTorset/fxr/compare/v32.0.1...HEAD)
+
+### Bug fixes
+- Component sequence properties being converted to equivalent sequence properties in Nightreign. They are now written as-is, since Nightreign *does* have support for them.
+
 ## [v32.0.1](https://github.com/EvenTorset/fxr/compare/v32.0.0...v32.0.1) - 2026-03-29
 
 ### Bug fixes

@@ -6411,7 +6411,11 @@ function writeProperty(
   properties: IProperty<any, any>[],
   isModifierProp: boolean
 ) {
-  if (game !== Game.ArmoredCore6 && prop instanceof ComponentSequenceProperty) {
+  if (prop instanceof ComponentSequenceProperty && [
+    Game.DarkSouls3,
+    Game.Sekiro,
+    Game.EldenRing,
+  ].includes(game)) {
     prop = prop.combineComponents()
   }
   const count = properties.length
