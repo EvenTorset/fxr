@@ -16289,7 +16289,7 @@ class PointSprite extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -16776,7 +16776,7 @@ class Line extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -17284,7 +17284,7 @@ class QuadLine extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -18059,7 +18059,7 @@ class BillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -19013,7 +19013,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -19897,7 +19897,7 @@ class Model extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -20539,7 +20539,7 @@ class LegacyTracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -21189,7 +21189,7 @@ class Distortion extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -21669,7 +21669,7 @@ class RadialBlur extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -23747,7 +23747,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -25179,7 +25179,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -26449,7 +26449,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -27449,7 +27449,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -28121,7 +28121,7 @@ class Tracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -30246,7 +30246,7 @@ class RichModel extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
