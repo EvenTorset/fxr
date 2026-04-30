@@ -9180,11 +9180,7 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
         this.rotationVariance.every(e => e === 0)
       ) {
         return ActionDataConversion[ActionType.StaticNodeTransform].minify.call(
-          new StaticNodeTransform(this).assign({
-            // For some reason, StaticNodeTransform flips the X rotation, but
-            // this one doesn't, even though the X offset is flipped in both.
-            rotation: [-this.rotation[0], this.rotation[1], this.rotation[2]]
-          })
+          new StaticNodeTransform(this)
         )
       }
       return this
@@ -32577,7 +32573,7 @@ class Unk10500 extends DataAction {
    * 
    * Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
    * 
-   * In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
+   * In Dark Souls 3, Sekiro, Elden Ring, and Nightreign, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
    * 
    * **Default**: `0`
    */

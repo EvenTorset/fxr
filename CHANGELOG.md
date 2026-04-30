@@ -5,6 +5,7 @@
 ### Bug fixes
 - Component sequence properties being converted to equivalent sequence properties in Nightreign. They are now written as-is, since Nightreign *does* have support for them.
 - Fixed the description for the `maxFadeDistance` property in many of the appearance actions saying that the max distance limit can be turned off by setting it and **`minDistance`** to `-1`. It now correctly says `maxDistance`.
+- Fixed `RandomNodeTransform`'s `minify` method flpping the X rotation when converting the action into a `StaticNodeTransform`.
 
 ## [v32.0.1](https://github.com/EvenTorset/fxr/compare/v32.0.0...v32.0.1) - 2026-03-29
 
