@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased](https://github.com/EvenTorset/fxr/compare/v32.0.1...HEAD)
+## [v32.1.0](https://github.com/EvenTorset/fxr/compare/v32.0.1...v32.1.0) - 2026-05-25
 
 ### Improvements
 - Added support for Action 11, which is still entirely unknown.
