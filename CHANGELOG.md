@@ -1,5 +1,10 @@
 # Changelog
 
+## [v32.1.1](https://github.com/EvenTorset/fxr/compare/v32.1.0...v32.1.1) - 2026-05-25
+
+### Bug fixes
+- Fixed Action 11 not fitting into the `nodeMovement` slot in `BasicConfig` and `NodeEmitterConfig`.
+
 ## [v32.1.0](https://github.com/EvenTorset/fxr/compare/v32.0.1...v32.1.0) - 2026-05-25
 
 ### Improvements
