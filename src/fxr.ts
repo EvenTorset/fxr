@@ -97,6 +97,14 @@ export enum ActionType {
    */
   NodeAcceleration = 1,
   /**
+   * ### Action 11 - Unk11
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link Unk11}
+   * 
+   * Unknown.
+   */
+  Unk11 = 11,
+  /**
    * ### Action 15 - NodeTranslation
    * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
    * - **Class**: {@link NodeTranslation}
@@ -2079,6 +2087,7 @@ export namespace ActionSlots {
 
   export type NodeMovementAction =
     | NodeAcceleration
+    | Unk11
     | NodeTranslation
     | NodeSpin
     | NodeAttachToCamera
@@ -2274,6 +2283,11 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.ArmoredCore6]: Game.EldenRing,
       [Game.Nightreign]: Game.EldenRing
     }
+  },
+  [ActionType.Unk11]: {
+    isAppearance: false,
+    isParticle: false,
+    slotDefault: false
   },
   [ActionType.NodeTranslation]: {
     isAppearance: false,
@@ -13749,6 +13763,20 @@ class NodeAcceleration extends DataAction {
   constructor(props: Partial<Props<NodeAcceleration>> = {}) {
     super(ActionType.NodeAcceleration)
     this.assign(props)
+  }
+}
+
+/**
+ * ### {@link ActionType.Unk11 Action 11 - Unk11}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Unknown.
+ */
+class Unk11 extends DataAction {
+  declare readonly type: ActionType.Unk11
+  
+  constructor() {
+    super(ActionType.Unk11)
   }
 }
 
@@ -32979,6 +33007,7 @@ class SpotLight extends DataAction {
 const DataActions = {
   /*#ActionsList start*/
   [ActionType.NodeAcceleration]: NodeAcceleration, NodeAcceleration,
+  [ActionType.Unk11]: Unk11, Unk11,
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeSpin]: NodeSpin, NodeSpin,
   [ActionType.StaticNodeTransform]: StaticNodeTransform, StaticNodeTransform,
@@ -36864,6 +36893,7 @@ export {
   ParticleMovement,
   /*#ActionsExport start*/
   NodeAcceleration,
+  Unk11,
   NodeTranslation,
   NodeSpin,
   StaticNodeTransform,

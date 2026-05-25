@@ -1,0 +1,14 @@
+type: 11
+name: Unk11
+slot: NodeMovement
+meta:
+  isAppearance: false
+  isParticle: false
+inGames:
+  - DS3
+  - SDT
+  - ER
+  - AC6
+  - NR
+desc:
+  Unknown.
