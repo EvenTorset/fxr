@@ -1108,11 +1108,11 @@ properties:
       en-US: |
         This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
 
-        This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+        This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
       zh-CN: |
         控制粒子不透明度开始在 {@link maxDistance 最大视图距离} 附近衰减为 0 的点。在 {@link maxDistance} 处，不透明度为 0，随着摄像机与粒子之间的距离接近此距离，不透明度将线性接近 1。
 
-        这要求 {@link maxDistance} 设置为正值或 0。可以通过将此值和 minDistance 设置为 -1 来禁用此距离限制。
+        这要求 {@link maxDistance} 设置为正值或 0。可以通过将此值和 maxDistance 设置为 -1 来禁用此距离限制。
     see:
       - minFadeDistance
       - minDistance

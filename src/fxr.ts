@@ -97,6 +97,14 @@ export enum ActionType {
    */
   NodeAcceleration = 1,
   /**
+   * ### Action 11 - Unk11
+   * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+   * - **Class**: {@link Unk11}
+   * 
+   * Unknown.
+   */
+  Unk11 = 11,
+  /**
    * ### Action 15 - NodeTranslation
    * - **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
    * - **Class**: {@link NodeTranslation}
@@ -2079,6 +2087,7 @@ export namespace ActionSlots {
 
   export type NodeMovementAction =
     | NodeAcceleration
+    | Unk11
     | NodeTranslation
     | NodeSpin
     | NodeAttachToCamera
@@ -2274,6 +2283,11 @@ const ActionData: Record<string, ActionDataEntry> = {
       [Game.ArmoredCore6]: Game.EldenRing,
       [Game.Nightreign]: Game.EldenRing
     }
+  },
+  [ActionType.Unk11]: {
+    isAppearance: false,
+    isParticle: false,
+    slotDefault: false
   },
   [ActionType.NodeTranslation]: {
     isAppearance: false,
@@ -6411,7 +6425,11 @@ function writeProperty(
   properties: IProperty<any, any>[],
   isModifierProp: boolean
 ) {
-  if (game !== Game.ArmoredCore6 && prop instanceof ComponentSequenceProperty) {
+  if (prop instanceof ComponentSequenceProperty && [
+    Game.DarkSouls3,
+    Game.Sekiro,
+    Game.EldenRing,
+  ].includes(game)) {
     prop = prop.combineComponents()
   }
   const count = properties.length
@@ -9176,11 +9194,7 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
         this.rotationVariance.every(e => e === 0)
       ) {
         return ActionDataConversion[ActionType.StaticNodeTransform].minify.call(
-          new StaticNodeTransform(this).assign({
-            // For some reason, StaticNodeTransform flips the X rotation, but
-            // this one doesn't, even though the X offset is flipped in both.
-            rotation: [-this.rotation[0], this.rotation[1], this.rotation[2]]
-          })
+          new StaticNodeTransform(this)
         )
       }
       return this
@@ -13753,6 +13767,20 @@ class NodeAcceleration extends DataAction {
 }
 
 /**
+ * ### {@link ActionType.Unk11 Action 11 - Unk11}
+ * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
+ * 
+ * Unknown.
+ */
+class Unk11 extends DataAction {
+  declare readonly type: ActionType.Unk11
+  
+  constructor() {
+    super(ActionType.Unk11)
+  }
+}
+
+/**
  * ### {@link ActionType.NodeTranslation Action 15 - NodeTranslation}
  * **Slot**: {@link ActionSlots.NodeMovementAction NodeMovement}
  * 
@@ -16285,7 +16313,7 @@ class PointSprite extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -16772,7 +16800,7 @@ class Line extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -17280,7 +17308,7 @@ class QuadLine extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -18055,7 +18083,7 @@ class BillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -19009,7 +19037,7 @@ class MultiTextureBillboardEx extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -19893,7 +19921,7 @@ class Model extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -20535,7 +20563,7 @@ class LegacyTracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -21185,7 +21213,7 @@ class Distortion extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -21665,7 +21693,7 @@ class RadialBlur extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -23743,7 +23771,7 @@ class GPUStandardParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -25175,7 +25203,7 @@ class GPUStandardCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -26445,7 +26473,7 @@ class GPUSparkParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -27445,7 +27473,7 @@ class GPUSparkCorrectParticle extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -28117,7 +28145,7 @@ class Tracer extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -30242,7 +30270,7 @@ class RichModel extends DataAction {
   /**
    * This controls a point where the opacity of a particle will start to fade to 0 near the {@link maxDistance maximum view distance}. At {@link maxDistance}, the opacity will be 0, and it will linearly approach 1 as the distance between the camera and the particle approaches this distance.
    * 
-   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and minDistance to -1.
+   * This requires {@link maxDistance} to be set to a positive value or 0. This distance limit can be disabled by setting this and maxDistance to -1.
    * 
    * **Default**: `-1`
    * 
@@ -32573,7 +32601,7 @@ class Unk10500 extends DataAction {
    * 
    * Setting this to very high values can cause noticeable stutters in the game when the effect is spawned due to it having to simulate playing the effect for so long.
    * 
-   * In Dark Souls 3, Sekiro, and Elden Ring, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
+   * In Dark Souls 3, Sekiro, Elden Ring, and Nightreign, this value will be rounded to the nearest 1/30s due to how it is stored in the file format. It is stored differently in Armored Core 6, and so no rounding will happen for that.
    * 
    * **Default**: `0`
    */
@@ -32979,6 +33007,7 @@ class SpotLight extends DataAction {
 const DataActions = {
   /*#ActionsList start*/
   [ActionType.NodeAcceleration]: NodeAcceleration, NodeAcceleration,
+  [ActionType.Unk11]: Unk11, Unk11,
   [ActionType.NodeTranslation]: NodeTranslation, NodeTranslation,
   [ActionType.NodeSpin]: NodeSpin, NodeSpin,
   [ActionType.StaticNodeTransform]: StaticNodeTransform, StaticNodeTransform,
@@ -36864,6 +36893,7 @@ export {
   ParticleMovement,
   /*#ActionsExport start*/
   NodeAcceleration,
+  Unk11,
   NodeTranslation,
   NodeSpin,
   StaticNodeTransform,
