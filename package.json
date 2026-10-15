@@ -49,7 +49,7 @@
   "bugs": {
     "url": "https://github.com/EvenTorset/fxr/issues"
   },
-  "homepage": "https://fxr-docs.pages.dev/",
+  "homepage": "https://fxr-js-docs.evto.cc/",
   "devDependencies": {
     "@types/node": "^26.0.0",
     "cheerio": "^1.2.0",
