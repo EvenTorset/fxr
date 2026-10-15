@@ -1,5 +1,5 @@
 # Before you continue
-Just in case you happened upon this page before finding out about it: The [FXR Playground](https://fxr-playground.pages.dev) is a website where you can use the library without having to install anything. It is recommended that you check it out before continuing to find out if you really need to install the library locally.
+Just in case you happened upon this page before finding out about it: The [FXR Playground](https://fxr-playground.evto.cc) is a website where you can use the library without having to install anything. It is recommended that you check it out before continuing to find out if you really need to install the library locally.
 
 The playground includes a UI for performing simple actions such as recoloring or resizing existing effects, as well as things to simplify manual edits and running scripts that perform more advanced or bulk edits, or create entirely new effects from scratch.
 
@@ -151,7 +151,7 @@ If you get this error when trying to run a JS file, you either don't have Node.j
 Another possible option for why this happens is that you opened the terminal before installing Node, causing it to not know where Node is installed. To fix that, simply close and reopen the terminal.
 
 ### I don't know what code to write
-If you don't know JS, there are plenty of free online courses out there to learn the basics, but you can also learn enough to use this library from [the examples in this repo](/examples/) and [the documentation site](https://fxr-docs.pages.dev/).
+If you don't know JS, there are plenty of free online courses out there to learn the basics, but you can also learn enough to use this library from [the examples in this repo](/examples/) and [the documentation site](https://fxr-js-docs.evto.cc/).
 
 ### I ran the command to set up the project folder, but node_modules didn't appear
 If the node_modules folder and the extra files didn't show up when running the command, it either errored or it was run from a different folder.

@@ -1,5 +1,10 @@
 # Changelog
 
+## [v32.1.1](https://github.com/EvenTorset/fxr/compare/v32.1.0...v32.1.1) - 2026-05-25
+
+### Bug fixes
+- Fixed Action 11 not fitting into the `nodeMovement` slot in `BasicConfig` and `NodeEmitterConfig`.
+
 ## [v32.1.0](https://github.com/EvenTorset/fxr/compare/v32.0.1...v32.1.0) - 2026-05-25
 
 ### Improvements
@@ -351,8 +356,8 @@ The following properties have been renamed and some have had their documentation
 ## [v20.0.0](https://github.com/EvenTorset/fxr/compare/v19.0.2...v20.0.0) - 2025-03-10
 
 - Added two JSON Schemas that can be used to validate FXR JSON objects. They are accessible through subpath exports:
-  - `/schema` - Describes the structure of FXR JSON objects that may contain "generic" objects. Also available at https://fxr-docs.pages.dev/json/schema.json
-  - `/schema/strict` - Same as the other one, but disallows generic objects and is much stricter about where certain actions can be placed. Also available at https://fxr-docs.pages.dev/json/schema_strict.json
+  - `/schema` - Describes the structure of FXR JSON objects that may contain "generic" objects. Also available at https://fxr-js-docs.evto.cc/json/schema.json
+  - `/schema/strict` - Same as the other one, but disallows generic objects and is much stricter about where certain actions can be placed. Also available at https://fxr-js-docs.evto.cc/json/schema_strict.json
 - All generic classes (`GenericNode`, `NodeConfig`, `Action`) and their JSON form now have a `$generic` property with a value of `true`.
   - The property in the JSON form prevents an issue where converting an node, config, or action to JSON and then back to the class object could produce unexpected results in some cases. Since the JSON now requires this property for the generic types, the library is able to correctly determine what class to construct based on its presence and value.
   - This also allows validation of the JSON objects to correctly determine what kind of structure the object must have.
@@ -360,7 +365,7 @@ The following properties have been renamed and some have had their documentation
 - Added `Unk11` with a value of `11` to the `OrientationMode` enum. Found in FXR 639742 in Elden Ring.
 - Fixed all of the values in the `ForceVolumeShape` enum being 0. They should now be the correct values instead.
 - All fields of type `LightingMode` are now just generic integer fields. This enum still exists and partially documents some of the tested values for these fields, but since some vanilla effects contain different values that have not been tested or documented yet and this whole field still needs to be better understood, the library will now accept any integer value for these fields.
-- Added the TypeScript type of action properties that have one to the [actions.json file on the docs site](https://fxr-docs.pages.dev/data/actions.json).
+- Added the TypeScript type of action properties that have one to the [actions.json file on the docs site](https://fxr-js-docs.evto.cc/data/actions.json).
 - Updated the description for the `particleRandomTurnIntervalMax` field in `GPUStandardParticle` and `GPUStandardCorrectParticle` to mention the fact that the value will be rounded to the nearest 1/30s due to how the value is stored.
 
 ## [v19.0.2](https://github.com/EvenTorset/fxr/compare/v19.0.1...v19.0.2) - 2025-03-03
@@ -371,7 +376,7 @@ The following properties have been renamed and some have had their documentation
 
 - To match the behavior of the games, the field count in property modifiers is now ignored when reading FXR files unless it is reading it as a generic modifier. The field count is now calculated based on the modifer and value types instead, and if the calculated count does not match the count in the file it will print a warning to notify the user about the error, but it will continue to correctly read the file and not throw because of the field count value being wrong.
   - The games apparently ignore this field count value and just reads the correct number of fields anyway.
-  - Generic modifiers have unknown structures, so this fix cannot be applied to those. Modifiers are only read as generic ones if [`Game.Generic`](https://fxr-docs.pages.dev/~#Game.Generic) is passed to the [`FXR.read`](https://fxr-docs.pages.dev/~#FXR.read) function, which is only meant for debugging and research anyway.
+  - Generic modifiers have unknown structures, so this fix cannot be applied to those. Modifiers are only read as generic ones if [`Game.Generic`](https://fxr-js-docs.evto.cc/~#Game.Generic) is passed to the [`FXR.read`](https://fxr-js-docs.evto.cc/~#FXR.read) function, which is only meant for debugging and research anyway.
   - It may still fail at reading the modifier fields if there are not enough fields to read, but that most likely errors in-game as well.
   - TL;DR: The library can now read some files that contain certain invalid values, but still work in-game.
 
@@ -471,8 +476,8 @@ The following properties have been renamed and some have had their documentation
 - Renamed the `unk70x` property in the `RootNode` class to `termination` to match the actions it can be set to.
 - Renamed `BlendMode.Screen` to `BlendMode.Unk7`. The old name was based on some old, and apparently incorrect, documentation. This blend mode is seemingly identical to `BlendMode.Add`.
 - The documentation site now generates JSON files that contain a lot of the information that is in the library. The main reason behind this addition was to allow the FXR Playground to have easy access to the documentation in the library, but feel free to use these in other tools if you need any of this information.
-  - [`/data/actions.json`](https://fxr-docs.pages.dev/data/actions.json) - This is an array of objects that contain information about all action types, including a name, description, what games it works in, the structure of the action in each of the supported games, and detailed information about every field, property, and section10 in the action.
-  - [`/data/enums.json`](https://fxr-docs.pages.dev/data/enums.json) - This is an object that contains various enums, like `BlendMode`, `InitialDirection`, `OrientationMode`, and so on. Each enum has a description and a members object. Each member has a value and a description.
+  - [`/data/actions.json`](https://fxr-js-docs.evto.cc/data/actions.json) - This is an array of objects that contain information about all action types, including a name, description, what games it works in, the structure of the action in each of the supported games, and detailed information about every field, property, and section10 in the action.
+  - [`/data/enums.json`](https://fxr-js-docs.evto.cc/data/enums.json) - This is an object that contains various enums, like `BlendMode`, `InitialDirection`, `OrientationMode`, and so on. Each enum has a description and a members object. Each member has a value and a description.
   - All of the descriptions are Markdown strings.
   - As a bonus for this, more enums are now properly documented, and some documentation errors in some actions have been fixed.
 - `DataAction`s now check if there are any properties that have the wrong type or number of components when they are written to an FXR buffer, and throws descriptive errors if there are any. This should make it easier to find out if and where you put an invalid value.

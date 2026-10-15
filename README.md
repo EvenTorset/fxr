@@ -4,7 +4,7 @@ This is a JavaScript library for creating and editing FXR files (particle effect
 It includes classes for all known structures in the file format that makes it relatively easy to create brand new effects from scratch. It also has functions that allow you to modify existing effects in many different ways: scaling, recoloring, converting between games, and more.
 
 ## Try it out
-The library can be used without needing to install anything at the [FXR Playground](https://fxr-playground.pages.dev). Installing it may be more convenient in some cases, but the playground is great for trying it out and also includes a UI for some simple actions, such as recoloring or resizing effects.
+The library can be used without needing to install anything at the [FXR Playground](https://fxr-playground.evto.cc). Installing it may be more convenient in some cases, but the playground is great for trying it out and also includes a UI for some simple actions, such as recoloring or resizing effects.
 
 ## Installation
 The library is available on [npm](https://www.npmjs.com/package/@cccode/fxr), so you can use a package manager like npm, yarn or pnpm to install it.
@@ -19,7 +19,7 @@ npm i @cccode/fxr
 ```
 
 ## Documentation
-Check out the auto-generated docs at https://fxr-docs.pages.dev/ to find more information about the specialized action classes and other things. Also check out the [example directory](https://github.com/EvenTorset/fxr/tree/main/examples) in the GitHub repo, it includes examples for creating new effects as well as editing existing effects in various ways.
+Check out the auto-generated docs at https://fxr-js-docs.evto.cc/ to find more information about the specialized action classes and other things. Also check out the [example directory](https://github.com/EvenTorset/fxr/tree/main/examples) in the GitHub repo, it includes examples for creating new effects as well as editing existing effects in various ways.
 
 ## fxrjson
 The library has the ability to deserialize FXR files into JSON objects and it can also do the reverse. [**fxrjson**](https://www.npmjs.com/package/fxrjson) is a tool that uses this to allow you to do it through the right-click context menu on Windows or through a command line interface.
@@ -35,7 +35,7 @@ Once it has been read, you can change things in the FXR object to whatever you n
 
 Once you have made your changes to the FXR object, you can write it to a file if you're using Node.js, or you can generate an ArrayBuffer with the file's content if you need it to run in the browser.
 
-[Open in FXR Playground](https://fxr-playground.pages.dev/shared/examples/readme/edit/edit_example.js)
+[Open in FXR Playground](https://fxr-playground.evto.cc/shared/examples/readme/edit/edit_example.js)
 ```js
 import { FXR, Game, Recolor, hex } from '@cccode/fxr'
 
@@ -58,7 +58,7 @@ await fxr.saveAs('f000450360_edit.fxr', Game.EldenRing)
 ## Creating new FXR files
 Creating brand new FXR files from scratch requires some knowledge about their structure, but below is an example to get started. The example creates lots of thin rectangular particles that change color over time in a cylindrical volume.
 
-[Open in FXR Playground](https://fxr-playground.pages.dev/shared/examples/readme/create/create_example.js)
+[Open in FXR Playground](https://fxr-playground.evto.cc/shared/examples/readme/create/create_example.js)
 ```js
 import {
   FXR,

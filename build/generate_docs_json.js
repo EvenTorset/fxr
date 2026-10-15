@@ -71,7 +71,7 @@ function linkReplacer(name, label, context) {
       }
     }
   }
-  return `[${label}](https://fxr-docs.pages.dev/~#${prefix}${name})`
+  return `[${label}](https://fxr-js-docs.evto.cc/~#${prefix}${name})`
 }
 
 function processMarkdown(md, context) {

@@ -6182,6 +6182,7 @@ const ConfigActionSlots = {
     ],
     [
       ActionType.NodeAcceleration,
+      ActionType.Unk11,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
       ActionType.NodeAttachToCamera,
@@ -6284,6 +6285,7 @@ const ConfigActionSlots = {
     ],
     [
       ActionType.NodeAcceleration,
+      ActionType.Unk11,
       ActionType.NodeTranslation,
       ActionType.NodeSpin,
       ActionType.NodeAttachToCamera,
