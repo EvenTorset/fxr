@@ -1,5 +1,15 @@
 # Changelog
 
+## [v32.1.3](https://github.com/EvenTorset/fxr/compare/v32.1.2...v32.1.3) - 2026-10-24
+
+### Bug fixes
+- Fixed the `initialSimulationTime` field in `Unk10500` not being written correctly for Dark Souls 3, Sekiro, and Nightreign.
+
+## [v32.1.2](https://github.com/EvenTorset/fxr/compare/v32.1.1...v32.1.2) - 2026-10-15
+
+### Changes
+- Moved documentation to a new domain and updated links to it and FXR Playground.
+
 ## [v32.1.1](https://github.com/EvenTorset/fxr/compare/v32.1.0...v32.1.1) - 2026-05-25
 
 ### Bug fixes
