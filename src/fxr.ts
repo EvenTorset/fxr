@@ -9596,7 +9596,7 @@ const ActionDataConversion: Partial<Record<ActionType, ActionDataConversionEntry
       return props
     },
     write(props: Props<Unk10500>, game: Game) {
-      if (game === Game.EldenRing) {
+      if (game !== Game.ArmoredCore6) {
         props.initialSimulationTime = Math.round(props.initialSimulationTime * 30)
       }
       return props
